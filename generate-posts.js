@@ -132,6 +132,25 @@ posts.sort((a, b) => {
   return dateB - dateA;
 });
 
-writeFileSync(OUTPUT, JSON.stringify(posts, null, 2), "utf-8");
+/**
+ * 自定义 JSON 格式化：数组单行显示
+ * 例如: ["技术", "Demo"] 而不是多行展开
+ */
+function stringifyPosts(posts) {
+  const lines = ["["];
+  posts.forEach((post, i) => {
+    const entries = Object.entries(post);
+    const fields = entries.map(([key, value]) => {
+      // 数组和基本类型都用 JSON.stringify（数组会单行显示）
+      return `    ${JSON.stringify(key)}: ${JSON.stringify(value)}`;
+    });
+    const objStr = "  {\n" + fields.join(",\n") + "\n  }";
+    lines.push(objStr + (i < posts.length - 1 ? "," : ""));
+  });
+  lines.push("]");
+  return lines.join("\n");
+}
+
+writeFileSync(OUTPUT, stringifyPosts(posts), "utf-8");
 console.log(`\n✅ 生成 posts.json: ${posts.length} 篇文章`);
 console.log(`   输出: ${OUTPUT}`);

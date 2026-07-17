@@ -86,25 +86,23 @@ content:
         type: string
         description: "外部图片 URL。与'封面图（上传）'二选一。"
 
+      # boolean 字段不设 default，未勾选时 PagesCMS 不会写入 frontmatter
+      # 这样 frontmatter 更干净（只有 true 时才出现）
       - name: pinned
         label: 置顶
         type: boolean
-        default: false
 
       - name: locked
         label: 锁定
         type: boolean
-        default: false
 
       - name: draft
         label: 草稿
         type: boolean
-        default: false
 
       - name: type
         label: 类型
         type: select
-        default: ""
         options:
           values: ["", note, gallery]
         description: "留空=普通文章；note=说说；gallery=图集。"

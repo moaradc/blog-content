@@ -5,13 +5,8 @@
     "date": "2026-07-17 20:43",
     "last_modified": "2026-07-17 20:43",
     "author": "Admin",
-    "category": [
-      "技术",
-      "Demo"
-    ],
-    "tags": [
-      "教程"
-    ],
+    "category": ["技术","Demo"],
+    "tags": ["教程"],
     "desc": "一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。"
   },
   {
@@ -20,13 +15,8 @@
     "date": "2026-07-17 20:08",
     "last_modified": "2026-07-17 20:08",
     "author": "Admin",
-    "category": [
-      "说说",
-      "生活"
-    ],
-    "tags": [
-      "猫"
-    ],
+    "category": ["说说","生活"],
+    "tags": ["猫"],
     "type": "note",
     "content": "今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。\n\n![猫](https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop)\n\n拍完照它就跑了，哈哈。\n\n![猫2](https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop)\n\n晚上准备去吃顿火锅庆祝一下周五！"
   },
@@ -36,13 +26,8 @@
     "date": "2026-06-09 10:00",
     "last_modified": "2026-06-09 10:00",
     "author": "Admin",
-    "category": [
-      "技术"
-    ],
-    "tags": [
-      "Markdown",
-      "教程"
-    ],
+    "category": ["技术"],
+    "tags": ["Markdown","教程"],
     "desc": "一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。"
   }
 ]
