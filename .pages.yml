@@ -1,42 +1,31 @@
 # PagesCMS 配置 - moaradc/blog-content
 # 文档: https://pagescms.org/docs/configuration/
 #
-# 本仓库作为博客的文章和媒体存储（"数据库"），不部署到任何平台。
-# 博客主站（moaradc/test2）通过 jsdelivr CDN 运行时 fetch 这些文件：
-#   - 文章列表: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts.json (由 GitHub Action 生成)
-#   - 单篇文章: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts/{id}.md
-#   - 媒体文件: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/{filename}
+# 关键：正文字段必须命名为 `body`，PagesCMS 才会将其写为 markdown 正文
+# （frontmatter 下方），而不是 frontmatter 字段。
 #
 # 访问编辑器: https://pagescms.org/moaradc/blog-content
 
-# 媒体配置：图片上传到 img/ 目录，URL 前缀 /img/
 media:
   input: img
   output: /img
   rename: safe
   extensions: [png, jpg, jpeg, webp, gif, svg]
 
-# 内容集合
 content:
   - name: posts
     label: 文章
     type: collection
     path: posts
+    # filename.field: true 让用户在编辑器中直接输入文件名（如 102）
+    # 文件名即文章 ID，不需要额外的 id 字段
     filename:
       template: "{primary}.md"
       field: true
     view:
-      fields: [id, title, date, category, type, pinned, locked]
-      primary: id
+      fields: [title, date, category, type]
+      primary: title
     fields:
-      # === 必填字段 ===
-      - name: id
-        label: 文章 ID
-        type: string
-        required: true
-        description: "文章唯一标识，用于 URL（如 /details/article?id=107）。建议用数字递增。"
-        pattern: "^[a-zA-Z0-9_-]+$"
-
       - name: title
         label: 标题
         type: string
@@ -50,37 +39,37 @@ content:
           format: yyyy-MM-dd HH:mm
           time: true
 
-      # === 正文内容 ===
-      # content 字段同时用于：
-      # 1. 列表页渲染 type=note 的说说（直接显示，不用点进详情）
-      # 2. 详情页正文（Markdown 格式，用 marked 解析）
-      - name: content
+      - name: last_modified
+        label: 最后修改
+        type: date
+        options:
+          format: yyyy-MM-dd HH:mm
+          time: true
+        description: "最后修改时间，编辑文章时更新。留空则用发布日期。"
+
+      # body 字段：PagesCMS 特殊字段名，自动写为 markdown 正文（frontmatter 下方）
+      - name: body
         label: 正文
         type: rich-text
-        description: "文章正文（Markdown 格式）。type=note 时会直接在首页列表渲染；普通文章点击后进入详情页显示。支持自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list>。"
+        description: "Markdown 正文。type=note 时会直接在首页列表渲染；普通文章点击进入详情页显示。"
 
-      # === 摘要 ===
       - name: desc
         label: 摘要
         type: text
-        description: "文章简短描述，显示在文章列表卡片和搜索结果中。type=note 可留空。"
+        description: "文章简短描述，显示在列表卡片和搜索结果中。"
 
-      # === 分类与标签 ===
       - name: category
         label: 分类
         type: select
         list: true
         options:
           values: [技术, 闲谈, 说说, 生活, 杂项, Demo]
-        description: "可多选。"
 
       - name: tags
         label: 标签
         type: string
         list: true
-        description: "自由输入标签，回车添加。"
 
-      # === 作者 ===
       - name: author
         label: 作者
         type: select
@@ -88,47 +77,38 @@ content:
         options:
           values: [Admin, Lamb, Anonymous]
 
-      # === 封面图 ===
       - name: coverImage
         label: 封面图（上传）
         type: image
-        description: "从本地上传封面图，自动存到 img/ 目录。与'封面图（URL）'二选一。"
 
       - name: image
         label: 封面图（URL）
         type: string
-        description: "外部图片 URL（如 Unsplash）。与'封面图（上传）'二选一。"
+        description: "外部图片 URL。与'封面图（上传）'二选一。"
 
-      # === 状态控制 ===
       - name: pinned
         label: 置顶
         type: boolean
         default: false
-        description: "置顶文章，显示在首页列表最前（带 TOP 标记）。不勾选则不置顶。"
 
       - name: locked
         label: 锁定
         type: boolean
         default: false
-        description: "锁定后在列表中隐藏（归档页仍可见）。防误删。"
 
       - name: draft
         label: 草稿
         type: boolean
         default: false
-        description: "草稿状态，不会在任何页面显示。"
 
-      # === 特殊类型 ===
       - name: type
-        label: 文章类型
+        label: 类型
         type: select
         default: ""
         options:
           values: ["", note, gallery]
-        description: "留空=普通文章（点击进入详情页）；note=说说（短内容，直接在首页列表渲染）；gallery=图集。"
+        description: "留空=普通文章；note=说说；gallery=图集。"
 
-      # === 外部内容 ===
       - name: content_url
         label: 外部内容 URL
         type: string
-        description: "如果文章内容托管在外部（如 123pan），填此 URL，详情页会从此 URL fetch 内容。留空则用正文。"

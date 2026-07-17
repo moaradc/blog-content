@@ -1,6 +1,11 @@
 // generate-posts.js
-// 扫描 posts/*.md，提取 frontmatter，生成 posts.json
+// 扫描 posts/*.md，提取 frontmatter + body，生成 posts.json
 // 输出结构匹配 moaradc/test2 项目的 articlesData 格式
+//
+// 关键逻辑：
+//   - id 从文件名获取（如 102.md → id: "102"），不从 frontmatter 读
+//   - content 只在 type=note 时写入 posts.json（列表页直接渲染说说）
+//   - 普通文章不含 content（详情页 fetch .md 解析）
 //
 // 用法: node generate-posts.js
 
@@ -18,7 +23,6 @@ function parseFrontmatter(fm) {
   let currentList = [];
 
   for (const line of lines) {
-    // Key: value
     const kvMatch = line.match(/^(\w[\w_-]*):\s*(.*)$/);
     if (kvMatch) {
       if (currentKey && currentList.length) {
@@ -30,7 +34,6 @@ function parseFrontmatter(fm) {
       if (val === "") {
         currentList = [];
       } else if (val.startsWith("[")) {
-        // 内联数组: [a, b, c]
         result[currentKey] = val
           .slice(1, -1)
           .split(",")
@@ -49,7 +52,6 @@ function parseFrontmatter(fm) {
       }
       continue;
     }
-    // 列表项:  - value
     const liMatch = line.match(/^\s*-\s+(.*)$/);
     if (liMatch && currentKey) {
       currentList.push(liMatch[1].trim().replace(/^['"]|['"]$/g, ""));
@@ -87,47 +89,43 @@ console.log(`📄 扫描到 ${files.length} 个 markdown 文件`);
 
 for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
-  const slug = file.replace(/\.md$/, "");
+  const slug = file.replace(/\.md$/, ""); // 文件名作为 id
   const { frontmatter, body } = parseMarkdown(raw);
 
-  // 构建 article 对象（匹配 articlesData 结构）
+  // 构建 article 对象
+  // id 从文件名获取，不从 frontmatter 读
   const article = {
-    id: frontmatter.id || slug,
+    id: slug,
     title: frontmatter.title || "",
     date: frontmatter.date || "",
     last_modified: frontmatter.last_modified || frontmatter.date || "",
   };
 
-  // 可选字段（只在有值时添加，保持 JSON 紧凑）
+  // 可选字段（只在有值时添加）
   if (frontmatter.author) article.author = frontmatter.author;
   if (frontmatter.category) article.category = frontmatter.category;
   if (frontmatter.tags) article.tags = frontmatter.tags;
   if (frontmatter.type) article.type = frontmatter.type;
   if (frontmatter.desc) article.desc = frontmatter.desc;
   if (frontmatter.image) article.image = frontmatter.image;
-  if (frontmatter.coverImage) article.image = frontmatter.coverImage; // 优先用上传的封面
+  if (frontmatter.coverImage) article.image = frontmatter.coverImage;
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
-  // locked: 从 frontmatter 读取，写入 posts.json（详情页通过 fetch .md 解析 frontmatter 也读 locked）
   if (frontmatter.locked === true) article.locked = true;
   if (frontmatter.pinned === true) article.pinned = true;
   if (frontmatter.draft === true) article.draft = true;
 
-  // content 字段：
-  // - type=note 的说说：content 直接存到 posts.json（列表页直接渲染）
-  // - 普通文章：content 也存到 posts.json（详情页从 posts.json 读取，不用单独 fetch .md）
-  //   但如果文章很长，建议只存摘要到 desc，content 留空，详情页通过 fetch .md 获取
-  // 这里默认把 body 存到 content（匹配现有 articles.js 的 note 行为）
-  if (body && body.trim()) {
+  // content 字段：只有 type=note 时才写入 posts.json
+  // note 类型（说说）在列表页直接渲染 content，不需要点进详情页
+  // 普通文章详情页直接 fetch .md 文件解析，posts.json 不需要 content
+  if (frontmatter.type === "note" && body && body.trim()) {
     article.content = body.trim();
-  } else if (frontmatter.content) {
-    article.content = frontmatter.content;
   }
 
   posts.push(article);
   console.log(`  ✅ ${file}: ${article.title}`);
 }
 
-// 按日期降序排序（最新在前）
+// 按日期降序排序
 posts.sort((a, b) => {
   const dateA = new Date(a.date).getTime() || 0;
   const dateB = new Date(b.date).getTime() || 0;

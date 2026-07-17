@@ -4,6 +4,7 @@
     "title": "周五的公园与猫",
     "date": "2026-07-17 20:08",
     "last_modified": "2026-07-17 20:08",
+<<<<<<< HEAD
     "author": "Admin",
     "category": [
       "说说",
@@ -20,33 +21,32 @@
     "title": "已锁定的测试文章",
     "date": "2026-07-17 13:00",
     "last_modified": "2026-07-17 13:00",
+=======
+>>>>>>> adab189 (Fix: rename content to body + only include content for note type)
     "author": "Admin",
     "category": [
-      "Demo"
+      "说说",
+      "生活"
     ],
     "tags": [
-      "测试",
-      "锁定"
+      "猫"
     ],
-    "desc": "这篇文章被锁定了，详情页应显示\"文章已隐藏\"。",
-    "locked": true,
-    "content": "这篇文章的内容应该被隐藏（因为 locked: true）。"
+    "type": "note",
+    "content": "今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。\n\n![猫](https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop)\n\n拍完照它就跑了，哈哈。\n\n![猫2](https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop)\n\n晚上准备去吃顿火锅庆祝一下周五！"
   },
   {
-    "id": "test-1",
-    "title": "PagesCMS 测试文章",
-    "date": "2026-07-17 12:00",
-    "last_modified": "2026-07-17 12:00",
+    "id": "107",
+    "title": "Markdown写作指南",
+    "date": "2026-06-09 10:00",
+    "last_modified": "2026-06-09 10:00",
     "author": "Admin",
     "category": [
-      "Demo"
+      "技术"
     ],
     "tags": [
-      "测试",
-      "PagesCMS"
+      "Markdown",
+      "教程"
     ],
-    "desc": "这是第一篇通过 PagesCMS 配置创建的测试文章，验证文章结构和生成脚本。",
-    "pinned": true,
-    "content": "## 测试文章\n\n这是正文内容。支持 **Markdown** 语法。\n\n### 自定义组件测试\n\n音乐卡片：\n\n<music id=\"cry\"></music>\n\n黑幕：\n\n<span class='spoiler'>这是被剧透隐藏的文字内容！</span>\n\n图集：\n\n<gallery src=\"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800, https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800\"></gallery>\n\n### 代码块\n\n```javascript\nfunction greet(name) {\n    return `Hello, ${name}!`;\n}\n```\n\n### 列表\n\n1. 第一项\n2. 第二项\n3. 第三项"
+    "desc": "一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。"
   }
 ]
