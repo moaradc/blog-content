@@ -181,10 +181,53 @@ function escapeXml(s) {
     .replace(/'/g, "&apos;");
 }
 
+/**
+ * 把 frontmatter 里的日期字符串（如 "2026-07-17 21:03"）当作 UTC+8 时间解析
+ * 返回 Date 对象
+ *
+ * 问题：new Date("2026-07-17 21:03") 在 UTC 环境下会被当作 UTC 时间，
+ * 导致 RSS pubDate 偏差 8 小时。frontmatter 写的是北京时间，需要显式指定时区。
+ */
+function parseCnDate(dateStr) {
+  if (!dateStr) return new Date();
+  // 把 "2026-07-17 21:03" 转成 "2026-07-17T21:03:00+08:00"（ISO 8601 带时区）
+  const isoStr = dateStr.replace(" ", "T") + ":00+08:00";
+  const d = new Date(isoStr);
+  return isNaN(d.getTime()) ? new Date() : d;
+}
+
+/**
+ * 把 Date 对象格式化为 RFC 822 日期（带 +0800 时区偏移）
+ * 例如：Fri, 17 Jul 2026 21:03:00 +0800
+ *
+ * RSS 阅读器会根据 +0800 偏移量正确显示用户本地时间。
+ */
 function toRfc822Date(dateStr) {
-  if (!dateStr) return new Date().toUTCString();
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString();
+  const d = parseCnDate(dateStr);
+  const weekdays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+  const months = [
+    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+  ];
+  const pad = (n) => String(n).padStart(2, "0");
+  // 用 UTC+8 时间部分（UTC + 8 小时）
+  const utc8 = new Date(d.getTime() + 8 * 60 * 60 * 1000);
+  return (
+    weekdays[utc8.getUTCDay()] +
+    ", " +
+    pad(utc8.getUTCDate()) +
+    " " +
+    months[utc8.getUTCMonth()] +
+    " " +
+    utc8.getUTCFullYear() +
+    " " +
+    pad(utc8.getUTCHours()) +
+    ":" +
+    pad(utc8.getUTCMinutes()) +
+    ":" +
+    pad(utc8.getUTCSeconds()) +
+    " +0800"
+  );
 }
 
 const MIME_MAP = {
