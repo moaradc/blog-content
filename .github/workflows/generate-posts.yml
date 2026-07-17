@@ -1,17 +1,18 @@
 name: Generate posts.json
 
-# 触发条件：push 到 main 时（posts/ 目录或 generate-posts.js 有改动）
+# 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
 on:
   push:
     branches: [main]
     paths:
       - "posts/**"
       - "generate-posts.js"
+      - "clean-frontmatter.js"
       - ".github/workflows/generate-posts.yml"
-  workflow_dispatch: # 手动触发
+  workflow_dispatch:
 
 permissions:
-  contents: write # 需要写权限来回 commit posts.json
+  contents: write
 
 jobs:
   generate:
@@ -27,6 +28,9 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Clean frontmatter
+        run: node clean-frontmatter.js
+
       - name: Generate posts.json
         run: node generate-posts.js
 
@@ -34,11 +38,11 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if git diff --quiet posts.json; then
-            echo "ℹ️  posts.json 无变化，跳过提交"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "ℹ️  无变化，跳过提交"
           else
-            git add posts.json
-            git commit -m "chore: auto-generate posts.json [skip ci]"
+            git commit -m "chore: auto-clean frontmatter + generate posts.json [skip ci]"
             git push
-            echo "✅ posts.json 已提交"
+            echo "✅ 已提交"
           fi
