@@ -1,0 +1,135 @@
+# PagesCMS 配置 - moaradc/blog-content
+# 文档: https://pagescms.org/docs/configuration/
+#
+# 本仓库作为博客的文章和媒体存储（"数据库"），不部署到任何平台。
+# 博客主站（moaradc/test2）通过 jsdelivr CDN 运行时 fetch 这些文件：
+#   - 文章列表: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts.json (由 GitHub Action 生成)
+#   - 单篇文章: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts/{id}.md
+#   - 媒体文件: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/{filename}
+#
+# 访问编辑器: https://pagescms.org/moaradc/blog-content
+
+# 媒体配置：图片上传到 img/ 目录，URL 前缀 /img/
+media:
+  input: img
+  output: /img
+  # safe 重命名：保留可读文件名，但移除特殊字符
+  rename: safe
+  # 只允许图片格式
+  extensions: [png, jpg, jpeg, webp, gif, svg]
+
+# 内容集合
+content:
+  # === 文章集合 ===
+  - name: posts
+    label: 文章
+    type: collection
+    path: posts
+    # 文件名用 id 字段，与现有结构一致（如 107.md）
+    filename:
+      template: "{primary}.md"
+      field: true
+    # 列表视图显示的字段
+    view:
+      fields: [id, title, date, category, draft]
+      primary: id
+    # 排序：按日期降序（最新在前）
+    order: date desc
+    fields:
+      # === 必填字段 ===
+      - name: id
+        label: 文章 ID
+        type: string
+        required: true
+        description: "文章唯一标识，用于 URL（如 /details/article?id=107）。建议用数字递增。"
+        pattern: "^[a-zA-Z0-9_-]+$"
+
+      - name: title
+        label: 标题
+        type: string
+        required: true
+
+      - name: date
+        label: 发布日期
+        type: date
+        required: true
+        options:
+          format: yyyy-MM-dd HH:mm
+          time: true
+
+      # === 内容字段 ===
+      - name: desc
+        label: 摘要
+        type: text
+        description: "文章简短描述，显示在文章列表和搜索结果中。"
+
+      - name: body
+        label: 正文（Markdown）
+        type: rich-text
+        description: "支持 Markdown 语法。可使用自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list> 等。"
+
+      # === 分类与标签 ===
+      - name: category
+        label: 分类
+        type: select
+        list: true
+        options:
+          values: [技术, 闲谈, 说说, 生活, 杂项, Demo]
+        description: "可多选。'说说' 类型会特殊处理。"
+
+      - name: tags
+        label: 标签
+        type: string
+        list: true
+        description: "自由输入标签，回车添加。"
+
+      # === 作者 ===
+      - name: author
+        label: 作者
+        type: select
+        default: Admin
+        options:
+          values: [Admin, Lamb, Anonymous]
+
+      # === 封面图（两种方式二选一）===
+      - name: coverImage
+        label: 封面图（上传）
+        type: image
+        description: "从本地上传封面图，自动存到 img/ 目录。与'封面图（URL）'二选一。"
+
+      - name: image
+        label: 封面图（URL）
+        type: string
+        description: "外部图片 URL（如 Unsplash）。与'封面图（上传）'二选一。"
+
+      # === 状态控制 ===
+      - name: locked
+        label: 锁定
+        type: boolean
+        default: false
+        description: "锁定后文章不可编辑（防误改）。"
+
+      - name: draft
+        label: 草稿
+        type: boolean
+        default: false
+        description: "草稿状态，不会在博客显示。"
+
+      - name: pin
+        label: 置顶
+        type: boolean
+        default: false
+        description: "置顶文章，显示在列表最前。"
+
+      # === 特殊类型（说说 / 图集）===
+      - name: type
+        label: 特殊类型
+        type: select
+        options:
+          values: ["", note, gallery]
+        description: "留空=普通文章；note=说说（短内容+图片）；gallery=图集。"
+
+      - name: content_url
+        label: 外部内容 URL
+        type: string
+        description: "如果文章内容托管在外部（如 123pan），填此 URL。留空则用正文。"
