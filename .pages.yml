@@ -13,28 +13,21 @@
 media:
   input: img
   output: /img
-  # safe 重命名：保留可读文件名，但移除特殊字符
   rename: safe
-  # 只允许图片格式
   extensions: [png, jpg, jpeg, webp, gif, svg]
 
 # 内容集合
 content:
-  # === 文章集合 ===
   - name: posts
     label: 文章
     type: collection
     path: posts
-    # 文件名用 id 字段，与现有结构一致（如 107.md）
     filename:
       template: "{primary}.md"
       field: true
-    # 列表视图显示的字段
     view:
-      fields: [id, title, date, category, draft]
+      fields: [id, title, date, category, type, pinned, locked]
       primary: id
-    # 排序：按日期降序（最新在前）
-    order: date desc
     fields:
       # === 必填字段 ===
       - name: id
@@ -57,16 +50,29 @@ content:
           format: yyyy-MM-dd HH:mm
           time: true
 
-      # === 内容字段 ===
+      # === 正文内容 ===
+      # content 字段同时用于：
+      # 1. 列表页渲染 type=note 的说说（直接显示，不用点进详情）
+      # 2. 详情页正文（content_type=md 时用 marked 解析，否则当 HTML）
+      - name: content
+        label: 正文
+        type: rich-text
+        description: "文章正文。type=note 时会直接在首页列表渲染；普通文章点击后进入详情页显示。支持 Markdown 语法和自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list>。"
+
+      # === 内容类型 ===
+      - name: content_type
+        label: 内容格式
+        type: select
+        default: md
+        options:
+          values: [md, html]
+        description: "md=Markdown（用 marked 解析）；html=纯 HTML。默认 md。"
+
+      # === 摘要 ===
       - name: desc
         label: 摘要
         type: text
-        description: "文章简短描述，显示在文章列表和搜索结果中。"
-
-      - name: body
-        label: 正文（Markdown）
-        type: rich-text
-        description: "支持 Markdown 语法。可使用自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list> 等。"
+        description: "文章简短描述，显示在文章列表卡片和搜索结果中。type=note 可留空。"
 
       # === 分类与标签 ===
       - name: category
@@ -75,7 +81,7 @@ content:
         list: true
         options:
           values: [技术, 闲谈, 说说, 生活, 杂项, Demo]
-        description: "可多选。'说说' 类型会特殊处理。"
+        description: "可多选。"
 
       - name: tags
         label: 标签
@@ -91,7 +97,7 @@ content:
         options:
           values: [Admin, Lamb, Anonymous]
 
-      # === 封面图（两种方式二选一）===
+      # === 封面图 ===
       - name: coverImage
         label: 封面图（上传）
         type: image
@@ -103,33 +109,35 @@ content:
         description: "外部图片 URL（如 Unsplash）。与'封面图（上传）'二选一。"
 
       # === 状态控制 ===
+      - name: pinned
+        label: 置顶
+        type: boolean
+        default: false
+        description: "置顶文章，显示在首页列表最前（带 TOP 标记）。不勾选则不置顶。"
+
       - name: locked
         label: 锁定
         type: boolean
         default: false
-        description: "锁定后文章不可编辑（防误改）。"
+        description: "锁定后在列表中隐藏（归档页仍可见）。防误删。"
 
       - name: draft
         label: 草稿
         type: boolean
         default: false
-        description: "草稿状态，不会在博客显示。"
+        description: "草稿状态，不会在任何页面显示。"
 
-      - name: pin
-        label: 置顶
-        type: boolean
-        default: false
-        description: "置顶文章，显示在列表最前。"
-
-      # === 特殊类型（说说 / 图集）===
+      # === 特殊类型 ===
       - name: type
-        label: 特殊类型
+        label: 文章类型
         type: select
+        default: ""
         options:
           values: ["", note, gallery]
-        description: "留空=普通文章；note=说说（短内容+图片）；gallery=图集。"
+        description: "留空=普通文章（点击进入详情页）；note=说说（短内容，直接在首页列表渲染）；gallery=图集。"
 
+      # === 外部内容 ===
       - name: content_url
         label: 外部内容 URL
         type: string
-        description: "如果文章内容托管在外部（如 123pan），填此 URL。留空则用正文。"
+        description: "如果文章内容托管在外部（如 123pan），填此 URL，详情页会从此 URL fetch 内容。留空则用正文。"

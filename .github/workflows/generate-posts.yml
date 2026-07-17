@@ -1,0 +1,44 @@
+name: Generate posts.json
+
+# 触发条件：push 到 main 时（posts/ 目录或 generate-posts.js 有改动）
+on:
+  push:
+    branches: [main]
+    paths:
+      - "posts/**"
+      - "generate-posts.js"
+      - ".github/workflows/generate-posts.yml"
+  workflow_dispatch: # 手动触发
+
+permissions:
+  contents: write # 需要写权限来回 commit posts.json
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Generate posts.json
+        run: node generate-posts.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet posts.json; then
+            echo "ℹ️  posts.json 无变化，跳过提交"
+          else
+            git add posts.json
+            git commit -m "chore: auto-generate posts.json [skip ci]"
+            git push
+            echo "✅ posts.json 已提交"
+          fi
