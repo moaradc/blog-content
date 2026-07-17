@@ -5,11 +5,24 @@
     <link>https://blog55.945426.xyz/</link>
     <description>基于 Astro 的极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Fri, 17 Jul 2026 21:03:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 17 Jul 2026 21:20:00 GMT</lastBuildDate>
     <generator>generate-posts.js (PagesCMS)</generator>
     <atom:link href="https://blog55.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>4679</title>
+      <link>https://blog55.945426.xyz/details/article?id=106</link>
+      <guid isPermaLink="false">106</guid>
+      <pubDate>Fri, 17 Jul 2026 21:20:00 GMT</pubDate>
+      <description>sjd</description>
+      <content:encoded><![CDATA[<p>sjd</p>djxxnkxk]]></content:encoded>
+      <category>技术</category>
+      <category>Demo</category>
+      <category>snxn</category>
+      <category>dmcmxm</category>
+      <author>moara@foxmail.com (Admin)</author>
+    </item>
     <item>
       <title>什么是Markdown？</title>
       <link>https://blog55.945426.xyz/details/article?id=104</link>
