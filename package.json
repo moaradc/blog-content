@@ -1,0 +1,14 @@
+{
+  "name": "blog-content",
+  "version": "1.0.0",
+  "private": true,
+  "description": "博客文章和媒体存储，通过 PagesCMS 编辑",
+  "scripts": {
+    "clean": "node clean-frontmatter.js",
+    "generate": "node generate-posts.js",
+    "build": "node clean-frontmatter.js && node generate-posts.js"
+  },
+  "dependencies": {
+    "marked": "^15.0.12"
+  }
+}

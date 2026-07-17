@@ -13,6 +13,15 @@
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const { join } = require("path");
 
+// marked 用于把 markdown body 转 HTML（RSS content:encoded 需要 HTML）
+let marked;
+try {
+  ({ marked } = require("marked"));
+} catch (e) {
+  console.warn("⚠️  marked 未安装，RSS 将输出原始 markdown。请运行 npm install marked");
+  marked = { parse: (s) => s };
+}
+
 const POSTS_DIR = join(__dirname, "posts");
 const POSTS_OUTPUT = join(__dirname, "posts.json");
 const RSS_OUTPUT = join(__dirname, "rss.xml");
@@ -218,10 +227,11 @@ function generateRssFeed(allPosts, allRawPosts) {
     // 文章 URL（详情页）
     const postUrl = SITE_URL + "details/article?id=" + encodeURIComponent(post.id);
 
-    // 正文：所有文章都用 .md 的 body（note 和普通文章都有 .md 文件）
+    // 正文：从 .md body 读取，用 marked 转成 HTML（RSS 阅读器需要 HTML）
     const rawBody = (bodyMap[post.id] || "").trim();
+    const contentHtml = marked.parse(rawBody);
 
-    // 完整内容：封面图 + 摘要 + 正文
+    // 完整内容：封面图 + 摘要 + 正文（都是 HTML）
     let fullContent = "";
     if (post.image) {
       fullContent += '<p><img src="' + escapeXml(post.image) + '" alt="' + escapeXml(post.title) + '" /></p>';
@@ -229,7 +239,7 @@ function generateRssFeed(allPosts, allRawPosts) {
     if (post.desc) {
       fullContent += "<p>" + escapeXml(post.desc) + "</p>";
     }
-    fullContent += rawBody;
+    fullContent += contentHtml;
 
     lines.push("    <item>");
     lines.push("      <title>" + escapeXml(post.title) + "</title>");
