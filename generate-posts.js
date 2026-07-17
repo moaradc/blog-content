@@ -202,7 +202,7 @@ function generateRssFeed(allPosts, allRawPosts) {
 
   const lines = [];
   lines.push('<?xml version="1.0" encoding="utf-8"?>');
-  lines.push('<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">');
+  lines.push('<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">');
   lines.push("  <channel>");
   lines.push("    <title>" + escapeXml(SITE_TITLE) + "</title>");
   lines.push("    <link>" + escapeXml(SITE_URL) + "</link>");
@@ -218,15 +218,8 @@ function generateRssFeed(allPosts, allRawPosts) {
     // 文章 URL（详情页）
     const postUrl = SITE_URL + "details/article?id=" + encodeURIComponent(post.id);
 
-    // 内容：note 类型用 content 字段，普通文章用 body（markdown 原文）
-    let contentHtml = "";
-    if (post.type === "note" && post.content) {
-      contentHtml = post.content;
-    } else {
-      const rawBody = bodyMap[post.id] || "";
-      // RSS 里直接放 markdown 原文，订阅器会渲染
-      contentHtml = rawBody.trim();
-    }
+    // 正文：所有文章都用 .md 的 body（note 和普通文章都有 .md 文件）
+    const rawBody = (bodyMap[post.id] || "").trim();
 
     // 完整内容：封面图 + 摘要 + 正文
     let fullContent = "";
@@ -236,7 +229,7 @@ function generateRssFeed(allPosts, allRawPosts) {
     if (post.desc) {
       fullContent += "<p>" + escapeXml(post.desc) + "</p>";
     }
-    fullContent += contentHtml;
+    fullContent += rawBody;
 
     lines.push("    <item>");
     lines.push("      <title>" + escapeXml(post.title) + "</title>");
@@ -271,9 +264,9 @@ function generateRssFeed(allPosts, allRawPosts) {
       }
     }
 
-    // 作者
+    // 作者（用 dc:creator，不要求邮箱）
     if (post.author) {
-      lines.push("      <author>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(post.author) + ")</author>");
+      lines.push("      <dc:creator>" + escapeXml(post.author) + "</dc:creator>");
     }
 
     lines.push("    </item>");

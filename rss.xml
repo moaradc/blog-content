@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>沫然Blog</title>
     <link>https://blog55.945426.xyz/</link>
@@ -21,7 +21,7 @@
       <category>Demo</category>
       <category>snxn</category>
       <category>dmcmxm</category>
-      <author>moara@foxmail.com (Admin)</author>
+      <dc:creator>Admin</dc:creator>
     </item>
     <item>
       <title>什么是Markdown？</title>
@@ -78,7 +78,7 @@ function greet(name) {
 ![示例图片](https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop)]]></content:encoded>
       <category>生活</category>
       <category>闲谈</category>
-      <author>moara@foxmail.com (Admin)</author>
+      <dc:creator>Admin</dc:creator>
     </item>
     <item>
       <title>Markdown写作指南</title>
@@ -128,7 +128,7 @@ function greet(name) {
       <category>技术</category>
       <category>Demo</category>
       <category>教程</category>
-      <author>moara@foxmail.com (Admin)</author>
+      <dc:creator>Admin</dc:creator>
     </item>
     <item>
       <title>周五的公园与猫</title>
@@ -147,7 +147,7 @@ function greet(name) {
       <category>说说</category>
       <category>生活</category>
       <category>猫</category>
-      <author>moara@foxmail.com (Admin)</author>
+      <dc:creator>Admin</dc:creator>
     </item>
     <item>
       <title>Markdown写作指南</title>
@@ -197,7 +197,7 @@ function greet(name) {
       <category>技术</category>
       <category>Markdown</category>
       <category>教程</category>
-      <author>moara@foxmail.com (Admin)</author>
+      <dc:creator>Admin</dc:creator>
     </item>
   </channel>
 </rss>
