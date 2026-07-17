@@ -102,12 +102,12 @@ for (const file of files.sort()) {
   if (frontmatter.author) article.author = frontmatter.author;
   if (frontmatter.category) article.category = frontmatter.category;
   if (frontmatter.tags) article.tags = frontmatter.tags;
-  if (frontmatter.content_type) article.content_type = frontmatter.content_type;
   if (frontmatter.type) article.type = frontmatter.type;
   if (frontmatter.desc) article.desc = frontmatter.desc;
   if (frontmatter.image) article.image = frontmatter.image;
   if (frontmatter.coverImage) article.image = frontmatter.coverImage; // 优先用上传的封面
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
+  // locked: 从 frontmatter 读取，写入 posts.json（详情页通过 fetch .md 解析 frontmatter 也读 locked）
   if (frontmatter.locked === true) article.locked = true;
   if (frontmatter.pinned === true) article.pinned = true;
   if (frontmatter.draft === true) article.draft = true;

@@ -5,7 +5,6 @@ date: 2026-07-17 12:00
 author: Admin
 category: ["Demo"]
 tags: ["测试", "PagesCMS"]
-content_type: md
 type: ""
 desc: 这是第一篇通过 PagesCMS 配置创建的测试文章，验证文章结构和生成脚本。
 coverImage: ""

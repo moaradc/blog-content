@@ -53,20 +53,11 @@ content:
       # === 正文内容 ===
       # content 字段同时用于：
       # 1. 列表页渲染 type=note 的说说（直接显示，不用点进详情）
-      # 2. 详情页正文（content_type=md 时用 marked 解析，否则当 HTML）
+      # 2. 详情页正文（Markdown 格式，用 marked 解析）
       - name: content
         label: 正文
         type: rich-text
-        description: "文章正文。type=note 时会直接在首页列表渲染；普通文章点击后进入详情页显示。支持 Markdown 语法和自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list>。"
-
-      # === 内容类型 ===
-      - name: content_type
-        label: 内容格式
-        type: select
-        default: md
-        options:
-          values: [md, html]
-        description: "md=Markdown（用 marked 解析）；html=纯 HTML。默认 md。"
+        description: "文章正文（Markdown 格式）。type=note 时会直接在首页列表渲染；普通文章点击后进入详情页显示。支持自定义组件：<music>, <gallery>, <spoiler>, <details-box>, <todo-list>。"
 
       # === 摘要 ===
       - name: desc

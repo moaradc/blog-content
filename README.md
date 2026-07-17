@@ -46,7 +46,6 @@ blog-content/
 | `title` | string | ✅ | 标题 |
 | `date` | datetime | ✅ | 发布日期 |
 | `content` | rich-text | | 正文（Markdown），type=note 时直接在首页渲染 |
-| `content_type` | select | | md / html（默认 md） |
 | `desc` | text | | 摘要 |
 | `category` | select[] | | 分类（技术/闲谈/说说/生活/杂项/Demo） |
 | `tags` | string[] | | 标签 |
