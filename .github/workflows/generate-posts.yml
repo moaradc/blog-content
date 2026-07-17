@@ -1,4 +1,4 @@
-name: Generate posts.json
+name: Generate posts.json and rss.xml
 
 # 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
 on:
@@ -31,7 +31,7 @@ jobs:
       - name: Clean frontmatter
         run: node clean-frontmatter.js
 
-      - name: Generate posts.json
+      - name: Generate posts.json and rss.xml
         run: node generate-posts.js
 
       - name: Commit and push if changed
@@ -42,7 +42,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "ℹ️  无变化，跳过提交"
           else
-            git commit -m "chore: auto-clean frontmatter + generate posts.json [skip ci]"
+            git commit -m "chore: auto-clean frontmatter + generate posts.json/rss.xml [skip ci]"
             git push
             echo "✅ 已提交"
           fi

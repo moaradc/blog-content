@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/">
+  <channel>
+    <title>沫然Blog</title>
+    <link>https://blog55.945426.xyz/</link>
+    <description>基于 Astro 的极简博客</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Fri, 17 Jul 2026 21:03:00 GMT</lastBuildDate>
+    <generator>generate-posts.js (PagesCMS)</generator>
+    <atom:link href="https://blog55.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
+    <managingEditor>moara@foxmail.com (沫然)</managingEditor>
+    <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>什么是Markdown？</title>
+      <link>https://blog55.945426.xyz/details/article?id=104</link>
+      <guid isPermaLink="false">104</guid>
+      <pubDate>Fri, 17 Jul 2026 21:03:00 GMT</pubDate>
+      <description>Markdown</description>
+      <content:encoded><![CDATA[<p>Markdown</p>## 什么是Markdown？
+
+Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。
+
+## 基本语法
+
+### 文本格式
+
+- **粗体文本**使用双星号
+
+- *斜体文本*使用单星号
+
+- ~~删除线~~使用双波浪号
+
+### 代码
+
+行内代码：`console.log('Hello')`
+
+代码块：
+
+```javascript
+
+function greet(name) {
+
+    return `Hello, ${name}!`;
+
+}
+
+```
+
+### 列表
+
+1. 第一项
+
+2. 第二项
+
+3. 第三项
+
+### 引用
+
+> Markdown让写作回归本质，专注于内容而非排版。
+
+### 链接与图片
+
+[访问GitHub](https://github.com)
+
+![示例图片](https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop)]]></content:encoded>
+      <category>生活</category>
+      <category>闲谈</category>
+      <author>moara@foxmail.com (Admin)</author>
+    </item>
+    <item>
+      <title>Markdown写作指南</title>
+      <link>https://blog55.945426.xyz/details/article?id=103</link>
+      <guid isPermaLink="false">103</guid>
+      <pubDate>Fri, 17 Jul 2026 20:43:00 GMT</pubDate>
+      <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
+      <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p>## 什么是Markdown？
+
+Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。
+
+## 基本语法
+
+### 文本格式
+
+- **粗体文本**使用双星号
+- *斜体文本*使用单星号
+- ~~删除线~~使用双波浪号
+
+### 代码
+
+行内代码：`console.log('Hello')`
+
+代码块：
+
+```javascript
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+```
+
+### 列表
+
+1. 第一项
+2. 第二项
+3. 第三项
+
+### 引用
+
+> Markdown让写作回归本质，专注于内容而非排版。
+
+### 链接与图片
+
+[访问GitHub](https://github.com)
+
+![示例图片](https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop)]]></content:encoded>
+      <category>技术</category>
+      <category>Demo</category>
+      <category>教程</category>
+      <author>moara@foxmail.com (Admin)</author>
+    </item>
+    <item>
+      <title>周五的公园与猫</title>
+      <link>https://blog55.945426.xyz/details/article?id=102</link>
+      <guid isPermaLink="false">102</guid>
+      <pubDate>Fri, 17 Jul 2026 20:08:00 GMT</pubDate>
+      <content:encoded><![CDATA[今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。
+
+![猫](https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop)
+
+拍完照它就跑了，哈哈。
+
+![猫2](https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop)
+
+晚上准备去吃顿火锅庆祝一下周五！]]></content:encoded>
+      <category>说说</category>
+      <category>生活</category>
+      <category>猫</category>
+      <author>moara@foxmail.com (Admin)</author>
+    </item>
+    <item>
+      <title>Markdown写作指南</title>
+      <link>https://blog55.945426.xyz/details/article?id=107</link>
+      <guid isPermaLink="false">107</guid>
+      <pubDate>Tue, 09 Jun 2026 10:00:00 GMT</pubDate>
+      <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
+      <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p>## 什么是Markdown？
+
+Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。
+
+## 基本语法
+
+### 文本格式
+
+- **粗体文本**使用双星号
+- *斜体文本*使用单星号
+- ~~删除线~~使用双波浪号
+
+### 代码
+
+行内代码：`console.log('Hello')`
+
+代码块：
+
+```javascript
+function greet(name) {
+    return `Hello, ${name}!`;
+}
+```
+
+### 列表
+
+1. 第一项
+2. 第二项
+3. 第三项
+
+### 引用
+
+> Markdown让写作回归本质，专注于内容而非排版。
+
+### 链接与图片
+
+[访问GitHub](https://github.com)
+
+![示例图片](https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop)]]></content:encoded>
+      <category>技术</category>
+      <category>Markdown</category>
+      <category>教程</category>
+      <author>moara@foxmail.com (Admin)</author>
+    </item>
+  </channel>
+</rss>
