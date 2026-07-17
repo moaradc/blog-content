@@ -1,0 +1,20 @@
+[
+  {
+    "id": "test-1",
+    "title": "PagesCMS 测试文章",
+    "date": "2026-07-17 12:00",
+    "last_modified": "2026-07-17 12:00",
+    "author": "Admin",
+    "category": [
+      "Demo"
+    ],
+    "tags": [
+      "测试",
+      "PagesCMS"
+    ],
+    "content_type": "md",
+    "desc": "这是第一篇通过 PagesCMS 配置创建的测试文章，验证文章结构和生成脚本。",
+    "pinned": true,
+    "content": "## 测试文章\n\n这是正文内容。支持 **Markdown** 语法。\n\n### 自定义组件测试\n\n音乐卡片：\n\n<music id=\"cry\"></music>\n\n黑幕：\n\n<span class='spoiler'>这是被剧透隐藏的文字内容！</span>\n\n图集：\n\n<gallery src=\"https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=800, https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800\"></gallery>\n\n### 代码块\n\n```javascript\nfunction greet(name) {\n    return `Hello, ${name}!`;\n}\n```\n\n### 列表\n\n1. 第一项\n2. 第二项\n3. 第三项"
+  }
+]
