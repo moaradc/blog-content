@@ -2,13 +2,10 @@
 title: ex
 date: 2026-07-18 10:33
 last_modified: 2026-07-18 10:33
+author: Admin
 category:
   - 杂项
-author: Admin
 coverImage: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/screenshot20260715174642.jpg
-pinned: false
-locked: false
-draft: false
 ---
 djxn
 
