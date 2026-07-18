@@ -5,7 +5,7 @@ last_modified: 2026-07-18 10:33
 category:
   - 杂项
 author: Admin
-coverImage: /img/screenshot20260715174642.jpg
+coverImage: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/screenshot20260715174642.jpg
 pinned: false
 locked: false
 draft: false
