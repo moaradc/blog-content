@@ -41,6 +41,8 @@ jobs:
 
       - name: Commit and push if changed
         run: |
+          git config user.name "moaradc"
+          git config user.email "moara@foxmail.com"
           git add -A
           if git diff --cached --quiet; then
             echo "ℹ️  无变化，跳过提交"
