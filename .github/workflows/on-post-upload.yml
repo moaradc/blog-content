@@ -1,0 +1,68 @@
+name: On post upload
+
+# PagesCMS 上传 .md 后触发：
+# 1. 把 /img/ 相对路径替换为绝对 URL（SITE_URL 变量）
+# 2. 提交修改后的 .md
+# 3. 触发 generate-posts-json.yml（清理 frontmatter + 生成 posts.json）
+#
+# 这样 .md 文件本身就是绝对 URL，posts.json 和 RSS 都不需要再转换
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "posts/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write  # 用于触发 generate-posts-json.yml
+
+jobs:
+  rewrite:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # 用 moaradc 身份提交
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Rewrite /img/ to absolute URL
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node rewrite-img-paths.js
+
+      - name: Commit rewritten .md files
+        run: |
+          git config user.name "moaradc"
+          git config user.email "moara@foxmail.com"
+          git add posts/
+          if git diff --cached --quiet; then
+            echo "ℹ️  无 /img/ 需要替换，跳过提交"
+          else
+            git commit -m "chore: rewrite /img/ to absolute URL [skip ci]"
+            git push
+            echo "✅ 已提交替换后的 .md"
+          fi
+
+      - name: Trigger generate-posts-json
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'generate-posts-json.yml',
+              ref: 'main',
+              inputs: {
+                payload: '{}'
+              }
+            });
+            console.log('✅ 已触发 generate-posts-json.yml');

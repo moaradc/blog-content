@@ -1,16 +1,15 @@
 name: Generate posts.json
 
-# 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
-# 自动生成 posts.json，不需要手动触发
+# 被 on-post-upload.yml 触发（不接受 push，避免循环）
+# PagesCMS 上传 → on-post-upload.yml 替换 /img/ → 触发此 workflow
 on:
-  push:
-    branches: [main]
-    paths:
-      - "posts/**"
-      - "generate-posts.js"
-      - "clean-frontmatter.js"
-      - ".github/workflows/generate-posts-json.yml"
   workflow_dispatch:
+    inputs:
+      payload:
+        description: Trigger payload
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: write
