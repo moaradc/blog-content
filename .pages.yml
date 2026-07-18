@@ -12,6 +12,18 @@ media:
   rename: safe
   extensions: [png, jpg, jpeg, webp, gif, svg]
 
+# 仓库级 Actions（显示在 PagesCMS 侧边栏）
+# 手动触发 generate-posts.yml（清理 frontmatter + 生成 posts.json + rss.xml）
+actions:
+  - name: generate
+    label: 生成 posts.json + RSS
+    workflow: generate-posts.yml
+    ref: main
+    confirm:
+      title: 生成 posts.json 和 RSS？
+      message: 将清理 frontmatter、生成 posts.json 和 rss.xml 并提交到仓库。
+      button: 生成
+
 content:
   - name: posts
     label: 文章
@@ -25,6 +37,17 @@ content:
     view:
       fields: [title, date, category, type]
       primary: title
+    # 集合级 Actions（显示在文章列表页头部）
+    actions:
+      - name: generate-posts
+        label: 生成 posts.json + RSS
+        workflow: generate-posts.yml
+        ref: main
+        scope: collection
+        confirm:
+          title: 生成 posts.json 和 RSS？
+          message: 将清理 frontmatter、生成 posts.json 和 rss.xml 并提交到仓库。
+          button: 生成
     fields:
       - name: title
         label: 标题
