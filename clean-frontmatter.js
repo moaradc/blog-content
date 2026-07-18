@@ -17,38 +17,45 @@ const POSTS_DIR = join(__dirname, "posts");
 const SITE_URL = process.env.SITE_URL || "";
 
 /**
- * 把 /img/ 相对路径替换为绝对 URL
+ * 把 /img/ 或 img/ 相对路径替换为绝对 URL
  * - 已经是绝对的（http/https）→ 不变
- * - 以 /img/ 开头 → 拼接 SITE_URL
+ * - URL 中间含 /img/（如 https://xxx/img/xxx）→ 不变
+ * - 以 /img/ 或 img/ 开头 → 拼接 SITE_URL
  */
 function rewriteImgPaths(content) {
   if (!SITE_URL) return content;
   let modified = content;
 
-  // 1. markdown 图片/链接：![](/img/xxx) 和 [](/img/xxx)
+  // 1. markdown 图片/链接：![](/img/xxx) 或 ![](img/xxx)
+  //    不匹配 https://xxx/img/xxx（URL 中间的 /img/）
   modified = modified.replace(
-    /(!?\[[^\]]*\]\()(\/img\/[^)]+)\)/g,
+    /(!?\[[^\]]*\]\()((?:\/)?img\/[^)]+)\)/g,
     (match, prefix, url) => {
+      // 跳过已经是绝对 URL 的
       if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      return prefix + SITE_URL + url + ")";
+      // 拼接 SITE_URL（url 已含 /img/ 或 img/）
+      const path = url.startsWith("/") ? url : "/" + url;
+      return prefix + SITE_URL + path + ")";
     }
   );
 
   // 2. frontmatter: coverImage: /img/xxx.jpg  或  image: /img/xxx.jpg
   modified = modified.replace(
-    /^(coverImage|image):\s*(\/img\/.+)$/gm,
+    /^(coverImage|image):\s*(\/?img\/.+)$/gm,
     (match, key, url) => {
       if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      return `${key}: ${SITE_URL}${url}`;
+      const path = url.startsWith("/") ? url : "/" + url;
+      return `${key}: ${SITE_URL}${path}`;
     }
   );
 
-  // 3. HTML img 标签：src="/img/xxx"
+  // 3. HTML img 标签：src="/img/xxx" 或 src="img/xxx"
   modified = modified.replace(
-    /src=["'](\/img\/[^"']+)["']/g,
+    /src=["'](\/?img\/[^"']+)["']/g,
     (match, url) => {
       if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      return `src="${SITE_URL}${url}"`;
+      const path = url.startsWith("/") ? url : "/" + url;
+      return `src="${SITE_URL}${path}"`;
     }
   );
 
