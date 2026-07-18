@@ -9,5 +9,4 @@ coverImage: https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/screenshot
 
 
 
-![猫](https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/img/photo-1514888286974)
-
+![猫](img/photo-1514888286974)
