@@ -5,7 +5,7 @@
     <link>https://blog55.945426.xyz/</link>
     <description>基于 Astro 的极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 18 Jul 2026 08:00:00 +0800</lastBuildDate>
+    <lastBuildDate>Sat, 18 Jul 2026 08:00:00 GMT</lastBuildDate>
     <generator>generate-posts.js (PagesCMS)</generator>
     <atom:link href="https://blog55.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
@@ -14,7 +14,7 @@
       <title>4676</title>
       <link>https://blog55.945426.xyz/details/article?id=110</link>
       <guid isPermaLink="false">110</guid>
-      <pubDate>Sat, 18 Jul 2026 08:00:00 +0800</pubDate>
+      <pubDate>Sat, 18 Jul 2026 08:00:00 GMT</pubDate>
       <description>sjx</description>
       <content:encoded><![CDATA[<p>sjx</p><p>ddjx</p>
 <p>djxnnx</p>
@@ -30,7 +30,7 @@
       <title>4679</title>
       <link>https://blog55.945426.xyz/details/article?id=106</link>
       <guid isPermaLink="false">106</guid>
-      <pubDate>Fri, 17 Jul 2026 21:20:00 +0800</pubDate>
+      <pubDate>Fri, 17 Jul 2026 21:20:00 GMT</pubDate>
       <description>sjd</description>
       <content:encoded><![CDATA[<p>sjd</p><p>djxxnkxk</p>
 ]]></content:encoded>
@@ -44,7 +44,7 @@
       <title>什么是Markdown？</title>
       <link>https://blog55.945426.xyz/details/article?id=104</link>
       <guid isPermaLink="false">104</guid>
-      <pubDate>Fri, 17 Jul 2026 21:03:00 +0800</pubDate>
+      <pubDate>Fri, 17 Jul 2026 21:03:00 GMT</pubDate>
       <description>Markdown</description>
       <content:encoded><![CDATA[<p>Markdown</p><h2>什么是Markdown？</h2>
 <p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
@@ -93,7 +93,7 @@ function greet(name) {
       <title>Markdown写作指南</title>
       <link>https://blog55.945426.xyz/details/article?id=103</link>
       <guid isPermaLink="false">103</guid>
-      <pubDate>Fri, 17 Jul 2026 20:43:00 +0800</pubDate>
+      <pubDate>Fri, 17 Jul 2026 20:43:00 GMT</pubDate>
       <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
       <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p><h2>什么是Markdown？</h2>
 <p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
@@ -134,7 +134,7 @@ function greet(name) {
       <title>周五的公园与猫</title>
       <link>https://blog55.945426.xyz/details/article?id=102</link>
       <guid isPermaLink="false">102</guid>
-      <pubDate>Fri, 17 Jul 2026 20:08:00 +0800</pubDate>
+      <pubDate>Fri, 17 Jul 2026 20:08:00 GMT</pubDate>
       <content:encoded><![CDATA[<p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
 <p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫"></p>
 <p>拍完照它就跑了，哈哈。</p>
@@ -150,7 +150,7 @@ function greet(name) {
       <title>Markdown写作指南</title>
       <link>https://blog55.945426.xyz/details/article?id=107</link>
       <guid isPermaLink="false">107</guid>
-      <pubDate>Tue, 09 Jun 2026 10:00:00 +0800</pubDate>
+      <pubDate>Tue, 09 Jun 2026 10:00:00 GMT</pubDate>
       <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
       <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p><h2>什么是Markdown？</h2>
 <p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
