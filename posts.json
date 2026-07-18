@@ -10,6 +10,16 @@
     "desc": "一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。"
   },
   {
+    "id": "104",
+    "title": "pixiv",
+    "date": "2025-12-26 08:59",
+    "last_modified": "2025-12-26 08:59",
+    "author": "Lamb",
+    "category": ["Demo"],
+    "tags": ["Demo"],
+    "type": "gallery"
+  },
+  {
     "id": "103",
     "title": "代码高亮与排版组件演示",
     "date": "2025-12-12 13:09",
