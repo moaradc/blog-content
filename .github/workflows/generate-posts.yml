@@ -1,14 +1,7 @@
 name: Generate posts.json and rss.xml
 
-# 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
+# 只手动触发（在 GitHub Actions 页面或 PagesCMS 的 Actions 面板点击运行）
 on:
-  push:
-    branches: [main]
-    paths:
-      - "posts/**"
-      - "generate-posts.js"
-      - "clean-frontmatter.js"
-      - ".github/workflows/generate-posts.yml"
   workflow_dispatch:
 
 permissions:
