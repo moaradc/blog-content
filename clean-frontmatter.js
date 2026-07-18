@@ -1,17 +1,59 @@
 // clean-frontmatter.js
-// 清理 posts/*.md 的 frontmatter：
+// 清理 posts/*.md：
 // 1. 移除值为 false 的 boolean 字段（pinned/locked/draft）
 // 2. 移除空字符串字段（type: ""）
 // 3. 重排字段顺序：title, date, last_modified, author, category, tags, desc, type, image, coverImage, content_url, pinned, locked, draft
 // 4. 确保 frontmatter 和 body 之间有空行
+// 5. 把 /img/ 相对路径替换为绝对 URL（SITE_URL 环境变量）
+//    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
 //
-// 用法: node clean-frontmatter.js
+// 用法: SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
 // 在 GitHub Action 中 generate-posts.js 之前运行
 
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const { join } = require("path");
 
 const POSTS_DIR = join(__dirname, "posts");
+const SITE_URL = process.env.SITE_URL || "";
+
+/**
+ * 把 /img/ 相对路径替换为绝对 URL
+ * - 已经是绝对的（http/https）→ 不变
+ * - 以 /img/ 开头 → 拼接 SITE_URL
+ */
+function rewriteImgPaths(content) {
+  if (!SITE_URL) return content;
+  let modified = content;
+
+  // 1. markdown 图片/链接：![](/img/xxx) 和 [](/img/xxx)
+  modified = modified.replace(
+    /(!?\[[^\]]*\]\()(\/img\/[^)]+)\)/g,
+    (match, prefix, url) => {
+      if (url.startsWith("http://") || url.startsWith("https://")) return match;
+      return prefix + SITE_URL + url + ")";
+    }
+  );
+
+  // 2. frontmatter: coverImage: /img/xxx.jpg  或  image: /img/xxx.jpg
+  modified = modified.replace(
+    /^(coverImage|image):\s*(\/img\/.+)$/gm,
+    (match, key, url) => {
+      if (url.startsWith("http://") || url.startsWith("https://")) return match;
+      return `${key}: ${SITE_URL}${url}`;
+    }
+  );
+
+  // 3. HTML img 标签：src="/img/xxx"
+  modified = modified.replace(
+    /src=["'](\/img\/[^"']+)["']/g,
+    (match, url) => {
+      if (url.startsWith("http://") || url.startsWith("https://")) return match;
+      return `src="${SITE_URL}${url}"`;
+    }
+  );
+
+  return modified;
+}
 
 // 期望的字段顺序（未列出的字段排在最后）
 const FIELD_ORDER = [
@@ -111,11 +153,15 @@ function cleanFile(filePath) {
   const fmLines = cleanedFields.flatMap((f) => f.rawLines);
   const newFm = "---\n" + fmLines.join("\n") + "\n---";
 
-  // body 确保以单个空行开头（移除开头多余空行，不处理 body 内部）
+  // body 确保以单个空行开头（移除开头多余空行）
+  // 同时把 body 里的 /img/ 相对路径替换为绝对 URL
   const trimmedBody = body.replace(/^\n+/, "");
-  const newBody = "\n" + trimmedBody;
+  const newBody = "\n" + rewriteImgPaths(trimmedBody);
 
-  const newContent = newFm + newBody;
+  // frontmatter 里的 coverImage/image 也替换 /img/
+  const newFmRewritten = rewriteImgPaths(newFm);
+
+  const newContent = newFmRewritten + newBody;
 
   if (newContent !== raw) {
     writeFileSync(filePath, newContent, "utf-8");
