@@ -5,178 +5,11 @@
     <link>https://blog55.945426.xyz/</link>
     <description>基于 Astro 的极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 18 Jul 2026 10:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 09 Jun 2026 10:00:00 GMT</lastBuildDate>
     <generator>generate-posts.js (PagesCMS)</generator>
     <atom:link href="https://blog55.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
-    <item>
-      <title>1375</title>
-      <link>https://blog55.945426.xyz/details/article?id=test3</link>
-      <guid isPermaLink="false">test3</guid>
-      <pubDate>Sat, 18 Jul 2026 10:00:00 GMT</pubDate>
-      <content:encoded><![CDATA[<p>didnnx</p>
-]]></content:encoded>
-      <category>杂项</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>2</title>
-      <link>https://blog55.945426.xyz/details/article?id=test2</link>
-      <guid isPermaLink="false">test2</guid>
-      <pubDate>Sat, 18 Jul 2026 09:22:00 GMT</pubDate>
-      <content:encoded><![CDATA[<p>test2</p>
-]]></content:encoded>
-      <category>杂项</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>test</title>
-      <link>https://blog55.945426.xyz/details/article?id=test</link>
-      <guid isPermaLink="false">test</guid>
-      <pubDate>Sat, 18 Jul 2026 09:01:00 GMT</pubDate>
-      <description>test</description>
-      <content:encoded><![CDATA[<p>test</p><p>test</p>
-]]></content:encoded>
-      <category>Demo</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>4676</title>
-      <link>https://blog55.945426.xyz/details/article?id=110</link>
-      <guid isPermaLink="false">110</guid>
-      <pubDate>Sat, 18 Jul 2026 08:00:00 GMT</pubDate>
-      <description>sjx</description>
-      <content:encoded><![CDATA[<p>sjx</p><p>ddjx</p>
-<p>djxnnx</p>
-<p>kdjd</p>
-<ul>
-<li>dbxs</li>
-</ul>
-]]></content:encoded>
-      <category>说说</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>4679</title>
-      <link>https://blog55.945426.xyz/details/article?id=106</link>
-      <guid isPermaLink="false">106</guid>
-      <pubDate>Fri, 17 Jul 2026 21:20:00 GMT</pubDate>
-      <description>sjd</description>
-      <content:encoded><![CDATA[<p>sjd</p><p>djxxnkxk</p>
-]]></content:encoded>
-      <category>技术</category>
-      <category>Demo</category>
-      <category>snxn</category>
-      <category>dmcmxm</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>什么是Markdown？</title>
-      <link>https://blog55.945426.xyz/details/article?id=104</link>
-      <guid isPermaLink="false">104</guid>
-      <pubDate>Fri, 17 Jul 2026 21:03:00 GMT</pubDate>
-      <description>Markdown</description>
-      <content:encoded><![CDATA[<p>Markdown</p><h2>什么是Markdown？</h2>
-<p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
-<h2>基本语法</h2>
-<h3>文本格式</h3>
-<ul>
-<li><p><strong>粗体文本</strong>使用双星号</p>
-</li>
-<li><p><em>斜体文本</em>使用单星号</p>
-</li>
-<li><p><del>删除线</del>使用双波浪号</p>
-</li>
-</ul>
-<h3>代码</h3>
-<p>行内代码：<code>console.log(&#39;Hello&#39;)</code></p>
-<p>代码块：</p>
-<pre><code class="language-javascript">
-function greet(name) {
-
-    return `Hello, ${name}!`;
-
-}
-</code></pre>
-<h3>列表</h3>
-<ol>
-<li><p>第一项</p>
-</li>
-<li><p>第二项</p>
-</li>
-<li><p>第三项</p>
-</li>
-</ol>
-<h3>引用</h3>
-<blockquote>
-<p>Markdown让写作回归本质，专注于内容而非排版。</p>
-</blockquote>
-<h3>链接与图片</h3>
-<p><a href="https://github.com">访问GitHub</a></p>
-<p><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop" alt="示例图片"></p>
-]]></content:encoded>
-      <category>生活</category>
-      <category>闲谈</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>Markdown写作指南</title>
-      <link>https://blog55.945426.xyz/details/article?id=103</link>
-      <guid isPermaLink="false">103</guid>
-      <pubDate>Fri, 17 Jul 2026 20:43:00 GMT</pubDate>
-      <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
-      <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p><h2>什么是Markdown？</h2>
-<p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
-<h2>基本语法</h2>
-<h3>文本格式</h3>
-<ul>
-<li><strong>粗体文本</strong>使用双星号</li>
-<li><em>斜体文本</em>使用单星号</li>
-<li><del>删除线</del>使用双波浪号</li>
-</ul>
-<h3>代码</h3>
-<p>行内代码：<code>console.log(&#39;Hello&#39;)</code></p>
-<p>代码块：</p>
-<pre><code class="language-javascript">function greet(name) {
-    return `Hello, ${name}!`;
-}
-</code></pre>
-<h3>列表</h3>
-<ol>
-<li>第一项</li>
-<li>第二项</li>
-<li>第三项</li>
-</ol>
-<h3>引用</h3>
-<blockquote>
-<p>Markdown让写作回归本质，专注于内容而非排版。</p>
-</blockquote>
-<h3>链接与图片</h3>
-<p><a href="https://github.com">访问GitHub</a></p>
-<p><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop" alt="示例图片"></p>
-]]></content:encoded>
-      <category>技术</category>
-      <category>Demo</category>
-      <category>教程</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
-    <item>
-      <title>周五的公园与猫</title>
-      <link>https://blog55.945426.xyz/details/article?id=102</link>
-      <guid isPermaLink="false">102</guid>
-      <pubDate>Fri, 17 Jul 2026 20:08:00 GMT</pubDate>
-      <content:encoded><![CDATA[<p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
-<p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫"></p>
-<p>拍完照它就跑了，哈哈。</p>
-<p><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop" alt="猫2"></p>
-<p>晚上准备去吃顿火锅庆祝一下周五！</p>
-]]></content:encoded>
-      <category>说说</category>
-      <category>生活</category>
-      <category>猫</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
     <item>
       <title>Markdown写作指南</title>
       <link>https://blog55.945426.xyz/details/article?id=107</link>
@@ -217,6 +50,218 @@ function greet(name) {
       <category>Markdown</category>
       <category>教程</category>
       <dc:creator>Admin</dc:creator>
+    </item>
+    <item>
+      <title>Hello world!</title>
+      <link>https://blog55.945426.xyz/details/article?id=106</link>
+      <guid isPermaLink="false">106</guid>
+      <pubDate>Mon, 29 Dec 2025 17:55:00 GMT</pubDate>
+      <description>Hello world!</description>
+      <content:encoded><![CDATA[<p>Hello world!</p><p>Hello world!</p>
+<p><music id="cry"></music></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <category>Demo</category>
+      <dc:creator>Admin</dc:creator>
+    </item>
+    <item>
+      <title>pixiv</title>
+      <link>https://blog55.945426.xyz/details/article?id=104</link>
+      <guid isPermaLink="false">104</guid>
+      <pubDate>Fri, 26 Dec 2025 08:59:00 GMT</pubDate>
+      <content:encoded><![CDATA[<img src='https://vip.123pan.cn/1814804152/ymjew503t0l000d7w32xne4num52gzj2DIYPAdYOAdeyDpxPDqJy.webp' width='1984' height='2806'>
+
+<img src='https://vip.123pan.cn/1814804152/ymjew503t0m000d7w32y3ocobrkotd34DIYPAdYOAdeyDpxPDqJy.jpg' width='1920' height='1080'>
+
+<img src='https://vip.123pan.cn/1814804152/yk6baz03t0l000d7w33g3oqn4u6j5t0eDIYPAdYOAdeyDpxPDqJy.webp' width='3392' height='5056'>
+
+<img src='https://vip.123pan.cn/1814804152/yk6baz03t0m000d7w33gwac32qm5i6zkDIYPAdYOAdeyDpxPDqJy.webp' width='1194' height='1288'>
+
+<img src='https://vip.123pan.cn/1814804152/yk6baz03t0n000d7w33hoq5x5d1rvsr6DIYPAdYOAdeyDpxPDqJy.webp' width='1579' height='2500'>]]></content:encoded>
+      <category>Demo</category>
+      <category>Demo</category>
+      <dc:creator>Lamb</dc:creator>
+    </item>
+    <item>
+      <title>代码高亮与排版组件演示</title>
+      <link>https://blog55.945426.xyz/details/article?id=103</link>
+      <guid isPermaLink="false">103</guid>
+      <pubDate>Fri, 12 Dec 2025 13:09:00 GMT</pubDate>
+      <description>代码高亮与排版组件演示</description>
+      <content:encoded><![CDATA[<p>代码高亮与排版组件演示</p><p>本文用于测试博客的代码块渲染逻辑、复制功能以及折叠/展开功能。</p>
+<h3>1. JavaScript 基础示例</h3>
+<p>这是最基础的 JS 代码块，使用 <code>language-js</code>。</p>
+<pre><code class="language-js">// 欢迎来到控制台
+console.log(&#39;Hello, Moara Blog!&#39;);
+
+const add = (a, b) =&gt; {
+    return a + b;
+}
+
+alert(add(10, 20));
+</code></pre>
+<h3>2. HTML 结构示例</h3>
+<p>测试 HTML 高亮显示。</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;测试页面&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class=&#39;container&#39;&gt;
+      &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3>3. 长代码测试 (测试展开功能)</h3>
+<p>当代码较长时，应显示滚动条或通过 CSS 限制高度（配合 <code>expand-btn</code> 逻辑）。</p>
+<pre><code class="language-css">/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f5f5f5;
+    font-family: &#39;Noto Sans SC&#39;, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.header {
+    background: #222;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #00adb5;
+}
+
+/* 底部样式 */
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.9rem;
+}
+</code></pre>
+<h3>4. 无语言标记 (Plaintext)</h3>
+<p>没有指定 class 的情况，将回退到 <code>language-plaintext</code>。</p>
+<pre><code>这是一段纯文本。
+没有高亮颜色。
+只是单纯的文字展示。
+</code></pre>
+<h3>5. 其他组件测试</h3>
+<p>根据你的 JS，这里还有防剧透和折叠块功能：</p>
+<p>点击查看隐藏内容：<span class='spoiler'>这是被剧透隐藏的文字内容！</span></p>
+<div class='details-box'><div class='details-header'>👉 点击展开详细说明</div><div class='details-content-wrapper'><div class='details-inner'><p>这里是折叠区域的内容。</p><p>可以包含文字、图片甚至另一个代码块。</p><pre><code class='language-python'>print('Inside Details')</code></pre></div></div></div>
+
+<p><gallery src="https://ts1.tc.mm.bing.net/th/id/OIP-C.mH9YLFEL5YdVxJM82mjVJQHaEo?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.e7588db8cf1d3592f05c59354c7d7f34?rik=rVGbZ1IKYj3dSg&riu=http%3a%2f%2fseopic.699pic.com%2fphoto%2f50073%2f0161.jpg_wh1200.jpg&ehk=ugyPJtY83rc68SfHXsUbzdSMvslDJR7BzyoTGXDUPew%3d&risl=&pid=ImgRaw&r=0,https://ts2.tc.mm.bing.net/th/id/OIP-C.kLs3tJ8EFQKVT5Z1VdC5EgHaE7?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.f5ae2e9a9976bee71d118dd402d80658?rik=nJChOY5iJSFRhQ&riu=http%3a%2f%2fimg3.redocn.com%2f20140308%2fRedocn_2014030311195180.jpg&ehk=9QqSiDRFgnBUaxV3u38ZMjQcWmYatan1pQzsCfbLFao%3d&risl=&pid=ImgRaw&r=0"></gallery></p>
+<p>音乐卡片</p>
+<p><music id="1"></music>
+<music id="cry"></music></p>
+<p>视频</p>
+<p><video src='https://vdse.bdstatic.com//192d9a98d782d9c74c96f09db9378d93.mp4'></video></p>
+<p>下面是一个表格示例：</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>width</td>
+<td>String</td>
+<td>100%</td>
+<td>设置表格宽度</td>
+</tr>
+<tr>
+<td>border</td>
+<td>px</td>
+<td>1px</td>
+<td>边框大小</td>
+</tr>
+<tr>
+<td>color</td>
+<td>Hex</td>
+<td>#333</td>
+<td>字体颜色</td>
+</tr>
+</tbody></table>
+]]></content:encoded>
+      <category>Demo</category>
+      <category>Demo</category>
+      <dc:creator>Admin</dc:creator>
+    </item>
+    <item>
+      <title>周五的公园与猫</title>
+      <link>https://blog55.945426.xyz/details/article?id=102</link>
+      <guid isPermaLink="false">102</guid>
+      <pubDate>Sat, 22 Nov 2025 10:30:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
+<p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫"></p>
+<p>拍完照它就跑了，哈哈。</p>
+<p><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop" alt="猫2"></p>
+<p>晚上准备去吃顿火锅庆祝一下周五！</p>
+]]></content:encoded>
+      <category>说说</category>
+      <category>生活</category>
+      <category>猫</category>
+      <dc:creator>Anonymous</dc:creator>
+    </item>
+    <item>
+      <title>月下独酌：李白诗中的孤独与自由</title>
+      <link>https://blog55.945426.xyz/details/article?id=101</link>
+      <guid isPermaLink="false">101</guid>
+      <pubDate>Fri, 21 Nov 2025 13:09:00 GMT</pubDate>
+      <description>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</description>
+      <content:encoded><![CDATA[<p><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="月下独酌：李白诗中的孤独与自由" /></p><p>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</p><p>夜色如水，明月当空。读李白的《月下独酌》，总能在字里行间感受到一种独特的孤独之美。</p>
+<h2>一、诗中的画面</h2>
+<p>“花间一壶酒，独酌无相亲。举杯邀明月，对影成三人。”开篇四句，便勾勒出一幅绝美的月夜独饮图。花丛之中，一人独坐，看似寂寞，却因邀月对影而瞬间热闹起来。</p>
+<blockquote>
+<p>“我歌月徘徊，我舞影零乱。醒时同交欢，醉后各分散。”</p>
+</blockquote>
+<p>这四句尤为动人。诗人与月共歌，与影共舞，在醉意朦胧中达到了物我两忘的境界。这种孤独，不是凄凉，而是自在；不是寂寞，而是充实。</p>
+<h2>二、孤独的辩证法</h2>
+<p>李白的高明之处在于，他将孤独转化为了另一种形式的陪伴。当现实世界中无人相伴时，他便在精神世界中与天地万物为友。</p>
+<p>月本无情，影本无意，但在诗人的笔下，它们都成了有情的伴侣。这种想象力的飞跃，正是诗人超越现实困境的精神力量。</p>
+<h2>三、现代启示</h2>
+<p>在快节奏的现代社会，我们常常害怕独处，用各种娱乐填满每一刻空闲。然而李白的诗提醒我们：独处也可以是一种滋养。</p>
+<p>学会与自己相处，在孤独中寻找内心的丰盈，这或许是古代诗人留给我们的珍贵智慧。</p>
+<h2>四、诗的艺术特色</h2>
+<ul>
+<li><p><strong>想象奇特：</strong> 邀月对影，化孤独为热闹</p>
+</li>
+<li><p><strong>情感真挚：</strong> 从孤独到狂放，情感起伏自然</p>
+</li>
+<li><p><strong>意境深远：</strong> 个人情感与宇宙意识交融</p>
+</li>
+</ul>
+<p>李白的这首诗，让我们看到：真正的自由，是在任何境遇中都能保持心灵的独立与丰盈。月下的独酌者，其实是最不孤独的人。</p>
+<blockquote>
+<p>“永结无情游，相期邈云汉。”——这最后的相约，将短暂的欢饮升华为永恒的陪伴。</p>
+</blockquote>
+<p>读罢全诗，不禁沉思：在我们的人生旅途中，是否也能像李白一样，在孤独中寻得自由，在寂寞中遇见美好？</p>
+]]></content:encoded>
+      <media:content url="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" type="image/jpeg" medium="image" />
+      <media:thumbnail url="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" />
+      <category>闲谈</category>
+      <category>书评</category>
+      <dc:creator>Anonymous</dc:creator>
     </item>
   </channel>
 </rss>
