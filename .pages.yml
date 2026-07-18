@@ -38,17 +38,6 @@ content:
     view:
       fields: [title, date, category, type]
       primary: title
-    # 集合级 Actions（显示在文章列表页头部）
-    actions:
-      - name: generate-rss
-        label: 生成 RSS
-        workflow: generate-rss.yml
-        ref: main
-        scope: collection
-        confirm:
-          title: 生成 RSS？
-          message: 将扫描所有文章并重新生成 rss.xml。
-          button: 生成
     fields:
       - name: title
         label: 标题
