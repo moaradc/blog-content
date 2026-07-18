@@ -13,15 +13,16 @@ media:
   extensions: [png, jpg, jpeg, webp, gif, svg]
 
 # 仓库级 Actions（显示在 PagesCMS 侧边栏）
-# 手动触发 generate-posts.yml（清理 frontmatter + 生成 posts.json + rss.xml）
+# 手动触发 generate-rss.yml 生成 RSS 订阅
+# posts.json 在 push 时自动生成，不需要手动触发
 actions:
-  - name: generate
-    label: 生成 posts.json + RSS
-    workflow: generate-posts.yml
+  - name: generate-rss
+    label: 生成 RSS
+    workflow: generate-rss.yml
     ref: main
     confirm:
-      title: 生成 posts.json 和 RSS？
-      message: 将清理 frontmatter、生成 posts.json 和 rss.xml 并提交到仓库。
+      title: 生成 RSS？
+      message: 将扫描所有文章并重新生成 rss.xml。
       button: 生成
 
 content:
@@ -39,14 +40,14 @@ content:
       primary: title
     # 集合级 Actions（显示在文章列表页头部）
     actions:
-      - name: generate-posts
-        label: 生成 posts.json + RSS
-        workflow: generate-posts.yml
+      - name: generate-rss
+        label: 生成 RSS
+        workflow: generate-rss.yml
         ref: main
         scope: collection
         confirm:
-          title: 生成 posts.json 和 RSS？
-          message: 将清理 frontmatter、生成 posts.json 和 rss.xml 并提交到仓库。
+          title: 生成 RSS？
+          message: 将扫描所有文章并重新生成 rss.xml。
           button: 生成
     fields:
       - name: title
