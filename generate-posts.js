@@ -10,11 +10,11 @@
 //
 // 用法: node generate-posts.js
 
-const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
+const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
 
-const POSTS_DIR = join(__dirname, "posts");
-const POSTS_OUTPUT = join(__dirname, "posts.json");
+const POSTS_DIR = join(__dirname, "docs", "posts");
+const POSTS_OUTPUT = join(__dirname, "docs", "posts.json");
 
 /** 解析类 YAML frontmatter 为对象 */
 function parseFrontmatter(fm) {
@@ -149,6 +149,8 @@ function stringifyPosts(posts) {
   return lines.join("\n");
 }
 
+// 确保 docs/ 目录存在（GitHub Pages 服务目录）
+mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(POSTS_OUTPUT, stringifyPosts(posts), "utf-8");
 console.log(`\n✅ 生成 posts.json: ${posts.length} 篇文章`);
 console.log(`   输出: ${POSTS_OUTPUT}`);

@@ -1,8 +1,7 @@
 # 依赖
 node_modules/
 
-# 生成文件（由 GitHub Action 生成并自动 commit，需要入库）
-# posts.json 不忽略，因为 jsdelivr CDN 需要读取它
+# 临时构建目录
 dist/
 
 # 系统

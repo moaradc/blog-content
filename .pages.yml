@@ -7,7 +7,7 @@
 # 访问编辑器: https://pagescms.org/moaradc/blog-content
 
 media:
-  input: img
+  input: docs/img
   output: /img
   rename: safe
   extensions: [png, jpg, jpeg, webp, gif, svg]
@@ -29,7 +29,7 @@ content:
   - name: posts
     label: 文章
     type: collection
-    path: posts
+    path: docs/posts
     # filename.field: true 让用户在编辑器中直接输入文件名（如 102）
     # 文件名即文章 ID，不需要额外的 id 字段
     filename:

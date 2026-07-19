@@ -6,7 +6,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "posts/**"
+      - "docs/posts/**"
       - "generate-posts.js"
       - "clean-frontmatter.js"
       - ".github/workflows/generate-posts-json.yml"

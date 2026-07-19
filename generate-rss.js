@@ -9,7 +9,7 @@
 //
 // 用法: node generate-rss.js
 
-const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
+const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
 
 // marked 用于把 markdown body 转 HTML（RSS content:encoded 需要 HTML）
@@ -21,14 +21,14 @@ try {
   marked = { parse: (s) => s };
 }
 
-const POSTS_DIR = join(__dirname, "posts");
-const RSS_OUTPUT = join(__dirname, "rss.xml");
+const POSTS_DIR = join(__dirname, "docs", "posts");
+const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
 // === RSS 站点配置 ===
 const SITE_URL = "https://blog55.945426.xyz/";
 const SITE_TITLE = "沫然Blog";
 const SITE_DESC = "基于 Astro 的极简博客";
-const RSS_SELF_URL = "https://blog55.945426.xyz/rss.xml";
+const RSS_SELF_URL = "https://raw-posts.945426.xyz/rss.xml";
 const AUTHOR_NAME = "沫然";
 const AUTHOR_EMAIL = "moara@foxmail.com";
 
@@ -265,6 +265,8 @@ function generateRssFeed(allPosts, allRawPosts) {
   return lines.join("\n") + "\n";
 }
 
+// 确保 docs/ 目录存在（GitHub Pages 服务目录）
+mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(RSS_OUTPUT, generateRssFeed(posts, rawPosts), "utf-8");
 const rssCount = posts.filter((p) => !p.draft && !p.locked).length;
 console.log(`✅ 生成 rss.xml: ${rssCount} 篇文章（RSS 2.0）`);

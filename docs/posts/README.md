@@ -35,5 +35,5 @@ content_url: ""
 ## 访问方式
 
 博客主站通过 jsdelivr CDN fetch：
-- 单篇文章: `https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts/107.md`
-- 文章列表: `https://cdn.jsdelivr.net/gh/moaradc/blog-content@main/posts.json`（需 GitHub Action 生成）
+- 单篇文章: `https://raw-posts.945426.xyz/posts/107.md`
+- 文章列表: `https://raw-posts.945426.xyz/posts.json`（需 GitHub Action 生成）

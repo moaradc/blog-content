@@ -13,7 +13,7 @@
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const { join } = require("path");
 
-const POSTS_DIR = join(__dirname, "posts");
+const POSTS_DIR = join(__dirname, "docs", "posts");
 const SITE_URL = process.env.SITE_URL || "";
 
 /**

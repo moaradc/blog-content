@@ -38,7 +38,7 @@ jobs:
         run: |
           git config user.name "moaradc"
           git config user.email "moara@foxmail.com"
-          git add rss.xml
+          git add docs/rss.xml
           if git diff --cached --quiet; then
             echo "ℹ️  rss.xml 无变化，跳过提交"
           else
