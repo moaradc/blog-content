@@ -311,9 +311,8 @@
             }
         });
 
-        // === 流式加载 posts.json ===
+        // === 加载 posts.json + 渐进渲染 ===
         let allPosts = [];
-        let postsLoaded = false;
 
         async function loadPosts() {
             const grid = document.getElementById('posts-grid');
@@ -324,93 +323,42 @@
                 const response = await fetch('/posts.json');
                 if (!response.ok) throw new Error('HTTP ' + response.status);
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let jsonStr = '';
-                let loaded = 0;
+                // 读取完整 JSON
+                allPosts = await response.json();
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
+                // 隐藏加载器
+                loader.style.display = 'none';
 
-                    const chunk = decoder.decode(value, { stream: true });
-                    jsonStr += chunk;
-
-                    // 尝试解析已加载的部分（每收到一个完整的 } 就尝试渲染）
-                    const newPosts = tryParsePartial(jsonStr);
-                    if (newPosts.length > loaded) {
-                        // 新增的文章
-                        for (let i = loaded; i < newPosts.length; i++) {
-                            renderPostCard(newPosts[i], i);
-                        }
-                        loaded = newPosts.length;
-
-                        // 显示网格
-                        if (loaded > 0) {
-                            grid.style.display = '';
-                            loader.style.display = 'none';
-                        }
-
-                        // 更新进度条
-                        const pct = Math.min(95, loaded * 10);
-                        fill.style.width = pct + '%';
-                    }
-                }
-
-                // 完整解析
-                allPosts = JSON.parse(jsonStr);
-                fill.style.width = '100%';
-
-                // 如果还没显示（极快加载），现在显示
-                if (loaded === 0) {
-                    allPosts.forEach((p, i) => renderPostCard(p, i));
-                    grid.style.display = '';
-                    loader.style.display = 'none';
-                }
-
-                // 如果为空
-                if (allPosts.length === 0) {
-                    grid.style.display = 'none';
-                    loader.style.display = 'none';
+                // 空状态
+                if (!allPosts || allPosts.length === 0) {
                     document.getElementById('empty-state').style.display = '';
+                    return;
                 }
 
-                postsLoaded = true;
-                setTimeout(() => { fill.parentElement.style.display = 'none'; }, 500);
+                // 显示网格
+                grid.style.display = '';
 
-                // 初始化 AOS
-                if (window.AOS) AOS.refresh();
+                // 逐个渲染卡片（带动画延迟，模拟流式效果）
+                allPosts.forEach((post, index) => {
+                    setTimeout(() => {
+                        renderPostCard(post, index);
+                    }, index * 80);
+                });
+
+                // 进度条动画
+                let progress = 0;
+                const progressTimer = setInterval(() => {
+                    progress = Math.min(100, progress + 100 / allPosts.length);
+                    fill.style.width = progress + '%';
+                    if (progress >= 100) clearInterval(progressTimer);
+                }, 80);
+
+                // AOS 刷新
+                setTimeout(() => { if (window.AOS) AOS.refresh(); }, allPosts.length * 80 + 100);
 
             } catch (err) {
                 loader.innerHTML = '<div class="empty"><i class="ri-error-warning-line"></i><p>加载失败: ' + err.message + '</p></div>';
             }
-        }
-
-        // 尝试解析部分 JSON（流式）
-        function tryParsePartial(str) {
-            const posts = [];
-            let depth = 0;
-            let start = -1;
-
-            for (let i = 0; i < str.length; i++) {
-                const c = str[i];
-                if (c === '{') {
-                    if (depth === 0) start = i;
-                    depth++;
-                } else if (c === '}') {
-                    depth--;
-                    if (depth === 0 && start !== -1) {
-                        const objStr = str.slice(start, i + 1);
-                        try {
-                            posts.push(JSON.parse(objStr));
-                        } catch (e) {
-                            // 解析失败，跳过
-                        }
-                        start = -1;
-                    }
-                }
-            }
-            return posts;
         }
 
         // === 渲染文章卡片 ===
