@@ -94,12 +94,6 @@ for (const file of files.sort()) {
   const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
 
-  // 跳过 locked: true 的文章（不写入 posts.json）
-  if (frontmatter.locked === true) {
-    console.log(`  🔒 ${file}: 已锁定，跳过`);
-    continue;
-  }
-
   const article = {
     id: slug,
     title: frontmatter.title || "",
