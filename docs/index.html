@@ -58,7 +58,7 @@
             overflow-x: hidden;
         }
 
-        /* 背景动效 */
+        /* 背景动效 — z-index: 0（最底层） */
         .bg-grid {
             position: fixed;
             inset: 0;
@@ -69,18 +69,18 @@
                 linear-gradient(90deg, var(--text) 1px, transparent 1px);
             background-size: 50px 50px;
             animation: gridMove 20s linear infinite;
+            pointer-events: none;
         }
         @keyframes gridMove {
             0% { transform: translate(0, 0); }
             100% { transform: translate(50px, 50px); }
         }
 
-        /* 光晕 */
         .glow-orb {
             position: fixed;
             border-radius: 50%;
             filter: blur(80px);
-            opacity: 0.15;
+            opacity: 0.12;
             pointer-events: none;
             z-index: 0;
         }
@@ -91,9 +91,10 @@
         @keyframes float2 { 0%,100% { transform: translate(0,0); } 50% { transform: translate(-80px,-60px); } }
         @keyframes float3 { 0%,100% { transform: translate(0,0) scale(1); } 50% { transform: translate(-50px,80px) scale(1.2); } }
 
-        .container { position: relative; z-index: 1; max-width: 900px; margin: 0 auto; padding: 0 20px; }
+        /* 内容层 — z-index: 10（在背景之上） */
+        .container { position: relative; z-index: 10; max-width: 900px; margin: 0 auto; padding: 0 20px; }
 
-        /* 导航栏 */
+        /* 导航栏 — z-index: 100 */
         nav {
             position: sticky; top: 0; z-index: 100;
             backdrop-filter: blur(20px);
@@ -133,7 +134,7 @@
         }
         .loader-bar-fill {
             height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2));
-            border-radius: 2px; transition: width 0.3s;
+            border-radius: 2px; transition: width 0.3s; width: 0%;
         }
 
         /* 文章卡片 */
@@ -152,9 +153,11 @@
             content: ''; position: absolute; inset: 0;
             background: linear-gradient(135deg, transparent, color-mix(in srgb, var(--accent3) 8%, transparent));
             opacity: 0; transition: opacity 0.3s;
+            pointer-events: none;
         }
         .post-card:hover { transform: translateY(-4px); border-color: var(--accent); box-shadow: 0 20px 40px -10px color-mix(in srgb, var(--accent3) 30%, transparent); }
         .post-card:hover::before { opacity: 1; }
+        .post-card > * { position: relative; z-index: 1; }
         .post-card .pin-badge {
             display: inline-block; background: var(--accent); color: #000;
             font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 4px;
@@ -246,7 +249,7 @@
                 <div class="loader-wrap" id="loader">
                     <div class="loader"></div>
                     <div class="loader-text">加载文章中...</div>
-                    <div class="loader-bar"><div class="loader-bar-fill" id="loader-fill" style="width:0%"></div></div>
+                    <div class="loader-bar"><div class="loader-bar-fill" id="loader-fill"></div></div>
                 </div>
                 <div class="posts-grid" id="posts-grid" style="display:none"></div>
                 <div class="empty" id="empty-state" style="display:none">
@@ -311,7 +314,7 @@
             }
         });
 
-        // === 加载 posts.json + 渐进渲染 ===
+        // === 流式加载 posts.json ===
         let allPosts = [];
 
         async function loadPosts() {
@@ -323,42 +326,94 @@
                 const response = await fetch('/posts.json');
                 if (!response.ok) throw new Error('HTTP ' + response.status);
 
-                // 读取完整 JSON
-                allPosts = await response.json();
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let jsonStr = '';
+                let loaded = 0;
 
-                // 隐藏加载器
-                loader.style.display = 'none';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
 
-                // 空状态
-                if (!allPosts || allPosts.length === 0) {
-                    document.getElementById('empty-state').style.display = '';
-                    return;
+                    const chunk = decoder.decode(value, { stream: true });
+                    jsonStr += chunk;
+
+                    // 尝试解析已加载的部分
+                    const newPosts = tryParsePartial(jsonStr);
+                    if (newPosts.length > loaded) {
+                        for (let i = loaded; i < newPosts.length; i++) {
+                            renderPostCard(newPosts[i], i);
+                        }
+                        loaded = newPosts.length;
+
+                        if (loaded > 0) {
+                            grid.style.display = '';
+                            loader.style.display = 'none';
+                        }
+
+                        const pct = Math.min(95, loaded * 10);
+                        fill.style.width = pct + '%';
+                    }
                 }
 
-                // 显示网格
-                grid.style.display = '';
+                // 完整解析
+                allPosts = JSON.parse(jsonStr);
+                fill.style.width = '100%';
 
-                // 逐个渲染卡片（带动画延迟，模拟流式效果）
-                allPosts.forEach((post, index) => {
-                    setTimeout(() => {
-                        renderPostCard(post, index);
-                    }, index * 80);
-                });
+                // 如果还没显示（极快加载），现在显示
+                if (loaded === 0) {
+                    allPosts.forEach((p, i) => renderPostCard(p, i));
+                    grid.style.display = '';
+                    loader.style.display = 'none';
+                }
 
-                // 进度条动画
-                let progress = 0;
-                const progressTimer = setInterval(() => {
-                    progress = Math.min(100, progress + 100 / allPosts.length);
-                    fill.style.width = progress + '%';
-                    if (progress >= 100) clearInterval(progressTimer);
-                }, 80);
+                // 如果为空
+                if (allPosts.length === 0) {
+                    grid.style.display = 'none';
+                    loader.style.display = 'none';
+                    document.getElementById('empty-state').style.display = '';
+                }
 
-                // AOS 刷新
-                setTimeout(() => { if (window.AOS) AOS.refresh(); }, allPosts.length * 80 + 100);
+                setTimeout(() => { fill.parentElement.style.display = 'none'; }, 500);
+                if (window.AOS) AOS.refresh();
 
             } catch (err) {
                 loader.innerHTML = '<div class="empty"><i class="ri-error-warning-line"></i><p>加载失败: ' + err.message + '</p></div>';
             }
+        }
+
+        // 尝试解析部分 JSON（流式）
+        function tryParsePartial(str) {
+            const posts = [];
+            let depth = 0;
+            let start = -1;
+            let inString = false;
+            let escape = false;
+
+            for (let i = 0; i < str.length; i++) {
+                const c = str[i];
+
+                if (escape) { escape = false; continue; }
+                if (c === '\\') { escape = true; continue; }
+                if (c === '"') { inString = !inString; continue; }
+
+                if (inString) continue;
+
+                if (c === '{') {
+                    if (depth === 0) start = i;
+                    depth++;
+                } else if (c === '}') {
+                    depth--;
+                    if (depth === 0 && start !== -1) {
+                        const objStr = str.slice(start, i + 1);
+                        try {
+                            posts.push(JSON.parse(objStr));
+                        } catch (e) {}
+                        start = -1;
+                    }
+                }
+            }
+            return posts;
         }
 
         // === 渲染文章卡片 ===
@@ -413,7 +468,6 @@
                 });
             }
 
-            // AOS
             if (window.AOS) AOS.refresh();
         }
 
