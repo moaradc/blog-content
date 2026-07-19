@@ -375,7 +375,6 @@
                 }
 
                 setTimeout(() => { fill.parentElement.style.display = 'none'; }, 500);
-                if (window.AOS) AOS.refresh();
 
             } catch (err) {
                 loader.innerHTML = '<div class="empty"><i class="ri-error-warning-line"></i><p>加载失败: ' + err.message + '</p></div>';
@@ -421,8 +420,6 @@
             const grid = document.getElementById('posts-grid');
             const card = document.createElement('div');
             card.className = 'post-card';
-            card.setAttribute('data-aos', 'fade-up');
-            card.setAttribute('data-aos-delay', Math.min(index * 30, 300));
 
             let html = '';
 
@@ -458,17 +455,19 @@
 
             grid.appendChild(card);
 
-            // GSAP 入场动画
+            // GSAP 入场动画（fromTo 明确起止，避免 opacity 卡在 0）
             if (window.gsap) {
-                gsap.from(card, {
+                gsap.fromTo(card, {
                     opacity: 0,
                     y: 30,
+                }, {
+                    opacity: 1,
+                    y: 0,
                     duration: 0.5,
-                    ease: 'power3.out'
+                    ease: 'power3.out',
+                    delay: Math.min(index * 0.05, 0.3)
                 });
             }
-
-            if (window.AOS) AOS.refresh();
         }
 
         // === 加载文章详情 ===
