@@ -1,5 +1,15 @@
 [
   {
+    "id": "mermaid-test",
+    "title": "Mermaid 渲染测试",
+    "date": "2026-07-20 20:09",
+    "last_modified": "2026-07-20 20:09",
+    "author": "Admin",
+    "category": ["Demo"],
+    "tags": ["Demo"],
+    "desc": "测试 Mermaid 图表渲染"
+  },
+  {
     "id": "107",
     "title": "Markdown写作指南",
     "date": "2026-06-09 10:00",
