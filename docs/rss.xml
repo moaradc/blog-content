@@ -5,11 +5,287 @@
     <link>https://blog55.945426.xyz/</link>
     <description>基于 Astro 的极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 09 Jun 2026 10:00:00 GMT</lastBuildDate>
+    <lastBuildDate>Tue, 21 Jul 2026 13:28:00 GMT</lastBuildDate>
     <generator>generate-posts.js (PagesCMS)</generator>
     <atom:link href="https://raw-posts.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>test2</title>
+      <link>https://blog55.945426.xyz/details/article?id=test2</link>
+      <guid isPermaLink="false">test2</guid>
+      <pubDate>Tue, 21 Jul 2026 13:28:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>dnc</p>
+<p>test2</p>
+]]></content:encoded>
+      <category>闲谈</category>
+      <category>杂项</category>
+      <dc:creator>Admin</dc:creator>
+    </item>
+    <item>
+      <title>Mermaid 渲染测试</title>
+      <link>https://blog55.945426.xyz/details/article?id=mermaid-test</link>
+      <guid isPermaLink="false">mermaid-test</guid>
+      <pubDate>Mon, 20 Jul 2026 20:09:00 GMT</pubDate>
+      <description>测试 Mermaid 图表渲染</description>
+      <content:encoded><![CDATA[<p>测试 Mermaid 图表渲染</p><p>本文仅用于测试 Mermaid 各类图表的渲染。</p>
+<h3>1. Flowchart 流程图</h3>
+<pre><code class="language-mermaid">
+flowchart TD
+
+    A[用户访问博客] --&gt; B{是否首次访问}
+
+    B -- 是 --&gt; C[加载文章列表]
+
+    B -- 否 --&gt; D[读取本地缓存]
+
+    C --&gt; E[渲染 marked]
+
+    D --&gt; E
+
+    E --&gt; F{是否含代码块}
+
+    F -- 是 --&gt; G[加载 hljs 高亮]
+
+    F -- 否 --&gt; H[完成]
+
+    G --&gt; H
+</code></pre>
+<h3>2. Sequence Diagram 时序图</h3>
+<pre><code class="language-mermaid">
+sequenceDiagram
+
+    participant U as 浏览器
+
+    participant F as 前端 Astro
+
+    participant R as raw-posts CDN
+
+    participant W as Waline server
+
+    U-&gt;&gt;F: 打开 /details/article?id=103
+
+    F-&gt;&gt;R: fetch posts.json
+
+    R--&gt;&gt;F: 文章元数据
+
+    F-&gt;&gt;R: fetch [103.md](http://103.md)
+
+    R--&gt;&gt;F: markdown 内容
+
+    F-&gt;&gt;F: marked.parse + hljs
+
+    F-&gt;&gt;W: 加载评论组件
+
+    W--&gt;&gt;U: 渲染评论框
+</code></pre>
+<h3>3. Class Diagram 类图</h3>
+<pre><code class="language-mermaid">
+classDiagram
+
+    class Article {
+
+        +String id
+
+        +String title
+
+        +String author
+
+        +Date published
+
+        +render() String
+
+    }
+
+    class TOC {
+
+        +Array~TOCItem~ items
+
+        +generate(html) void
+
+        +highlightActive() void
+
+    }
+
+    class Comment {
+
+        +String userId
+
+        +String content
+
+        +Date createdAt
+
+    }
+
+    Article --&gt; TOC : has
+
+    Article --&gt; Comment : has many
+</code></pre>
+<h3>4. State Diagram 状态图</h3>
+<pre><code class="language-mermaid">
+stateDiagram-v2
+
+    [*] --&gt; 加载中
+
+    加载中 --&gt; 渲染中 : fetch 成功
+
+    加载中 --&gt; 错误 : 网络失败
+
+    渲染中 --&gt; 已完成 : marked + hljs 完成
+
+    渲染中 --&gt; 错误 : 解析异常
+
+    已完成 --&gt; [*]
+
+    错误 --&gt; 加载中 : 用户重试
+</code></pre>
+<h3>5. Gantt Chart 甘特图</h3>
+<pre><code class="language-mermaid">
+gantt
+
+    title 博客重构计划
+
+    dateFormat  YYYY-MM-DD
+
+    section 前端
+
+    设计文章页样式      :a1, 2026-07-01, 7d
+
+    实现 TOC 组件       :a2, after a1, 4d
+
+    接入 Waline 评论    :a3, after a2, 3d
+
+    section 后端
+
+    搭建内容仓库        :b1, 2026-07-01, 5d
+
+    配置 GitHub Actions :b2, after b1, 3d
+
+    生成 posts.json     :b3, after b2, 2d
+
+    section 部署
+
+    Vercel 上线         :c1, after a3, 1d
+</code></pre>
+<h3>6. Pie Chart 饼图</h3>
+<pre><code class="language-mermaid">
+pie showData
+
+    title 博客文章类型分布
+
+    &quot;技术笔记&quot; : 45
+
+    &quot;生活随笔&quot; : 25
+
+    &quot;教程文档&quot; : 20
+
+    &quot;项目复盘&quot; : 10
+</code></pre>
+<h3>7. ER Diagram 实体关系图</h3>
+<pre><code class="language-mermaid">
+erDiagram
+
+    POST ||--o{ COMMENT : has
+
+    POST ||--o{ TAG : tagged
+
+    POST {
+
+        string id PK
+
+        string title
+
+        string author
+
+        date published
+
+    }
+
+    COMMENT {
+
+        string id PK
+
+        string post_id FK
+
+        string user_id
+
+        text content
+
+    }
+
+    TAG {
+
+        string id PK
+
+        string name
+
+    }
+</code></pre>
+<h3>8. User Journey 用户旅程</h3>
+<pre><code class="language-mermaid">
+journey
+
+    title 读者访问文章的体验
+
+    section 进入
+
+      搜索引擎: 5: 读者
+
+      点击链接: 5: 读者
+
+      首屏加载: 3: 读者
+
+    section 阅读
+
+      渲染正文: 5: 读者
+
+      滚动浏览: 5: 读者
+
+      点击 TOC: 4: 读者
+
+    section 互动
+
+      留下评论: 3: 读者
+
+      分享文章: 2: 读者
+</code></pre>
+<h3>9. Git Graph 提交图</h3>
+<pre><code class="language-mermaid">
+gitGraph
+
+    commit id: &quot;init&quot;
+
+    commit id: &quot;add posts.json&quot;
+
+    branch feature/toc
+
+    checkout feature/toc
+
+    commit id: &quot;toc sidebar&quot;
+
+    commit id: &quot;mobile toc&quot;
+
+    checkout main
+
+    merge feature/toc
+
+    commit id: &quot;release v1&quot;
+
+    branch fix/comments
+
+    commit id: &quot;waline fix&quot;
+
+    checkout main
+
+    merge fix/comments
+
+    commit id: &quot;release v1.1&quot;
+</code></pre>
+]]></content:encoded>
+      <category>Demo</category>
+      <category>Demo</category>
+      <dc:creator>Admin</dc:creator>
+    </item>
     <item>
       <title>Markdown写作指南</title>
       <link>https://blog55.945426.xyz/details/article?id=107</link>
