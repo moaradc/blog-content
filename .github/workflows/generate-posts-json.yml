@@ -32,7 +32,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "22"
           cache: 'npm'
 
       - name: Install dependencies
@@ -69,7 +69,7 @@ jobs:
               echo "incremental=true" >> "$GITHUB_OUTPUT"
               echo "files=" >> "$GITHUB_OUTPUT"
             else
-              echo "📝 增量清理 ${#EXISTING[@]} 个文件:"
+              echo "📝 增量更新 ${#EXISTING[@]} 个文件:"
               printf '  - %s\n' "${EXISTING[@]}"
               # 用空格分隔传给 node（路径不含空格，安全）
               echo "incremental=true" >> "$GITHUB_OUTPUT"
@@ -84,13 +84,13 @@ jobs:
           INCREMENTAL: ${{ steps.changed.outputs.incremental }}
         run: |
           if [ "$INCREMENTAL" = "true" ] && [ -n "$CHANGED_FILES" ]; then
-            echo "🧹 增量清理: $CHANGED_FILES"
+            echo "🧹 增量更新: $CHANGED_FILES"
             # shellcheck disable=SC2086  # 故意不引用，让空格分隔多个路径
             node clean-frontmatter.js $CHANGED_FILES
           elif [ "$INCREMENTAL" = "true" ]; then
             echo "ℹ️  跳过 clean-frontmatter（没有 .md 文件变更）"
           else
-            echo "🧹 全量清理（fallback）"
+            echo "🧹 全量更新（fallback）"
             node clean-frontmatter.js
           fi
 
@@ -100,7 +100,7 @@ jobs:
       - name: Commit and push if changed
         run: |
           git config user.name "moaradc"
-          git config user.email "moara@foxmail.com"
+          git config user.email "143486936+moaradc@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
             echo "ℹ️  无变化，跳过提交"
