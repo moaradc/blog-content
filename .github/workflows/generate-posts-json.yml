@@ -2,6 +2,11 @@ name: Generate posts.json
 
 # 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
 # 自动生成 posts.json，不需要手动触发
+#
+# 性能优化：
+#   - clean-frontmatter.js 增量执行：只清理本次 push 涉及的 .md 文件
+#     （用 git diff 取上次 commit 列表，过滤 docs/posts/*.md）
+#   - generate-posts.js 保持全量：posts.json 是全量索引，跳过任何文件都会让首页缺卡片
 on:
   push:
     branches: [main]
@@ -22,7 +27,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # 增量 diff 需要完整历史
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -33,10 +38,61 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Clean frontmatter
+      - name: Collect changed post files
+        id: changed
+        env:
+          # workflow_dispatch 没有 before，fallback 到 HEAD~1
+          BEFORE: ${{ github.event.before || 'HEAD~1' }}
+        run: |
+          # 取 BEFORE..HEAD 范围内所有变更的 docs/posts/*.md 文件
+          # 3-way fallback：
+          #   1. git diff --name-only BEFORE..HEAD
+          #   2. git diff --name-only HEAD~1..HEAD（BEFORE 不存在时，如新分支）
+          #   3. 全量（连 HEAD~1 都没有时，如初次提交）
+          mapfile -t FILES < <(git diff --name-only "$BEFORE"..HEAD -- 'docs/posts/*.md' 2>/dev/null || true)
+          if [ ${#FILES[@]} -eq 0 ]; then
+            mapfile -t FILES < <(git diff --name-only HEAD~1..HEAD -- 'docs/posts/*.md' 2>/dev/null || true)
+          fi
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "ℹ️  无法确定增量范围，回退到全量清理"
+            echo "incremental=false" >> "$GITHUB_OUTPUT"
+          else
+            # 过滤：只保留仍然存在的文件（删除的文件不需要 clean）
+            EXISTING=()
+            for f in "${FILES[@]}"; do
+              if [ -f "$f" ]; then
+                EXISTING+=("$f")
+              fi
+            done
+            if [ ${#EXISTING[@]} -eq 0 ]; then
+              echo "ℹ️  本次 push 没有改动任何 .md 文件（可能只改了脚本），跳过 clean"
+              echo "incremental=true" >> "$GITHUB_OUTPUT"
+              echo "files=" >> "$GITHUB_OUTPUT"
+            else
+              echo "📝 增量清理 ${#EXISTING[@]} 个文件:"
+              printf '  - %s\n' "${EXISTING[@]}"
+              # 用空格分隔传给 node（路径不含空格，安全）
+              echo "incremental=true" >> "$GITHUB_OUTPUT"
+              echo "files=${EXISTING[*]}" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Clean frontmatter (incremental or full)
         env:
           SITE_URL: ${{ vars.SITE_URL }}
-        run: node clean-frontmatter.js
+          CHANGED_FILES: ${{ steps.changed.outputs.files }}
+          INCREMENTAL: ${{ steps.changed.outputs.incremental }}
+        run: |
+          if [ "$INCREMENTAL" = "true" ] && [ -n "$CHANGED_FILES" ]; then
+            echo "🧹 增量清理: $CHANGED_FILES"
+            # shellcheck disable=SC2086  # 故意不引用，让空格分隔多个路径
+            node clean-frontmatter.js $CHANGED_FILES
+          elif [ "$INCREMENTAL" = "true" ]; then
+            echo "ℹ️  跳过 clean-frontmatter（没有 .md 文件变更）"
+          else
+            echo "🧹 全量清理（fallback）"
+            node clean-frontmatter.js
+          fi
 
       - name: Generate posts.json
         run: node generate-posts.js

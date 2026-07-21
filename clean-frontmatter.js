@@ -13,7 +13,11 @@
 //    转为：
 //      category: ["Demo", "杂项"]
 //
-// 用法: SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
+// 用法:
+//   全量:    SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
+//   增量:    node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
+//            ↑ 只清理指定文件，不传则全量清理
+//
 // 在 GitHub Action 中 generate-posts.js 之前运行
 
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
@@ -223,16 +227,57 @@ function cleanFile(filePath) {
 }
 
 // 主逻辑
+// 支持两种模式：
+//   1. 命令行传参：node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
+//      → 只清理指定文件（路径相对于仓库根，或绝对路径，或相对 POSTS_DIR 的文件名均可）
+//   2. 无传参：node clean-frontmatter.js
+//      → 全量清理 POSTS_DIR 下所有 .md
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
-const files = readdirSync(POSTS_DIR).filter(
-  (f) => f.endsWith(".md") && f !== "README.md"
-);
+const argv = process.argv.slice(2);
 
-console.log(`🧹 清理 ${files.length} 个 markdown 文件的 frontmatter`);
+function resolveTargetFile(input) {
+  // input 可能是:
+  //   - 绝对路径
+  //   - 仓库相对路径: docs/posts/102.md
+  //   - 文件名: 102.md
+  //   - 带子目录: sub/102.md
+  if (input.startsWith("/")) {
+    return input;
+  }
+  if (input.startsWith("docs/posts/")) {
+    return join(__dirname, input);
+  }
+  return join(POSTS_DIR, input);
+}
+
+let files; // 统一存文件名（相对 POSTS_DIR 的 basename）
+if (argv.length > 0) {
+  files = argv
+    .map(resolveTargetFile)
+    .filter((p) => {
+      if (!existsSync(p)) {
+        console.warn(`⚠️  跳过不存在的文件: ${p}`);
+        return false;
+      }
+      return true;
+    })
+    .filter((p) => p.endsWith(".md"))
+    .map((p) => {
+      // 转回 basename 用于显示
+      const parts = p.split("/");
+      return parts[parts.length - 1];
+    });
+  console.log(`🧹 增量清理 ${files.length} 个 markdown 文件（命令行参数模式）`);
+} else {
+  files = readdirSync(POSTS_DIR).filter(
+    (f) => f.endsWith(".md") && f !== "README.md"
+  );
+  console.log(`🧹 全量清理 ${files.length} 个 markdown 文件`);
+}
 
 let changed = 0;
 for (const file of files.sort()) {
