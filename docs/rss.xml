@@ -5,23 +5,11 @@
     <link>https://blog55.945426.xyz/</link>
     <description>基于 Astro 的极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Tue, 21 Jul 2026 13:28:00 GMT</lastBuildDate>
+    <lastBuildDate>Mon, 20 Jul 2026 20:09:00 GMT</lastBuildDate>
     <generator>generate-posts.js (PagesCMS)</generator>
     <atom:link href="https://raw-posts.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
-    <item>
-      <title>test2</title>
-      <link>https://blog55.945426.xyz/details/article?id=test2</link>
-      <guid isPermaLink="false">test2</guid>
-      <pubDate>Tue, 21 Jul 2026 13:28:00 GMT</pubDate>
-      <content:encoded><![CDATA[<p>dnc</p>
-<p>test2</p>
-]]></content:encoded>
-      <category>闲谈</category>
-      <category>杂项</category>
-      <dc:creator>Admin</dc:creator>
-    </item>
     <item>
       <title>Mermaid 渲染测试</title>
       <link>https://blog55.945426.xyz/details/article?id=mermaid-test</link>
