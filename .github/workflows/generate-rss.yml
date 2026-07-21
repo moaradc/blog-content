@@ -1,4 +1,4 @@
-name: Generate RSS1
+name: Generate RSS
 
 # 只手动触发（在 PagesCMS Actions 面板或 GitHub Actions 页面点击运行）
 # PagesCMS 触发时会发送 payload 参数（包含触发上下文信息）
