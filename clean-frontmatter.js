@@ -6,6 +6,7 @@
 // 4. 确保 frontmatter 和 body 之间有空行
 // 5. 把 /img/ 相对路径替换为绝对 URL（SITE_URL 环境变量）
 //    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
+// 6. 把列表式数组字段（`category:\n  - Demo`）规范化为内联数组（`category: ["Demo"]`）
 //
 // 用法: SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
 // 在 GitHub Action 中 generate-posts.js 之前运行
@@ -120,6 +121,35 @@ function getFieldValue(field) {
   return val.replace(/^['"]|['"]$/g, "");
 }
 
+/**
+ * 把列表式数组字段规范化为内联数组
+ * 输入:  rawLines = ["category:", "  - Demo", "  - 技术"]
+ * 输出:  ["category: [\"Demo\", \"技术\"]"]
+ * 非列表字段（单行键值，或后续行非 `- item` 格式）原样返回
+ */
+function normalizeListField(field) {
+  const { key, rawLines } = field;
+  if (rawLines.length <= 1) return rawLines;
+
+  // 第一行必须为 `key:` 形式（键后无值）
+  if (!/^(\w[\w_-]*):\s*$/.test(rawLines[0])) return rawLines;
+
+  // 后续行必须为列表项 `  - value`（允许空行）
+  const items = [];
+  for (let i = 1; i < rawLines.length; i++) {
+    const line = rawLines[i];
+    if (line.trim() === "") continue;
+    const liMatch = line.match(/^\s*-\s+(.*)$/);
+    if (!liMatch) return rawLines; // 非列表格式，保持原样
+    items.push(liMatch[1].trim().replace(/^['"]|['"]$/g, ""));
+  }
+
+  if (items.length === 0) return rawLines; // 空列表交给上层过滤处理
+
+  const itemsStr = items.map((i) => JSON.stringify(i)).join(", ");
+  return [`${key}: [${itemsStr}]`];
+}
+
 /** 处理单个 md 文件 */
 function cleanFile(filePath) {
   const raw = readFileSync(filePath, "utf-8");
@@ -129,6 +159,11 @@ function cleanFile(filePath) {
   const fmContent = match[1];
   const body = raw.slice(match[0].length);
   const fields = parseFrontmatterLines(fmContent);
+
+  // 规范化列表字段为内联数组
+  for (const field of fields) {
+    field.rawLines = normalizeListField(field);
+  }
 
   // 过滤字段
   const cleanedFields = [];

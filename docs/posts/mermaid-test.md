@@ -3,10 +3,8 @@ title: Mermaid 渲染测试
 date: 2026-07-20 20:09
 last_modified: 2026-07-20 20:09
 author: Admin
-category:
-  - Demo
-tags:
-  - Demo
+category: ["Demo"]
+tags: ["Demo"]
 desc: 测试 Mermaid 图表渲染
 ---
 本文仅用于测试 Mermaid 各类图表的渲染。
