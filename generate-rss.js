@@ -28,7 +28,10 @@ const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 const SITE_URL = "https://blog55.945426.xyz/";
 const SITE_TITLE = "沫然Blog";
 const SITE_DESC = "基于 Astro 的极简博客";
-const RSS_SELF_URL = "https://raw-posts.945426.xyz/rss.xml";
+// RSS_SELF_URL 必须指向前端主域（blog55.945426.xyz/rss.xml）
+// 前端 vercel.json / netlify.toml 配置了透明代理，会把该 URL 路由到后端 raw-posts.945426.xyz/rss.xml
+// 这样 RSS 阅读器订阅的源地址对外是前端主域，避免读者直接看到 raw-posts 后端 API 域
+const RSS_SELF_URL = "https://blog55.945426.xyz/rss.xml";
 const AUTHOR_NAME = "沫然";
 const AUTHOR_EMAIL = "moara@foxmail.com";
 
