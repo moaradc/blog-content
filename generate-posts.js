@@ -164,51 +164,49 @@ const total = visibleSorted.length;
 const pageCount = Math.max(1, Math.ceil(total / PER_PAGE));
 const generatedAt = new Date().toISOString();
 
-/**
- * 自定义 JSON 序列化：
- *   - 对象 / 对象数组：多行展开（保持可读性，与 .md frontmatter 字段顺序一致）
- *   - 基本类型数组（string/number/boolean/null）：单行 inline，
- *     对齐 clean-frontmatter.js 的 inline JSON 数组风格
- *     （["Demo", "技术"] 而不是 ["Demo","技术"]，元素间保留一个空格）
- *
- * 这样 category / tags 等字段在 .json 里和 .md 里看起来一致，
- * 不再被 JSON.stringify 的多行展开风格打乱。
- *
- * @param {*} value     任意 JSON 值
- * @param {number} indent 当前缩进层数（每层 2 空格）
- * @returns {string}
- */
-function prettyJson(value, indent) {
-  const pad = "  ".repeat(indent);
-  if (value === null) return "null";
-  if (Array.isArray(value)) {
-    if (value.length === 0) return "[]";
-    // 基本类型数组 → inline
-    const allPrimitive = value.every(
-      (v) => v === null || typeof v !== "object"
-    );
-    if (allPrimitive) {
-      return "[" + value.map((v) => JSON.stringify(v)).join(", ") + "]";
+// === 序列化 ===
+// 沿用 672a8fe 的风格：值用 JSON.stringify(value)，对象多行展开。
+// 这样基本类型数组（category / tags）天然 inline，
+// 不会被 JSON.stringify(obj, null, 2) 强行展开成多行。
+//
+// 输出形如：
+//   {
+//     "generatedAt": "...",
+//     "perPage": 16,
+//     "total": 8,
+//     "pageCount": 1,
+//     "posts": [
+//       {
+//         "id": "test",
+//         "category": ["Demo","技术"],
+//         ...
+//       },
+//       ...
+//     ]
+//   }
+function stringifyIndex(obj) {
+  const lines = ["{"];
+  const entries = Object.entries(obj);
+  entries.forEach(([k, v], i) => {
+    const sep = i < entries.length - 1 ? "," : "";
+    if (k === "posts") {
+      // posts 是文章对象数组，多行展开
+      lines.push('  "posts": [');
+      v.forEach((post, j) => {
+        const fields = Object.entries(post).map(
+          ([fk, fv]) => `      ${JSON.stringify(fk)}: ${JSON.stringify(fv)}`
+        );
+        const postStr = "    {\n" + fields.join(",\n") + "\n    }";
+        lines.push(postStr + (j < v.length - 1 ? "," : ""));
+      });
+      lines.push("  ]" + sep);
+    } else {
+      // 顶层基本类型字段（number / string / boolean），inline
+      lines.push(`  ${JSON.stringify(k)}: ${JSON.stringify(v)}${sep}`);
     }
-    // 对象数组 → 多行
-    const innerPad = "  ".repeat(indent + 1);
-    const items = value.map(
-      (v) => innerPad + prettyJson(v, indent + 1)
-    );
-    return "[\n" + items.join(",\n") + "\n" + pad + "]";
-  }
-  if (typeof value === "object") {
-    const keys = Object.keys(value);
-    if (keys.length === 0) return "{}";
-    const innerPad = "  ".repeat(indent + 1);
-    const entries = keys.map(
-      (k) =>
-        innerPad + JSON.stringify(k) + ": " + prettyJson(value[k], indent + 1)
-    );
-    return "{\n" + entries.join(",\n") + "\n" + pad + "}";
-  }
-  // string / number / boolean / undefined
-  return JSON.stringify(value);
+  });
+  lines.push("}");
+  return lines.join("\n");
 }
 
 // === 生成 docs/posts.json（索引对象） ===
@@ -222,7 +220,7 @@ const indexObj = {
   pageCount,
   posts: visibleSorted,
 };
-writeFileSync(POSTS_OUTPUT, prettyJson(indexObj, 0) + "\n", "utf-8");
+writeFileSync(POSTS_OUTPUT, stringifyIndex(indexObj) + "\n", "utf-8");
 console.log(`\n✅ 生成 posts.json 索引: ${total} 篇可见文章 / ${pageCount} 页 (perPage=${PER_PAGE})`);
 console.log(`   输出: ${POSTS_OUTPUT}`);
 
@@ -238,7 +236,7 @@ for (let pg = 0; pg < pageCount; pg++) {
     posts: slice,
   };
   const pagePath = join(DOCS_DIR, `posts-${pg}.json`);
-  writeFileSync(pagePath, prettyJson(pageObj, 0) + "\n", "utf-8");
+  writeFileSync(pagePath, stringifyIndex(pageObj) + "\n", "utf-8");
 }
 console.log(`   生成 ${pageCount} 个分页文件: posts-0.json .. posts-${pageCount - 1}.json`);
 
