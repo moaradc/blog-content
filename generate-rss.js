@@ -1,13 +1,5 @@
 // generate-rss.js
 // 扫描 posts/*.md，生成 RSS 2.0 订阅（rss.xml）
-// 手动触发（GitHub Action workflow_dispatch）
-//
-// 关键逻辑：
-//   - 用 marked 把 markdown body 转 HTML（RSS 阅读器需要 HTML）
-//   - 过滤草稿和锁定文章
-//   - 作者用 dc:creator（不含邮箱）
-//
-// 用法: node generate-rss.js
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
@@ -24,15 +16,14 @@ try {
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
-// === RSS 站点配置 ===
+// RSS 站点配置
 const SITE_URL = "https://blog55.945426.xyz/";
 const SITE_TITLE = "沫然Blog";
-const SITE_DESC = "基于 Astro 的极简博客";
+const SITE_DESC = "极简博客";
 const RSS_SELF_URL = "https://blog55.945426.xyz/rss.xml";
 const AUTHOR_NAME = "沫然";
 const AUTHOR_EMAIL = "moara@foxmail.com";
 
-/** 解析类 YAML frontmatter 为对象 */
 function parseFrontmatter(fm) {
   const lines = fm.split("\n");
   const result = {};
@@ -80,7 +71,6 @@ function parseFrontmatter(fm) {
   return result;
 }
 
-/** 从 markdown 提取 frontmatter 和 body */
 function parseMarkdown(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
   if (!match) {
@@ -91,19 +81,16 @@ function parseMarkdown(raw) {
   return { frontmatter, body };
 }
 
-// === 主逻辑：扫描文章 ===
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
 const posts = [];
-const rawPosts = []; // 保留 body 供 RSS 使用
+const rawPosts = [];
 const files = readdirSync(POSTS_DIR).filter(
   (f) => f.endsWith(".md") && f !== "README.md"
 );
-
-console.log(`📄 扫描到 ${files.length} 个 markdown 文件`);
 
 for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
@@ -138,7 +125,6 @@ for (const file of files.sort()) {
   console.log(`  ✅ ${file}: ${article.title}`);
 }
 
-// 按日期降序排序
 posts.sort((a, b) => {
   const dateA = new Date(a.date).getTime() || 0;
   const dateB = new Date(b.date).getTime() || 0;
@@ -149,7 +135,6 @@ rawPosts.sort((a, b) => {
   const dateB = new Date(b.frontmatter.date).getTime() || 0;
   return dateB - dateA;
 });
-// === 生成 RSS 2.0 ===
 function escapeXml(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
@@ -176,12 +161,10 @@ const MIME_MAP = {
 };
 
 function generateRssFeed(allPosts, allRawPosts) {
-  // 只包含非草稿、非锁定、非隐藏的文章
   const visible = allPosts.filter((p) => !p.draft && !p.locked);
   const lastBuildDate =
     visible.length > 0 ? toRfc822Date(visible[0].date) : new Date().toUTCString();
 
-  // slug -> body 映射
   const bodyMap = {};
   for (const rp of allRawPosts) {
     bodyMap[rp.slug] = rp.body;
@@ -202,14 +185,11 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
   for (const post of visible) {
-    // 文章 URL（详情页）
     const postUrl = SITE_URL + "details/article?id=" + encodeURIComponent(post.id);
 
-    // 正文：从 .md body 读取，用 marked 转成 HTML（RSS 阅读器需要 HTML）
     const rawBody = (bodyMap[post.id] || "").trim();
     const contentHtml = marked.parse(rawBody);
 
-    // 完整内容：封面图 + 摘要 + 正文（都是 HTML）
     let fullContent = "";
     if (post.image) {
       fullContent += '<p><img src="' + escapeXml(post.image) + '" alt="' + escapeXml(post.title) + '" /></p>';
@@ -229,10 +209,8 @@ function generateRssFeed(allPosts, allRawPosts) {
       lines.push("      <description>" + escapeXml(post.desc) + "</description>");
     }
 
-    // 全文内容（CDATA 包裹）
     lines.push("      <content:encoded><![CDATA[" + fullContent + "]]></content:encoded>");
 
-    // 封面图作为 media:content
     if (post.image) {
       const ext = (post.image.toLowerCase().match(/\.\w+$/) || [""])[0];
       const mime = MIME_MAP[ext] || "image/jpeg";
@@ -240,7 +218,6 @@ function generateRssFeed(allPosts, allRawPosts) {
       lines.push('      <media:thumbnail url="' + escapeXml(post.image) + '" />');
     }
 
-    // 分类和标签
     if (Array.isArray(post.category)) {
       for (const cat of post.category) {
         lines.push("      <category>" + escapeXml(cat) + "</category>");
@@ -252,7 +229,6 @@ function generateRssFeed(allPosts, allRawPosts) {
       }
     }
 
-    // 作者（用 dc:creator，不要求邮箱）
     if (post.author) {
       lines.push("      <dc:creator>" + escapeXml(post.author) + "</dc:creator>");
     }
@@ -265,9 +241,8 @@ function generateRssFeed(allPosts, allRawPosts) {
   return lines.join("\n") + "\n";
 }
 
-// 确保 docs/ 目录存在（GitHub Pages 服务目录）
 mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(RSS_OUTPUT, generateRssFeed(posts, rawPosts), "utf-8");
 const rssCount = posts.filter((p) => !p.draft && !p.locked).length;
-console.log(`✅ 生成 rss.xml: ${rssCount} 篇文章（RSS 2.0）`);
-console.log(`   输出: ${RSS_OUTPUT}`);
+console.log(`✅ 生成 rss.xm`);
+console.log(`输出: ${RSS_OUTPUT}`);
