@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "node clean-frontmatter.js",
     "generate": "node generate-posts.js",
-    "build": "node clean-frontmatter.js && node generate-posts.js"
+    "build": "node clean-frontmatter.js && node generate-posts.js && node generate-sitemap.js",
+    "sitemap": "node generate-sitemap.js"
   },
   "dependencies": {
     "marked": "^15.0.12"
