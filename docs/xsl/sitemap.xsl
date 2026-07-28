@@ -1,23 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
   public/xsl/sitemap.xsl
-  沫然Blog sitemap 可视化样式表（原创设计）
+  沫然Blog sitemap 可视化样式表
 
   功能：让浏览器打开 sitemap.xml 时渲染成可读的 HTML 表格，而非裸 XML。
   对爬虫无影响（爬虫忽略 <?xml-stylesheet?> 处理指令，只读 XML 节点）。
-
-  特性：
-  - 单文件兼顾 sitemapindex 和 urlset 两种文档类型（用 match 分别匹配）
-  - 响应式暗色/亮色双主题（跟随系统 prefers-color-scheme）
-  - 表格布局，窄屏可横向滚动
-  - 顶部 banner 说明用途
-  - lastmod 截取前 10 字符（YYYY-MM-DD），去掉时间部分
-  - <meta name="robots" content="noindex"> 防止样式表渲染的 HTML 被搜索引擎误收
-  - XSLT 1.0（浏览器只实现 1.0，不能用 2.0 语法）
-
-  注意：本文件在两个仓库各有一份（test2/public/xsl/ 和 blog-content/docs/xsl/），
-  因为 sitemap 会从 blog55.945426.xyz 和 raw-posts.945426.xyz 两个域名提供，
-  而 XSLT 受同源策略约束，跨域引用会被拒。改动时两边要同步。
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
