@@ -19,7 +19,7 @@
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9"
                 exclude-result-prefixes="sm">
-  <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes" doctype-system="about:legacy-compat" />
+  <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes" />
 
   <xsl:template match="/">
     <html lang="zh-CN">
