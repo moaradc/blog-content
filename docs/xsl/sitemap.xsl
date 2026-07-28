@@ -1,32 +1,36 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  docs/xsl/sitemap.xsl
+  public/xsl/sitemap.xsl
   沫然Blog sitemap 可视化样式表（原创设计）
 
   功能：让浏览器打开 sitemap.xml 时渲染成可读的 HTML 表格，而非裸 XML。
   对爬虫无影响（爬虫忽略 <?xml-stylesheet?> 处理指令，只读 XML 节点）。
 
   特性：
-  - 单文件兼顾 sitemapindex 和 urlset 两种文档类型
+  - 单文件兼顾 sitemapindex 和 urlset 两种文档类型（用 match 分别匹配）
   - 响应式暗色/亮色双主题（跟随系统 prefers-color-scheme）
   - 表格布局，窄屏可横向滚动
   - 顶部 banner 说明用途
   - lastmod 截取前 10 字符（YYYY-MM-DD），去掉时间部分
   - <meta name="robots" content="noindex"> 防止样式表渲染的 HTML 被搜索引擎误收
   - XSLT 1.0（浏览器只实现 1.0，不能用 2.0 语法）
+
+  注意：本文件在两个仓库各有一份（test2/public/xsl/ 和 blog-content/docs/xsl/），
+  因为 sitemap 会从 blog55.945426.xyz 和 raw-posts.945426.xyz 两个域名提供，
+  而 XSLT 受同源策略约束，跨域引用会被拒。改动时两边要同步。
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
-                xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9"
-                exclude-result-prefixes="sm">
-  <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes" />
+                xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
 
+  <!-- 根模板：输出 HTML 骨架，再 apply-templates 让 sitemapindex/urlset 模板填充 -->
   <xsl:template match="/">
     <html lang="zh-CN">
       <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="robots" content="noindex" />
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="robots" content="noindex"/>
         <title>Sitemap · 沫然Blog</title>
         <style>
           :root {
@@ -126,7 +130,6 @@
             font-family: 'SF Mono', 'Fira Code', 'Consolas', monospace;
             font-size: 0.85rem;
           }
-          td.empty { text-align: center; color: var(--fg-muted); padding: 2rem; }
           footer {
             margin-top: 1.5rem;
             text-align: center;
@@ -143,76 +146,76 @@
             <h1>🗺️ Sitemap</h1>
             <p class="subtitle">沫然Blog 的站点地图，列出所有可被搜索引擎抓取的 URL</p>
           </header>
-
-          <!-- sitemapindex 模式：分片索引 -->
-          <xsl:if test="/*/local-name() = 'sitemapindex'">
-            <div class="banner">
-              📂 这是一个 <strong>Sitemap 索引</strong>文件，包含 <strong><xsl:value-of select="count(//sm:sitemap)" /></strong> 个子 sitemap。
-              搜索引擎会分别抓取每个子 sitemap。
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>子 Sitemap 地址</th>
-                    <th>更新时间</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <xsl:for-each select="//sm:sitemap">
-                    <tr>
-                      <td class="num"><xsl:value-of select="position()" /></td>
-                      <td class="url">
-                        <a href="{sm:loc}"><xsl:value-of select="sm:loc" /></a>
-                      </td>
-                      <td class="date">
-                        <xsl:value-of select="substring(sm:lastmod, 1, 10)" />
-                      </td>
-                    </tr>
-                  </xsl:for-each>
-                </tbody>
-              </table>
-            </div>
-          </xsl:if>
-
-          <!-- urlset 模式：URL 列表 -->
-          <xsl:if test="/*/local-name() = 'urlset'">
-            <div class="banner">
-              📄 这个 Sitemap 包含 <strong><xsl:value-of select="count(//sm:url)" /></strong> 个 URL。
-              <a href="/">← 返回首页</a>
-            </div>
-            <div class="table-wrap">
-              <table>
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>URL</th>
-                    <th>最后修改</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <xsl:for-each select="//sm:url">
-                    <tr>
-                      <td class="num"><xsl:value-of select="position()" /></td>
-                      <td class="url">
-                        <a href="{sm:loc}"><xsl:value-of select="sm:loc" /></a>
-                      </td>
-                      <td class="date">
-                        <xsl:value-of select="substring(sm:lastmod, 1, 10)" />
-                      </td>
-                    </tr>
-                  </xsl:for-each>
-                </tbody>
-              </table>
-            </div>
-          </xsl:if>
-
+          <xsl:apply-templates/>
           <footer>
             <p>此页面由 <a href="https://github.com/moaradc/blog-content/blob/main/docs/xsl/sitemap.xsl">sitemap.xsl</a> 自动生成 · <a href="/">沫然Blog</a></p>
           </footer>
         </div>
       </body>
     </html>
+  </xsl:template>
+
+  <!-- sitemapindex 模式：分片索引 -->
+  <xsl:template match="sm:sitemapindex">
+    <div class="banner">
+      📂 这是一个 <strong>Sitemap 索引</strong>文件，包含 <strong><xsl:value-of select="count(sm:sitemap)"/></strong> 个子 sitemap。
+      搜索引擎会分别抓取每个子 sitemap。
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>子 Sitemap 地址</th>
+            <th>更新时间</th>
+          </tr>
+        </thead>
+        <tbody>
+          <xsl:for-each select="sm:sitemap">
+            <tr>
+              <td class="num"><xsl:value-of select="position()"/></td>
+              <td class="url">
+                <a href="{sm:loc}"><xsl:value-of select="sm:loc"/></a>
+              </td>
+              <td class="date">
+                <xsl:value-of select="substring(sm:lastmod, 1, 10)"/>
+              </td>
+            </tr>
+          </xsl:for-each>
+        </tbody>
+      </table>
+    </div>
+  </xsl:template>
+
+  <!-- urlset 模式：URL 列表 -->
+  <xsl:template match="sm:urlset">
+    <div class="banner">
+      📄 这个 Sitemap 包含 <strong><xsl:value-of select="count(sm:url)"/></strong> 个 URL。
+      <a href="/">← 返回首页</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>URL</th>
+            <th>最后修改</th>
+          </tr>
+        </thead>
+        <tbody>
+          <xsl:for-each select="sm:url">
+            <tr>
+              <td class="num"><xsl:value-of select="position()"/></td>
+              <td class="url">
+                <a href="{sm:loc}"><xsl:value-of select="sm:loc"/></a>
+              </td>
+              <td class="date">
+                <xsl:value-of select="substring(sm:lastmod, 1, 10)"/>
+              </td>
+            </tr>
+          </xsl:for-each>
+        </tbody>
+      </table>
+    </div>
   </xsl:template>
 </xsl:stylesheet>
