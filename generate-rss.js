@@ -185,7 +185,7 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
   for (const post of visible) {
-    const postUrl = SITE_URL + "details/article?id=" + encodeURIComponent(post.id);
+    const postUrl = SITE_URL + "posts/" + encodeURIComponent(post.id);
 
     const rawBody = (bodyMap[post.id] || "").trim();
     const contentHtml = marked.parse(rawBody);

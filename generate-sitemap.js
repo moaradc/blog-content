@@ -156,7 +156,7 @@ console.log(`\n📊 可见文章: ${posts.length} 篇`);
 
 // === 构造文章 URL 列表 ===
 const articleUrls = posts.map((p) => ({
-  loc: `${SITE_URL_BASE}/details/article?id=${encodeURIComponent(p.id)}`,
+  loc: `${SITE_URL_BASE}/posts/${encodeURIComponent(p.id)}`,
   lastmod: p.lastmod,
 }));
 
