@@ -6,12 +6,10 @@
 // 4. 确保 frontmatter 和 body 之间有空行
 // 5. 把 /img/ 相对路径替换为绝对 URL（SITE_URL 环境变量）
 //    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
-// 6. 把 YAML 块状列表规范化为 inline JSON 数组：
-//      category:
-//        - Demo
-//        - 杂项
-//    转为：
-//      category: ["Demo", "杂项"]
+//
+// 注意：YAML 块状列表格式化逻辑（normalizeField）已移除。
+// PagesCMS 写回的 frontmatter 字段如果以 inline JSON 数组形式（category: ["A","B"]）
+// 或单值形式（category: A）保存，本脚本不再改写其格式，只做过滤、排序、路径替换。
 //
 // 用法:
 //   全量:    SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
@@ -130,42 +128,6 @@ function getFieldValue(field) {
   return val.replace(/^['"]|['"]$/g, "");
 }
 
-/**
- * 把 YAML 块状列表规范化为 inline JSON 数组：
- *   category:
- *     - Demo
- *     - 杂项
- * 转为：
- *   category: ["Demo", "杂项"]
- *
- * - 仅处理首行形如 `key:` 或 `key: ` 的字段
- * - 后续行必须全部是 `  - xxx` 列表项，否则保持原样不动
- * - 列表项若已被引号包裹，先剥掉外层引号再用双引号重新包裹
- * - 内部双引号会被转义为 \"
- */
-function normalizeField(field) {
-  if (field.rawLines.length <= 1) return field;
-  const firstLine = field.rawLines[0];
-  const m = firstLine.match(/^(\w[\w_-]*):\s*$/);
-  if (!m) return field;
-  const key = m[1];
-
-  const items = [];
-  for (let i = 1; i < field.rawLines.length; i++) {
-    const line = field.rawLines[i];
-    const im = line.match(/^\s+-\s+(.+?)\s*$/);
-    if (!im) return field; // 不是标准列表项，原样返回不冒险
-    let item = im[1];
-    // 剥掉外层单/双引号
-    item = item.replace(/^['"]|['"]$/g, "");
-    // 转义内部双引号
-    item = item.replace(/"/g, '\\"');
-    items.push(`"${item}"`);
-  }
-  if (items.length === 0) return field;
-  return { key, rawLines: [`${key}: [${items.join(", ")}]`] };
-}
-
 /** 处理单个 md 文件 */
 function cleanFile(filePath) {
   const raw = readFileSync(filePath, "utf-8");
@@ -192,10 +154,8 @@ function cleanFile(filePath) {
     cleanedFields.push(field);
   }
 
-  // 把 YAML 块状列表规范化为 inline JSON 数组
-  const normalizedFields = cleanedFields.map(normalizeField);
-
-  // 按指定顺序排序
+  // 按指定顺序排序（注意：已不再做块状列表 → inline 数组的格式转换）
+  const normalizedFields = cleanedFields;
   normalizedFields.sort((a, b) => {
     const ia = FIELD_ORDER.indexOf(a.key);
     const ib = FIELD_ORDER.indexOf(b.key);
