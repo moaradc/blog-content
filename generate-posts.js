@@ -21,13 +21,14 @@
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
 const { join } = require("path");
+const site = require("./site");
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const DOCS_DIR = join(__dirname, "docs");
 const POSTS_OUTPUT = join(DOCS_DIR, "posts.json");
 
 // 每页文章数（前端按页拉取 posts-{n}.json）
-const PER_PAGE = 16;
+const PER_PAGE = site.perPage;
 
 /** 解析类 YAML frontmatter 为对象 */
 function parseFrontmatter(fm) {

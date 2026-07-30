@@ -4,15 +4,11 @@
 // 2. 移除空字符串字段（type: ""）
 // 3. 重排字段顺序：title, date, last_modified, author, category, tags, desc, type, image, coverImage, content_url, pinned, locked, draft
 // 4. 确保 frontmatter 和 body 之间有空行
-// 5. 把 /img/ 相对路径替换为绝对 URL（SITE_URL 环境变量）
+// 5. 把 /img/ 相对路径替换为绝对 URL（site.siteUrl）
 //    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
 //
-// 注意：YAML 块状列表格式化逻辑（normalizeField）已移除。
-// PagesCMS 写回的 frontmatter 字段如果以 inline JSON 数组形式（category: ["A","B"]）
-// 或单值形式（category: A）保存，本脚本不再改写其格式，只做过滤、排序、路径替换。
-//
 // 用法:
-//   全量:    SITE_URL=https://cdn.jsdelivr.net/gh/moaradc/blog-content@main node clean-frontmatter.js
+//   全量:    node clean-frontmatter.js
 //   增量:    node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
 //            ↑ 只清理指定文件，不传则全量清理
 //
@@ -20,9 +16,10 @@
 
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const { join } = require("path");
+const site = require("./site");
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
-const SITE_URL = process.env.SITE_URL || "";
+const SITE_URL = site.siteUrl || "";
 
 /**
  * 把 /img/ 或 img/ 相对路径替换为绝对 URL
@@ -154,9 +151,8 @@ function cleanFile(filePath) {
     cleanedFields.push(field);
   }
 
-  // 按指定顺序排序（注意：已不再做块状列表 → inline 数组的格式转换）
-  const normalizedFields = cleanedFields;
-  normalizedFields.sort((a, b) => {
+  // 按指定顺序排序
+  cleanedFields.sort((a, b) => {
     const ia = FIELD_ORDER.indexOf(a.key);
     const ib = FIELD_ORDER.indexOf(b.key);
     if (ia === -1 && ib === -1) return 0;
@@ -166,7 +162,7 @@ function cleanFile(filePath) {
   });
 
   // 重建 frontmatter
-  const fmLines = normalizedFields.flatMap((f) => f.rawLines);
+  const fmLines = cleanedFields.flatMap((f) => f.rawLines);
   const newFm = "---\n" + fmLines.join("\n") + "\n---";
 
   // body 确保以单个空行开头（移除开头多余空行）

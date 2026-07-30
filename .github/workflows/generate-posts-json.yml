@@ -1,7 +1,7 @@
 name: Generate posts.json
 
 # 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
-# 自动生成 posts.json + 分页 + sitemap.xml + SEO 静态页，不需要手动触发
+# 自动生成 posts.json + 分页 + sitemap.xml，不需要手动触发
 #
 # 性能优化：
 #   - clean-frontmatter.js 增量执行：只清理本次 push 涉及的 .md 文件
@@ -11,10 +11,11 @@ name: Generate posts.json
 # 流水线顺序（关键，不能乱）：
 #   1. clean-frontmatter.js  (增量清理 frontmatter + 替换 /img/ → 绝对 URL)
 #   2. generate-posts.js     (全量生成 posts.json + posts-{n}.json 分页)
-#   3. generate-sitemap.js   (基于 posts.json 生成 sitemap.xml + SEO 静态页)
+#   3. generate-sitemap.js   (基于 posts.json 生成 sitemap.xml)
 #
 # 注：generate-sitemap.yml 已合并到本工作流，已删除。
 #     sitemap 不再独立扫描 .md，而是消费 posts.json，避免重复解析 + 保证顺序一致。
+# 配置统一从 site.js 读取；如需覆盖，设置环境变量 BLOG_URL / SITE_URL（仓库 Variables）。
 on:
   push:
     branches: [main]
@@ -23,6 +24,7 @@ on:
       - "generate-posts.js"
       - "generate-sitemap.js"
       - "clean-frontmatter.js"
+      - "site.js"
       - ".github/workflows/generate-posts-json.yml"
   workflow_dispatch:
 
@@ -89,6 +91,7 @@ jobs:
       - name: Clean frontmatter (incremental or full)
         env:
           SITE_URL: ${{ vars.SITE_URL }}
+          BLOG_URL: ${{ vars.BLOG_URL }}
           CHANGED_FILES: ${{ steps.changed.outputs.files }}
           INCREMENTAL: ${{ steps.changed.outputs.incremental }}
         run: |
@@ -104,12 +107,15 @@ jobs:
           fi
 
       - name: Generate posts.json + pagination
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-posts.js
 
-      - name: Generate sitemap.xml + SEO pages
+      - name: Generate sitemap.xml
         env:
-          BLOG_URL: ${{ vars.BLOG_URL }}
           SITE_URL: ${{ vars.SITE_URL }}
+          BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-sitemap.js
 
       - name: Commit and push if changed

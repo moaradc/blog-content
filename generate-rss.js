@@ -16,14 +16,15 @@ try {
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
-// RSS 站点配置
-const SITE_URL = process.env.BLOG_URL || "https://blog.945426.xyz/";
-const SITE_URL_BASE = SITE_URL.replace(/\/$/, "");
-const RSS_SELF_URL = SITE_URL_BASE + "/rss.xml";
-const SITE_TITLE = "沫然Blog";
-const SITE_DESC = "极简博客";
-const AUTHOR_NAME = "沫然";
-const AUTHOR_EMAIL = "moara@foxmail.com";
+// 站点配置单一来源（./site.js）；环境变量优先级在该文件内处理
+const site = require("./site");
+const SITE_URL = site.blogUrl;                        // RSS channel link 指向主站
+const SITE_URL_BASE = site.blogUrlBase;
+const RSS_SELF_URL = site.rssSelfUrl;
+const SITE_TITLE = site.title;
+const SITE_DESC = site.description;
+const AUTHOR_NAME = site.author.name;
+const AUTHOR_EMAIL = site.author.email;
 
 function parseFrontmatter(fm) {
   const lines = fm.split("\n");
