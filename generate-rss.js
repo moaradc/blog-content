@@ -94,9 +94,12 @@ const files = readdirSync(POSTS_DIR).filter(
 
 for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
-  const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
 
+  if (frontmatter.locked === true) continue;
+  if (frontmatter.draft === true) continue;
+
+  const slug = file.replace(/\.md$/, "");
   const article = {
     id: slug,
     title: frontmatter.title || "",
@@ -161,9 +164,8 @@ const MIME_MAP = {
 };
 
 function generateRssFeed(allPosts, allRawPosts) {
-  const visible = allPosts.filter((p) => !p.draft && !p.locked);
   const lastBuildDate =
-    visible.length > 0 ? toRfc822Date(visible[0].date) : new Date().toUTCString();
+    allPosts.length > 0 ? toRfc822Date(allPosts[0].date) : new Date().toUTCString();
 
   const bodyMap = {};
   for (const rp of allRawPosts) {
@@ -184,7 +186,7 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <managingEditor>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</managingEditor>");
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
-  for (const post of visible) {
+  for (const post of allPosts) {
     const postUrl = SITE_URL + "posts/" + encodeURIComponent(post.id);
 
     const rawBody = (bodyMap[post.id] || "").trim();
