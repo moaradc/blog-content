@@ -115,9 +115,6 @@ for (const file of files.sort()) {
   if (frontmatter.image) article.image = frontmatter.image;
   if (frontmatter.coverImage) article.image = frontmatter.coverImage;
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
-  if (frontmatter.locked === true) article.locked = true;
-  if (frontmatter.pinned === true) article.pinned = true;
-  if (frontmatter.draft === true) article.draft = true;
 
   if (frontmatter.type === "note" && body && body.trim()) {
     article.content = body.trim();
@@ -245,6 +242,5 @@ function generateRssFeed(allPosts, allRawPosts) {
 
 mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(RSS_OUTPUT, generateRssFeed(posts, rawPosts), "utf-8");
-const rssCount = posts.filter((p) => !p.draft && !p.locked).length;
 console.log(`✅ 生成 rss.xm`);
 console.log(`输出: ${RSS_OUTPUT}`);
