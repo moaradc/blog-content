@@ -122,7 +122,6 @@ for (const file of files.sort()) {
 
   posts.push(article);
   rawPosts.push({ slug, body, frontmatter });
-  console.log(`  ✅ ${file}: ${article.title}`);
 }
 
 posts.sort((a, b) => {
