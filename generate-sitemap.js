@@ -21,8 +21,8 @@ const POSTS_DIR = join(__dirname, "docs", "posts");
 const DOCS_DIR = join(__dirname, "docs");
 const SITEMAP_OUTPUT = join(DOCS_DIR, "sitemap.xml");
 
-// 站点配置（与 generate-rss.js 一致）
-const SITE_URL = "https://blog.945426.xyz";
+// 站点配置（与 generate-rss.js 一致，共用 BLOG_URL 环境变量）
+const SITE_URL = process.env.BLOG_URL || "https://blog.945426.xyz";
 const SITE_URL_BASE = SITE_URL.replace(/\/$/, "");
 
 // 单个 sitemap 文件 URL 上限（协议上限 50000，保守用 10000）

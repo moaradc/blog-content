@@ -105,3 +105,6 @@ blog-content/
 - `SITE_URL` GitHub Actions 变量：`https://raw-posts.945426.xyz`
   - 用于 `clean-frontmatter.js` 把 `/img/` 替换为绝对 URL
   - 修改此变量即可切换 CDN 域名
+- `BLOG_URL` GitHub Actions 变量：`https://blog.945426.xyz`
+  - 用于 `generate-rss.js` / `generate-sitemap.js` 生成站点和文章 URL
+  - 修改此变量即可切换博客主站域名（RSS 的 self link 也自动派生）

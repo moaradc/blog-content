@@ -17,10 +17,11 @@ const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
 // RSS 站点配置
-const SITE_URL = "https://blog.945426.xyz/";
+const SITE_URL = process.env.BLOG_URL || "https://blog.945426.xyz/";
+const SITE_URL_BASE = SITE_URL.replace(/\/$/, "");
+const RSS_SELF_URL = SITE_URL_BASE + "/rss.xml";
 const SITE_TITLE = "沫然Blog";
 const SITE_DESC = "极简博客";
-const RSS_SELF_URL = "https://blog.945426.xyz/rss.xml";
 const AUTHOR_NAME = "沫然";
 const AUTHOR_EMAIL = "moara@foxmail.com";
 
