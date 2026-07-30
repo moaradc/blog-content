@@ -17,10 +17,11 @@ const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
 // RSS 站点配置
-const SITE_URL = "https://blog55.945426.xyz/";
+const SITE_URL = process.env.BLOG_URL || "https://blog.945426.xyz/";
+const SITE_URL_BASE = SITE_URL.replace(/\/$/, "");
+const RSS_SELF_URL = SITE_URL_BASE + "/rss.xml";
 const SITE_TITLE = "沫然Blog";
 const SITE_DESC = "极简博客";
-const RSS_SELF_URL = "https://blog55.945426.xyz/rss.xml";
 const AUTHOR_NAME = "沫然";
 const AUTHOR_EMAIL = "moara@foxmail.com";
 
@@ -94,9 +95,12 @@ const files = readdirSync(POSTS_DIR).filter(
 
 for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
-  const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
 
+  if (frontmatter.locked === true) continue;
+  if (frontmatter.draft === true) continue;
+
+  const slug = file.replace(/\.md$/, "");
   const article = {
     id: slug,
     title: frontmatter.title || "",
@@ -112,9 +116,6 @@ for (const file of files.sort()) {
   if (frontmatter.image) article.image = frontmatter.image;
   if (frontmatter.coverImage) article.image = frontmatter.coverImage;
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
-  if (frontmatter.locked === true) article.locked = true;
-  if (frontmatter.pinned === true) article.pinned = true;
-  if (frontmatter.draft === true) article.draft = true;
 
   if (frontmatter.type === "note" && body && body.trim()) {
     article.content = body.trim();
@@ -122,7 +123,6 @@ for (const file of files.sort()) {
 
   posts.push(article);
   rawPosts.push({ slug, body, frontmatter });
-  console.log(`  ✅ ${file}: ${article.title}`);
 }
 
 posts.sort((a, b) => {
@@ -161,9 +161,8 @@ const MIME_MAP = {
 };
 
 function generateRssFeed(allPosts, allRawPosts) {
-  const visible = allPosts.filter((p) => !p.draft && !p.locked);
   const lastBuildDate =
-    visible.length > 0 ? toRfc822Date(visible[0].date) : new Date().toUTCString();
+    allPosts.length > 0 ? toRfc822Date(allPosts[0].date) : new Date().toUTCString();
 
   const bodyMap = {};
   for (const rp of allRawPosts) {
@@ -184,7 +183,7 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <managingEditor>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</managingEditor>");
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
-  for (const post of visible) {
+  for (const post of allPosts) {
     const postUrl = SITE_URL + "posts/" + encodeURIComponent(post.id);
 
     const rawBody = (bodyMap[post.id] || "").trim();
@@ -243,6 +242,5 @@ function generateRssFeed(allPosts, allRawPosts) {
 
 mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(RSS_OUTPUT, generateRssFeed(posts, rawPosts), "utf-8");
-const rssCount = posts.filter((p) => !p.draft && !p.locked).length;
 console.log(`✅ 生成 rss.xm`);
 console.log(`输出: ${RSS_OUTPUT}`);

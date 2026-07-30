@@ -32,6 +32,8 @@ jobs:
         run: npm ci
 
       - name: Generate rss.xml
+        env:
+          BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-rss.js
 
       - name: Commit and push if changed

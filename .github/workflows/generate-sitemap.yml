@@ -45,6 +45,8 @@ jobs:
         run: npm ci
 
       - name: Generate sitemap.xml
+        env:
+          BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-sitemap.js
 
       - name: Commit and push if changed

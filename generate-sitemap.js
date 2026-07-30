@@ -21,8 +21,8 @@ const POSTS_DIR = join(__dirname, "docs", "posts");
 const DOCS_DIR = join(__dirname, "docs");
 const SITEMAP_OUTPUT = join(DOCS_DIR, "sitemap.xml");
 
-// 站点配置（与 generate-rss.js 一致）
-const SITE_URL = "https://blog55.945426.xyz";
+// 站点配置（与 generate-rss.js 一致，共用 BLOG_URL 环境变量）
+const SITE_URL = process.env.BLOG_URL || "https://blog.945426.xyz";
 const SITE_URL_BASE = SITE_URL.replace(/\/$/, "");
 
 // 单个 sitemap 文件 URL 上限（协议上限 50000，保守用 10000）
@@ -117,23 +117,14 @@ const files = readdirSync(POSTS_DIR).filter(
   (f) => f.endsWith(".md") && f !== "README.md"
 );
 
-console.log(`📄 扫描到 ${files.length} 个 markdown 文件`);
-
 const posts = [];
 for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
   const slug = file.replace(/\.md$/, "");
   const { frontmatter } = parseMarkdown(raw);
 
-  // 跳过 locked / draft（与 generate-posts.js 一致）
-  if (frontmatter.locked === true) {
-    console.log(`  🔒 ${file}: locked，跳过`);
-    continue;
-  }
-  if (frontmatter.draft === true) {
-    console.log(`  📝 ${file}: draft，跳过`);
-    continue;
-  }
+  if (frontmatter.locked === true) continue;
+  if (frontmatter.draft === true) continue;
 
   const lastmod = toDateOnly(frontmatter.last_modified || frontmatter.date);
   posts.push({
@@ -141,7 +132,6 @@ for (const file of files.sort()) {
     title: frontmatter.title || slug,
     lastmod,
   });
-  console.log(`  ✅ ${file}: ${frontmatter.title || slug}`);
 }
 
 // 按 date 降序（与 posts.json 排序一致，最新的在前）
@@ -151,8 +141,6 @@ posts.sort((a, b) => {
   const db = b.lastmod ? new Date(b.lastmod).getTime() : 0;
   return db - da;
 });
-
-console.log(`\n📊 可见文章: ${posts.length} 篇`);
 
 // === 构造文章 URL 列表 ===
 const articleUrls = posts.map((p) => ({
@@ -181,8 +169,6 @@ function renderSitemapIndex(shards) {
 if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
   // === 单文件 urlset ===
   writeFileSync(SITEMAP_OUTPUT, renderUrlSet(articleUrls), "utf-8");
-  console.log(`\n✅ 生成 sitemap.xml（单文件 urlset，${articleUrls.length} 个 URL）`);
-  console.log(`   输出: ${SITEMAP_OUTPUT}`);
 } else {
   // === 分片：主 sitemap 是 sitemapindex，分片文件是 urlset ===
   const shardCount = Math.ceil(articleUrls.length / SITEMAP_SHARD_SIZE);
@@ -194,7 +180,6 @@ if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
     shardFiles.push({
       loc: `${SITE_URL_BASE}/sitemap-${i}.xml`,
     });
-    console.log(`   生成分片: sitemap-${i}.xml (${shardUrls.length} URL)`);
   }
 
   // 清理可能存在的多余分片文件（文章减少时）
@@ -204,7 +189,6 @@ if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
     if (idx >= shardCount) {
       try {
         unlinkSync(join(DOCS_DIR, f));
-        console.log(`   🗑️  清理过期分片: ${f}`);
       } catch (e) {
         console.warn(`   ⚠️  清理 ${f} 失败: ${e.message}`);
       }
@@ -212,6 +196,4 @@ if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
   }
 
   writeFileSync(SITEMAP_OUTPUT, renderSitemapIndex(shardFiles), "utf-8");
-  console.log(`\n✅ 生成 sitemap.xml（sitemapindex，${shardCount} 个分片，共 ${articleUrls.length} 个 URL）`);
-  console.log(`   输出: ${SITEMAP_OUTPUT}`);
 }
