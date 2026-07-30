@@ -125,24 +125,19 @@ for (const file of files.sort()) {
   const slug = file.replace(/\.md$/, "");
   const { frontmatter } = parseMarkdown(raw);
 
-  // 跳过 locked / draft（与 generate-posts.js 一致）
-  if (frontmatter.locked === true) {
-    console.log(`  🔒 ${file}: locked，跳过`);
-    continue;
-  }
-  if (frontmatter.draft === true) {
-    console.log(`  📝 ${file}: draft，跳过`);
-    continue;
-  }
-
   const lastmod = toDateOnly(frontmatter.last_modified || frontmatter.date);
   posts.push({
     id: slug,
     title: frontmatter.title || slug,
     lastmod,
+    locked: frontmatter.locked === true,
+    draft: frontmatter.draft === true,
   });
   console.log(`  ✅ ${file}: ${frontmatter.title || slug}`);
 }
+
+// 过滤 locked / draft（与 generate-rss.js 风格一致：先全收，再统一筛）
+const visible = posts.filter((p) => !p.draft && !p.locked);
 
 // 按 date 降序（与 posts.json 排序一致，最新的在前）
 // 注意：这里没有 date 字段，用 lastmod 兜底排序
