@@ -5,11 +5,24 @@
     <link>https://blog.945426.xyz/</link>
     <description>极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sat, 25 Jul 2026 17:33:00 GMT</lastBuildDate>
-    <generator>generate-posts.js (PagesCMS)</generator>
+    <lastBuildDate>Fri, 31 Jul 2026 08:09:00 GMT</lastBuildDate>
+    <generator>generate-rss.js (PagesCMS)</generator>
     <atom:link href="https://blog.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>test2</title>
+      <link>https://blog.945426.xyz/posts/test2</link>
+      <guid isPermaLink="false">test2</guid>
+      <pubDate>Fri, 31 Jul 2026 08:09:00 GMT</pubDate>
+      <description>test22</description>
+      <content:encoded><![CDATA[<p>test22</p><p>test2</p>
+]]></content:encoded>
+      <category>Demo</category>
+      <category>杂项</category>
+      <category>Demo</category>
+      <dc:creator>Admin</dc:creator>
+    </item>
     <item>
       <title>test</title>
       <link>https://blog.945426.xyz/posts/test</link>

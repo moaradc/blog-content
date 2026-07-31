@@ -1,10 +1,11 @@
 // generate-rss.js
-// 扫描 posts/*.md，生成 RSS 2.0 订阅（rss.xml）
+// 扫描 docs/posts/*.md，生成 RSS 2.0 订阅（docs/rss.xml）。
+// 用法: node generate-rss.js
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
+const site = require("./site");
 
-// marked 用于把 markdown body 转 HTML（RSS content:encoded 需要 HTML）
 let marked;
 try {
   ({ marked } = require("marked"));
@@ -16,45 +17,35 @@ try {
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
-// 站点配置单一来源（./site.js）；环境变量优先级在该文件内处理
-const site = require("./site");
-const SITE_URL = site.blogUrl;                        // RSS channel link 指向主站
-const SITE_URL_BASE = site.blogUrlBase;
+const SITE_URL = site.blogUrl;            // RSS channel link 指向主站
 const RSS_SELF_URL = site.rssSelfUrl;
 const SITE_TITLE = site.title;
 const SITE_DESC = site.description;
 const AUTHOR_NAME = site.author.name;
 const AUTHOR_EMAIL = site.author.email;
 
+/** 解析类 YAML frontmatter（支持 inline 数组 + 块状列表） */
 function parseFrontmatter(fm) {
-  const lines = fm.split("\n");
   const result = {};
   let currentKey = null;
   let currentList = [];
 
-  for (const line of lines) {
+  for (const line of fm.split("\n")) {
     const kvMatch = line.match(/^(\w[\w_-]*):\s*(.*)$/);
     if (kvMatch) {
-      if (currentKey && currentList.length) {
-        result[currentKey] = [...currentList];
-        currentList = [];
-      }
+      if (currentKey && currentList.length) result[currentKey] = [...currentList];
       currentKey = kvMatch[1];
       const val = kvMatch[2].trim();
       if (val === "") {
         currentList = [];
       } else if (val.startsWith("[")) {
         result[currentKey] = val
-          .slice(1, -1)
-          .split(",")
+          .slice(1, -1).split(",")
           .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
           .filter(Boolean);
         currentKey = null;
-      } else if (val === "true") {
-        result[currentKey] = true;
-        currentKey = null;
-      } else if (val === "false") {
-        result[currentKey] = false;
+      } else if (val === "true" || val === "false") {
+        result[currentKey] = val === "true";
         currentKey = null;
       } else {
         result[currentKey] = val.replace(/^['"]|['"]$/g, "");
@@ -67,21 +58,32 @@ function parseFrontmatter(fm) {
       currentList.push(liMatch[1].trim().replace(/^['"]|['"]$/g, ""));
     }
   }
-  if (currentKey && currentList.length) {
-    result[currentKey] = [...currentList];
-  }
+  if (currentKey && currentList.length) result[currentKey] = [...currentList];
   return result;
 }
 
 function parseMarkdown(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
-  if (!match) {
-    return { frontmatter: {}, body: raw };
-  }
-  const frontmatter = parseFrontmatter(match[1]);
-  const body = raw.slice(match[0].length);
-  return { frontmatter, body };
+  if (!match) return { frontmatter: {}, body: raw };
+  return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
 }
+
+function escapeXml(s) {
+  return String(s == null ? "" : s)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+}
+
+function toRfc822Date(dateStr) {
+  if (!dateStr) return new Date().toUTCString();
+  const d = new Date(dateStr);
+  return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString();
+}
+
+const MIME_MAP = {
+  ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".png": "image/png",
+  ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml", ".bmp": "image/bmp",
+};
 
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
@@ -90,12 +92,11 @@ if (!existsSync(POSTS_DIR)) {
 
 const posts = [];
 const rawPosts = [];
-const files = readdirSync(POSTS_DIR).filter(
-  (f) => f.endsWith(".md") && f !== "README.md"
-);
+const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 
 for (const file of files.sort()) {
-  const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
+  // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致
+  const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
   const { frontmatter, body } = parseMarkdown(raw);
 
   if (frontmatter.locked === true) continue;
@@ -136,39 +137,13 @@ rawPosts.sort((a, b) => {
   const dateB = new Date(b.frontmatter.date).getTime() || 0;
   return dateB - dateA;
 });
-function escapeXml(s) {
-  return String(s == null ? "" : s)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&apos;");
-}
-
-function toRfc822Date(dateStr) {
-  if (!dateStr) return new Date().toUTCString();
-  const d = new Date(dateStr);
-  return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString();
-}
-
-const MIME_MAP = {
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".png": "image/png",
-  ".gif": "image/gif",
-  ".webp": "image/webp",
-  ".svg": "image/svg+xml",
-  ".bmp": "image/bmp",
-};
 
 function generateRssFeed(allPosts, allRawPosts) {
   const lastBuildDate =
     allPosts.length > 0 ? toRfc822Date(allPosts[0].date) : new Date().toUTCString();
 
   const bodyMap = {};
-  for (const rp of allRawPosts) {
-    bodyMap[rp.slug] = rp.body;
-  }
+  for (const rp of allRawPosts) bodyMap[rp.slug] = rp.body;
 
   const lines = [];
   lines.push('<?xml version="1.0" encoding="utf-8"?>');
@@ -179,20 +154,23 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <description>" + escapeXml(SITE_DESC) + "</description>");
   lines.push("    <language>zh-CN</language>");
   lines.push("    <lastBuildDate>" + lastBuildDate + "</lastBuildDate>");
-  lines.push("    <generator>generate-posts.js (PagesCMS)</generator>");
+  lines.push("    <generator>generate-rss.js (PagesCMS)</generator>");
   lines.push('    <atom:link href="' + escapeXml(RSS_SELF_URL) + '" rel="self" type="application/rss+xml"/>');
   lines.push("    <managingEditor>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</managingEditor>");
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
   for (const post of allPosts) {
-    const postUrl = SITE_URL + "posts/" + encodeURIComponent(post.id);
+    // 文章 URL：主站 + /posts/<id>
+    const postUrl = site.absUrl("posts/" + encodeURIComponent(post.id), site.blogUrl);
 
     const rawBody = (bodyMap[post.id] || "").trim();
     const contentHtml = marked.parse(rawBody);
 
     let fullContent = "";
     if (post.image) {
-      fullContent += '<p><img src="' + escapeXml(post.image) + '" alt="' + escapeXml(post.title) + '" /></p>';
+      // 封面图 URL：若是 /img/ 相对路径，转绝对指向 raw-posts CDN
+      const imageUrl = site.absUrl(post.image);
+      fullContent += '<p><img src="' + escapeXml(imageUrl) + '" alt="' + escapeXml(post.title) + '" /></p>';
     }
     if (post.desc) {
       fullContent += "<p>" + escapeXml(post.desc) + "</p>";
@@ -212,10 +190,11 @@ function generateRssFeed(allPosts, allRawPosts) {
     lines.push("      <content:encoded><![CDATA[" + fullContent + "]]></content:encoded>");
 
     if (post.image) {
-      const ext = (post.image.toLowerCase().match(/\.\w+$/) || [""])[0];
+      const imageUrl = site.absUrl(post.image);
+      const ext = (imageUrl.toLowerCase().match(/\.\w+$/) || [""])[0];
       const mime = MIME_MAP[ext] || "image/jpeg";
-      lines.push('      <media:content url="' + escapeXml(post.image) + '" type="' + mime + '" medium="image" />');
-      lines.push('      <media:thumbnail url="' + escapeXml(post.image) + '" />');
+      lines.push('      <media:content url="' + escapeXml(imageUrl) + '" type="' + mime + '" medium="image" />');
+      lines.push('      <media:thumbnail url="' + escapeXml(imageUrl) + '" />');
     }
 
     if (Array.isArray(post.category)) {
@@ -243,5 +222,5 @@ function generateRssFeed(allPosts, allRawPosts) {
 
 mkdirSync(join(__dirname, "docs"), { recursive: true });
 writeFileSync(RSS_OUTPUT, generateRssFeed(posts, rawPosts), "utf-8");
-console.log(`✅ 生成 rss.xm`);
-console.log(`输出: ${RSS_OUTPUT}`);
+console.log(`✅ 生成 rss.xml`);
+console.log(`   输出: ${RSS_OUTPUT}`);

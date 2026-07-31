@@ -1,21 +1,13 @@
 // generate-posts.js
-// 扫描 posts/*.md，提取 frontmatter + body，生成 posts.json（索引对象）+ posts-{n}.json（分页文件）
-// 输出结构匹配 moaradc/test2 项目的 articlesData 格式，并兼容 afoim/eleventy-blog-pagescms 的分页索引约定
-// push 触发（GitHub Action push to main）
+// 扫描 docs/posts/*.md，生成 posts.json（索引对象）+ posts-{n}.json（分页文件）。
 //
 // 关键逻辑：
 //   - id 从文件名获取（如 102.md → id: "102"），不从 frontmatter 读
-//   - content 只在 type=note 时写入（列表页直接渲染说说）
-//   - 普通文章不含 content（详情页 fetch .md 解析）
-//   - locked: true 的文章直接跳过（不进任何输出）
-//   - draft: true 的文章不进 visible 集合（不出现在 posts.json.posts 和 posts-{n}.json 中）
-//   - 排序：pinned 优先，再按 date 降序（用 new Date(date).getTime() 兼容多种日期格式）
-//
-// 输出：
-//   docs/posts.json       索引对象  { generatedAt, perPage, total, pageCount, posts: visibleSorted }
-//   docs/posts-{n}.json   分页文件  { page, perPage, total, pageCount, posts: slice }
-//                          n 从 0 起，到 pageCount-1；每页 perPage=16 篇
-//   当 pageCount 缩小时，自动清理多余的 posts-{n}.json 文件
+//   - type=note 时 body 内联进 posts.content（列表页直接渲染说说）
+//   - locked: true 整篇跳过（不进任何输出）
+//   - draft: true 不进 visible 集合（不出现在 posts.json.posts 和分页中）
+//   - 排序：pinned 优先，再按 date 降序
+//   - 当 pageCount 缩小时，自动清理多余的 posts-{n}.json
 //
 // 用法: node generate-posts.js
 
@@ -26,40 +18,30 @@ const site = require("./site");
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const DOCS_DIR = join(__dirname, "docs");
 const POSTS_OUTPUT = join(DOCS_DIR, "posts.json");
-
-// 每页文章数（前端按页拉取 posts-{n}.json）
 const PER_PAGE = site.perPage;
 
-/** 解析类 YAML frontmatter 为对象 */
+/** 解析类 YAML frontmatter 为对象（支持 inline 数组 + 块状列表） */
 function parseFrontmatter(fm) {
-  const lines = fm.split("\n");
   const result = {};
   let currentKey = null;
   let currentList = [];
 
-  for (const line of lines) {
+  for (const line of fm.split("\n")) {
     const kvMatch = line.match(/^(\w[\w_-]*):\s*(.*)$/);
     if (kvMatch) {
-      if (currentKey && currentList.length) {
-        result[currentKey] = [...currentList];
-        currentList = [];
-      }
+      if (currentKey && currentList.length) result[currentKey] = [...currentList];
       currentKey = kvMatch[1];
       const val = kvMatch[2].trim();
       if (val === "") {
         currentList = [];
       } else if (val.startsWith("[")) {
         result[currentKey] = val
-          .slice(1, -1)
-          .split(",")
+          .slice(1, -1).split(",")
           .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
           .filter(Boolean);
         currentKey = null;
-      } else if (val === "true") {
-        result[currentKey] = true;
-        currentKey = null;
-      } else if (val === "false") {
-        result[currentKey] = false;
+      } else if (val === "true" || val === "false") {
+        result[currentKey] = val === "true";
         currentKey = null;
       } else {
         result[currentKey] = val.replace(/^['"]|['"]$/g, "");
@@ -72,43 +54,33 @@ function parseFrontmatter(fm) {
       currentList.push(liMatch[1].trim().replace(/^['"]|['"]$/g, ""));
     }
   }
-  if (currentKey && currentList.length) {
-    result[currentKey] = [...currentList];
-  }
+  if (currentKey && currentList.length) result[currentKey] = [...currentList];
   return result;
 }
 
-/** 从 markdown 提取 frontmatter 和 body */
 function parseMarkdown(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
-  if (!match) {
-    return { frontmatter: {}, body: raw };
-  }
-  const frontmatter = parseFrontmatter(match[1]);
-  const body = raw.slice(match[0].length);
-  return { frontmatter, body };
+  if (!match) return { frontmatter: {}, body: raw };
+  return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
 }
 
-// === 主逻辑：扫描文章 ===
+// === 扫描文章 ===
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
-const posts = [];        // 全量（不含 locked），供历史/调试/RSS 使用
-const rawPosts = [];     // 保留 body 供 RSS 使用
-const files = readdirSync(POSTS_DIR).filter(
-  (f) => f.endsWith(".md") && f !== "README.md"
-);
-
+const posts = [];
+const rawPosts = [];
+const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 console.log(`📄 扫描到 ${files.length} 个 markdown 文件`);
 
 for (const file of files.sort()) {
-  const raw = readFileSync(join(POSTS_DIR, file), "utf-8");
+  // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致
+  const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
   const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
 
-  // 跳过 locked: true 的文章（不写入 posts.json，不输出日志）
   if (frontmatter.locked === true) continue;
 
   const article = {
@@ -126,7 +98,6 @@ for (const file of files.sort()) {
   if (frontmatter.image) article.image = frontmatter.image;
   if (frontmatter.coverImage) article.image = frontmatter.coverImage;
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
-  if (frontmatter.locked === true) article.locked = true;
   if (frontmatter.pinned === true) article.pinned = true;
   if (frontmatter.draft === true) article.draft = true;
 
@@ -139,17 +110,14 @@ for (const file of files.sort()) {
   console.log(`  ✅ ${file}: ${article.title}`);
 }
 
-// === 排序 ===
-// rawPosts 仍按 date 降序（RSS 用），保持原有行为
+// rawPosts 按 date 降序（供 RSS 用）
 rawPosts.sort((a, b) => {
   const dateA = new Date(a.frontmatter.date).getTime() || 0;
   const dateB = new Date(b.frontmatter.date).getTime() || 0;
   return dateB - dateA;
 });
 
-// === 计算 visible 集合（用于索引和分页文件） ===
-// 过滤 draft: true（locked 已在扫描时跳过）
-// 排序：pinned 优先，再按 date 降序
+// visible 集合：过滤 draft，pinned 优先 + date 降序
 const visibleSorted = posts
   .filter((p) => !p.draft)
   .sort((a, b) => {
@@ -160,49 +128,28 @@ const visibleSorted = posts
     return dateB - dateA;
   });
 
-// === 分页元信息 ===
 const total = visibleSorted.length;
 const pageCount = Math.max(1, Math.ceil(total / PER_PAGE));
 const generatedAt = new Date().toISOString();
 
-// === 序列化 ===
-// 沿用 672a8fe 的风格：值用 JSON.stringify(value)，对象多行展开。
-// 这样基本类型数组（category / tags）天然 inline，
+// 序列化：posts 数组多行展开（每篇文章一行字段），顶层基本类型 inline。
+// 这样 category/tags 等基本类型数组天然 inline，
 // 不会被 JSON.stringify(obj, null, 2) 强行展开成多行。
-//
-// 输出形如：
-//   {
-//     "generatedAt": "...",
-//     "perPage": 16,
-//     "total": 8,
-//     "pageCount": 1,
-//     "posts": [
-//       {
-//         "id": "test",
-//         "category": ["Demo","技术"],
-//         ...
-//       },
-//       ...
-//     ]
-//   }
 function stringifyIndex(obj) {
   const lines = ["{"];
   const entries = Object.entries(obj);
   entries.forEach(([k, v], i) => {
     const sep = i < entries.length - 1 ? "," : "";
     if (k === "posts") {
-      // posts 是文章对象数组，多行展开
       lines.push('  "posts": [');
       v.forEach((post, j) => {
         const fields = Object.entries(post).map(
           ([fk, fv]) => `      ${JSON.stringify(fk)}: ${JSON.stringify(fv)}`
         );
-        const postStr = "    {\n" + fields.join(",\n") + "\n    }";
-        lines.push(postStr + (j < v.length - 1 ? "," : ""));
+        lines.push("    {\n" + fields.join(",\n") + "\n    }" + (j < v.length - 1 ? "," : ""));
       });
       lines.push("  ]" + sep);
     } else {
-      // 顶层基本类型字段（number / string / boolean），inline
       lines.push(`  ${JSON.stringify(k)}: ${JSON.stringify(v)}${sep}`);
     }
   });
@@ -210,57 +157,33 @@ function stringifyIndex(obj) {
   return lines.join("\n");
 }
 
-// === 生成 docs/posts.json（索引对象） ===
-// 结构：{ generatedAt, perPage, total, pageCount, posts: visibleSorted }
-// 前端可直接用 .posts 渲染，或按页拉取 posts-{n}.json
+// === 生成 docs/posts.json + 分页文件 ===
 mkdirSync(DOCS_DIR, { recursive: true });
-const indexObj = {
-  generatedAt,
-  perPage: PER_PAGE,
-  total,
-  pageCount,
-  posts: visibleSorted,
-};
+const indexObj = { generatedAt, perPage: PER_PAGE, total, pageCount, posts: visibleSorted };
 writeFileSync(POSTS_OUTPUT, stringifyIndex(indexObj) + "\n", "utf-8");
 console.log(`\n✅ 生成 posts.json 索引: ${total} 篇可见文章 / ${pageCount} 页 (perPage=${PER_PAGE})`);
 console.log(`   输出: ${POSTS_OUTPUT}`);
 
-// === 生成 docs/posts-{n}.json 分页文件 ===
-// 每个文件包含 { page, perPage, total, pageCount, posts: slice }
 for (let pg = 0; pg < pageCount; pg++) {
   const slice = visibleSorted.slice(pg * PER_PAGE, (pg + 1) * PER_PAGE);
-  const pageObj = {
-    page: pg,
-    perPage: PER_PAGE,
-    total,
-    pageCount,
-    posts: slice,
-  };
-  const pagePath = join(DOCS_DIR, `posts-${pg}.json`);
-  writeFileSync(pagePath, stringifyIndex(pageObj) + "\n", "utf-8");
+  const pageObj = { page: pg, perPage: PER_PAGE, total, pageCount, posts: slice };
+  writeFileSync(join(DOCS_DIR, `posts-${pg}.json`), stringifyIndex(pageObj) + "\n", "utf-8");
 }
 console.log(`   生成 ${pageCount} 个分页文件: posts-0.json .. posts-${pageCount - 1}.json`);
 
-// === 清理多余的分页文件 ===
-// 当 pageCount 缩小（文章被删/转草稿）时，删除不再需要的 posts-{n}.json
-// 避免前端按旧的 pageCount 拉取到过时的分页内容
+// === 清理多余的 posts-{n}.json（文章减少时） ===
 let cleaned = 0;
-const pageFilePattern = /^posts-(\d+)\.json$/;
 for (const entry of readdirSync(DOCS_DIR)) {
-  const m = entry.match(pageFilePattern);
+  const m = entry.match(/^posts-(\d+)\.json$/);
   if (!m) continue;
-  const idx = parseInt(m[1], 10);
-  if (idx >= pageCount) {
+  if (parseInt(m[1], 10) >= pageCount) {
     try {
       unlinkSync(join(DOCS_DIR, entry));
       cleaned++;
       console.log(`   🗑️  清理过期分页文件: ${entry}`);
     } catch (e) {
-      // 文件可能在并发场景下被删，warn 后继续
       console.warn(`   ⚠️  清理 ${entry} 失败: ${e.message}`);
     }
   }
 }
-if (cleaned > 0) {
-  console.log(`   已清理 ${cleaned} 个过期分页文件`);
-}
+if (cleaned > 0) console.log(`   已清理 ${cleaned} 个过期分页文件`);

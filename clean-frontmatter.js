@@ -1,119 +1,69 @@
 // clean-frontmatter.js
-// 清理 posts/*.md：
-// 1. 移除值为 false 的 boolean 字段（pinned/locked/draft）
-// 2. 移除空字符串字段（type: ""）
-// 3. 重排字段顺序：title, date, last_modified, author, category, tags, desc, type, image, coverImage, content_url, pinned, locked, draft
-// 4. 确保 frontmatter 和 body 之间有空行
-// 5. 把 /img/ 相对路径替换为绝对 URL（site.siteUrl）
-//    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
-// 6. 把 YAML 块状列表规范化为 inline JSON 数组：
-//      category:
-//        - Demo
-//        - 杂项
-//    转为：
-//      category: ["Demo", "杂项"]
-//    原因：PagesCMS 写回的 frontmatter 会被自动折成块状列表，
-//    inline JSON 数组形式更紧凑、可读、人手编辑也不易错。
+// 清理 posts/*.md 的 frontmatter 与 body：
+//   1. 移除值为 false 的 boolean 字段（pinned/locked/draft）
+//   2. 移除空字符串字段（type/image/coverImage/content_url/desc）
+//   3. 字段按固定顺序重排
+//   4. body 与 frontmatter 间确保一个空行
+//   5. /img/ 相对路径 → 绝对 URL（site.absUrl，已绝对的链接不动）
+//   6. YAML 块状列表 → inline JSON 数组（PagesCMS 偶尔写回块状形式，统一为 inline）
 //
-// 用法:
-//   全量:    node clean-frontmatter.js
-//   增量:    node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
-//            ↑ 只清理指定文件，不传则全量清理
-//
-// 在 GitHub Action 中 generate-posts.js 之前运行
+// 用法：
+//   全量:  node clean-frontmatter.js
+//   增量:  node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
+// GitHub Action 中在 generate-posts.js 之前运行。
 
 const { readdirSync, readFileSync, writeFileSync, existsSync } = require("fs");
 const { join } = require("path");
 const site = require("./site");
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
-const SITE_URL = site.siteUrl || "";
+const SITE_URL = site.siteUrl;
 
-/**
- * 把 /img/ 或 img/ 相对路径替换为绝对 URL
- * - 已经是绝对的（http/https）→ 不变
- * - URL 中间含 /img/（如 https://xxx/img/xxx）→ 不变
- * - 以 /img/ 或 img/ 开头 → 拼接 SITE_URL
- */
+/** /img/ 相对路径 → 绝对 URL（已绝对的链接不动） */
 function rewriteImgPaths(content) {
   if (!SITE_URL) return content;
-  let modified = content;
 
-  // 1. markdown 图片/链接：![](/img/xxx) 或 ![](img/xxx)
-  //    不匹配 https://xxx/img/xxx（URL 中间的 /img/）
-  modified = modified.replace(
+  // markdown 图片/链接：![](/img/xxx) 或 ![](img/xxx)，不匹配 https://xxx/img/xxx
+  content = content.replace(
     /(!?\[[^\]]*\]\()((?:\/)?img\/[^)]+)\)/g,
-    (match, prefix, url) => {
-      // 跳过已经是绝对 URL 的
-      if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      // 拼接 SITE_URL（url 已含 /img/ 或 img/）
-      const path = url.startsWith("/") ? url : "/" + url;
-      return prefix + SITE_URL + path + ")";
-    }
+    (m, prefix, url) => prefix + site.absUrl(url) + ")"
   );
 
-  // 2. frontmatter: coverImage: /img/xxx.jpg  或  image: /img/xxx.jpg
-  modified = modified.replace(
+  // frontmatter: coverImage: /img/xxx  或  image: /img/xxx
+  content = content.replace(
     /^(coverImage|image):\s*(\/?img\/.+)$/gm,
-    (match, key, url) => {
-      if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      const path = url.startsWith("/") ? url : "/" + url;
-      return `${key}: ${SITE_URL}${path}`;
-    }
+    (m, key, url) => `${key}: ${site.absUrl(url)}`
   );
 
-  // 3. HTML img 标签：src="/img/xxx" 或 src="img/xxx"
-  modified = modified.replace(
+  // HTML img 标签：src="/img/xxx" 或 src="img/xxx"
+  content = content.replace(
     /src=["'](\/?img\/[^"']+)["']/g,
-    (match, url) => {
-      if (url.startsWith("http://") || url.startsWith("https://")) return match;
-      const path = url.startsWith("/") ? url : "/" + url;
-      return `src="${SITE_URL}${path}"`;
-    }
+    (m, url) => `src="${site.absUrl(url)}"`
   );
 
-  return modified;
+  return content;
 }
 
 // 期望的字段顺序（未列出的字段排在最后）
 const FIELD_ORDER = [
-  "title",
-  "date",
-  "last_modified",
-  "author",
-  "category",
-  "tags",
-  "desc",
-  "type",
-  "image",
-  "coverImage",
-  "content_url",
-  "pinned",
-  "locked",
-  "draft",
+  "title", "date", "last_modified", "author", "category", "tags", "desc",
+  "type", "image", "coverImage", "content_url", "pinned", "locked", "draft",
 ];
 
-// 需要在值为 false 时移除的 boolean 字段
 const BOOLEAN_FIELDS = ["pinned", "locked", "draft"];
-
-// 需要在值为空字符串时移除的字段
 const EMPTY_REMOVABLE = ["type", "image", "coverImage", "content_url", "desc"];
 
-/** 解析 frontmatter 为键值对（保留原始行格式） */
+/** 解析 frontmatter 为 [{key, rawLines}]（保留原始行格式便于后续重排） */
 function parseFrontmatterLines(fm) {
-  const lines = fm.split("\n");
-  const fields = []; // [{key, rawLines: []}]
+  const fields = [];
   let current = null;
-
-  for (const line of lines) {
-    // 键值行: key: value
+  for (const line of fm.split("\n")) {
     const kvMatch = line.match(/^(\w[\w_-]*):\s*(.*)$/);
     if (kvMatch) {
       current = { key: kvMatch[1], rawLines: [line] };
       fields.push(current);
       continue;
     }
-    // 列表项或续行
     if (current && (line.match(/^\s+-\s/) || line.match(/^\s+/) || line === "")) {
       current.rawLines.push(line);
     }
@@ -121,10 +71,9 @@ function parseFrontmatterLines(fm) {
   return fields;
 }
 
-/** 从字段原始行提取值（用于判断 boolean/string） */
+/** 从字段原始行提取值（用于判断 boolean/空字符串） */
 function getFieldValue(field) {
-  const firstLine = field.rawLines[0];
-  const m = firstLine.match(/^\w[\w_-]*:\s*(.*)$/);
+  const m = field.rawLines[0].match(/^\w[\w_-]*:\s*(.*)$/);
   if (!m) return null;
   const val = m[1].trim();
   if (val === "true") return true;
@@ -134,35 +83,27 @@ function getFieldValue(field) {
 }
 
 /**
- * 把 YAML 块状列表规范化为 inline JSON 数组：
+ * YAML 块状列表 → inline JSON 数组：
  *   category:
  *     - Demo
  *     - 杂项
  * 转为：
  *   category: ["Demo", "杂项"]
  *
- * - 仅处理首行形如 `key:` 或 `key: ` 的字段（值为空，表示后续是块状列表）
- * - 后续行必须全部是 `  - xxx` 列表项，否则保持原样不动（安全退化）
- * - 列表项若已被引号包裹，先剥掉外层引号再用双引号重新包裹
- * - 内部双引号会被转义为 \"
+ * 仅处理首行 `key:`（值为空）且后续全是 `  - xxx` 列表项的字段；
+ * 列表项剥外层引号 + 内部双引号转义为 \"；非标准形式原样返回不冒险。
  */
 function normalizeField(field) {
   if (field.rawLines.length <= 1) return field;
-  const firstLine = field.rawLines[0];
-  const m = firstLine.match(/^(\w[\w_-]*):\s*$/);
+  const m = field.rawLines[0].match(/^(\w[\w_-]*):\s*$/);
   if (!m) return field;
   const key = m[1];
 
   const items = [];
   for (let i = 1; i < field.rawLines.length; i++) {
-    const line = field.rawLines[i];
-    const im = line.match(/^\s+-\s+(.+?)\s*$/);
-    if (!im) return field; // 不是标准列表项，原样返回不冒险
-    let item = im[1];
-    // 剥掉外层单/双引号
-    item = item.replace(/^['"]|['"]$/g, "");
-    // 转义内部双引号
-    item = item.replace(/"/g, '\\"');
+    const im = field.rawLines[i].match(/^\s+-\s+(.+?)\s*$/);
+    if (!im) return field;
+    let item = im[1].replace(/^['"]|['"]$/g, "").replace(/"/g, '\\"');
     items.push(`"${item}"`);
   }
   if (items.length === 0) return field;
@@ -171,34 +112,26 @@ function normalizeField(field) {
 
 /** 处理单个 md 文件 */
 function cleanFile(filePath) {
-  const raw = readFileSync(filePath, "utf-8");
+  // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致，
+  // 否则 `^---\n` 正则失配会让整篇文章被静默丢弃。
+  const raw = readFileSync(filePath, "utf-8").replace(/\r\n/g, "\n");
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
   if (!match) return false;
 
   const fmContent = match[1];
   const body = raw.slice(match[0].length);
-  const fields = parseFrontmatterLines(fmContent);
 
   // 过滤字段
   const cleanedFields = [];
-  for (const field of fields) {
+  for (const field of parseFrontmatterLines(fmContent)) {
     const value = getFieldValue(field);
-
-    // 移除值为 false 的 boolean 字段
-    if (BOOLEAN_FIELDS.includes(field.key) && value === false) {
-      continue;
-    }
-    // 移除空字符串字段
-    if (EMPTY_REMOVABLE.includes(field.key) && (value === "" || value === null)) {
-      continue;
-    }
+    if (BOOLEAN_FIELDS.includes(field.key) && value === false) continue;
+    if (EMPTY_REMOVABLE.includes(field.key) && (value === "" || value === null)) continue;
     cleanedFields.push(field);
   }
 
-  // 把 YAML 块状列表规范化为 inline JSON 数组
+  // 块状列表 → inline 数组 + 按指定顺序排序
   const normalizedFields = cleanedFields.map(normalizeField);
-
-  // 按指定顺序排序
   normalizedFields.sort((a, b) => {
     const ia = FIELD_ORDER.indexOf(a.key);
     const ib = FIELD_ORDER.indexOf(b.key);
@@ -208,19 +141,10 @@ function cleanFile(filePath) {
     return ia - ib;
   });
 
-  // 重建 frontmatter
   const fmLines = normalizedFields.flatMap((f) => f.rawLines);
   const newFm = "---\n" + fmLines.join("\n") + "\n---";
-
-  // body 确保以单个空行开头（移除开头多余空行）
-  // 同时把 body 里的 /img/ 相对路径替换为绝对 URL
-  const trimmedBody = body.replace(/^\n+/, "");
-  const newBody = "\n" + rewriteImgPaths(trimmedBody);
-
-  // frontmatter 里的 coverImage/image 也替换 /img/
-  const newFmRewritten = rewriteImgPaths(newFm);
-
-  const newContent = newFmRewritten + newBody;
+  const newBody = "\n" + rewriteImgPaths(body.replace(/^\n+/, ""));
+  const newContent = rewriteImgPaths(newFm) + newBody;
 
   if (newContent !== raw) {
     writeFileSync(filePath, newContent, "utf-8");
@@ -229,63 +153,35 @@ function cleanFile(filePath) {
   return false;
 }
 
-// 主逻辑
-// 支持两种模式：
-//   1. 命令行传参：node clean-frontmatter.js docs/posts/102.md docs/posts/mermaid-test.md
-//      → 只清理指定文件（路径相对于仓库根，或绝对路径，或相对 POSTS_DIR 的文件名均可）
-//   2. 无传参：node clean-frontmatter.js
-//      → 全量清理 POSTS_DIR 下所有 .md
+// === 主逻辑：支持全量或命令行传参增量 ===
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
-const argv = process.argv.slice(2);
-
 function resolveTargetFile(input) {
-  // input 可能是:
-  //   - 绝对路径
-  //   - 仓库相对路径: docs/posts/102.md
-  //   - 文件名: 102.md
-  //   - 带子目录: sub/102.md
-  if (input.startsWith("/")) {
-    return input;
-  }
-  if (input.startsWith("docs/posts/")) {
-    return join(__dirname, input);
-  }
+  if (input.startsWith("/")) return input;
+  if (input.startsWith("docs/posts/")) return join(__dirname, input);
   return join(POSTS_DIR, input);
 }
 
-let files; // 统一存文件名（相对 POSTS_DIR 的 basename）
+const argv = process.argv.slice(2);
+let files;
 if (argv.length > 0) {
   files = argv
     .map(resolveTargetFile)
-    .filter((p) => {
-      if (!existsSync(p)) {
-        console.warn(`⚠️  跳过不存在的文件: ${p}`);
-        return false;
-      }
-      return true;
-    })
+    .filter((p) => existsSync(p) || (console.warn(`⚠️  跳过不存在的文件: ${p}`), false))
     .filter((p) => p.endsWith(".md"))
-    .map((p) => {
-      // 转回 basename 用于显示
-      const parts = p.split("/");
-      return parts[parts.length - 1];
-    });
-  console.log(`🧹 增量清理 ${files.length} 个 markdown 文件（命令行参数模式）`);
+    .map((p) => p.split("/").pop());
+  console.log(`🧹 增量清理 ${files.length} 个 markdown 文件`);
 } else {
-  files = readdirSync(POSTS_DIR).filter(
-    (f) => f.endsWith(".md") && f !== "README.md"
-  );
+  files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
   console.log(`🧹 全量清理 ${files.length} 个 markdown 文件`);
 }
 
 let changed = 0;
 for (const file of files.sort()) {
-  const changed2 = cleanFile(join(POSTS_DIR, file));
-  if (changed2) {
+  if (cleanFile(join(POSTS_DIR, file))) {
     changed++;
     console.log(`  ✏️  ${file}: 已清理`);
   }
