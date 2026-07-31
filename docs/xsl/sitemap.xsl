@@ -334,7 +334,6 @@
 
     <div class="section-head">
       <h2 class="section-title">子 Sitemap 列表</h2>
-      <span class="section-count">共 <strong><xsl:value-of select="count(sm:sitemap)"/></strong> 条</span>
     </div>
 
     <xsl:choose>
