@@ -2,15 +2,6 @@
 <!--
   public/xsl/rss.xsl
   沫然Blog RSS 订阅可视化样式表
-
-  功能：让浏览器打开 rss.xml 时渲染成可读的 HTML 文章流，而非裸 XML。
-  对阅读器无影响（阅读器忽略 <?xml-stylesheet?> 处理指令，只读 XML 节点）。
-
-  视觉语言对齐 KawaYiLab/InterKnot-Web：
-  - 深色底 (#0a0a0a) + 荧光黄绿主色 (#BFFF09)
-  - 非对称切角卡片 (24px 24px 0 24px，左下收直角)
-  - 棋盘格 / 对角斜线纹理点缀
-  - 胶囊按钮 (9999px) + 斜体粗体小标签
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
@@ -21,7 +12,7 @@
                 exclude-result-prefixes="content atom media dc">
   <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
 
-  <!-- 根模板：输出 HTML 骨架，再 apply-templates 让 channel 模板填充 -->
+  <!-- 根模板 -->
   <xsl:template match="/">
     <html lang="zh-CN">
       <head>
@@ -54,7 +45,6 @@
             line-height: 1.6;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            /* 极淡网格底纹，呼应 InterKnot 全局 grid pattern */
             background-image:
               linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
               linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
@@ -67,7 +57,7 @@
             padding: 40px 0 64px;
           }
 
-          /* ── Channel 头部 ──────────────────────────── */
+          /* Channel 头部 */
           .channel {
             position: relative;
             padding: 36px 32px;
@@ -76,7 +66,6 @@
             border-radius: var(--radius-cut);
             overflow: hidden;
           }
-          /* 右上角棋盘格点缀（InterKnot chessboard-background） */
           .channel::before {
             content: '';
             position: absolute;
@@ -180,7 +169,6 @@
             border: 1px solid #000;
             border-radius: 9999px;
             cursor: pointer;
-            /* InterKnot 三层内阴影叠边 */
             box-shadow: inset 0 0 0 2px #000, inset 0 0 0 4px var(--ik-primary);
             transition: transform 0.1s ease;
             font-family: inherit;
@@ -189,7 +177,7 @@
           .copy-btn:active { transform: translateY(0) scale(0.97); }
           .copy-btn.copied { background: var(--ik-accent); box-shadow: inset 0 0 0 2px #000, inset 0 0 0 4px var(--ik-accent); }
 
-          /* ── 章节标题 ──────────────────────────────── */
+          /* 章节标题 */
           .section-head {
             display: flex;
             align-items: baseline;
@@ -211,7 +199,7 @@
           }
           .section-count strong { color: var(--ik-primary); font-weight: 800; }
 
-          /* ── 文章卡片列表 ──────────────────────────── */
+          /* 文章卡片列表 */
           .items { display: flex; flex-direction: column; gap: 16px; }
           .item {
             position: relative;
@@ -370,7 +358,7 @@
           .preview-body table { border-collapse: collapse; margin: 0.8em 0; }
           .preview-body th, .preview-body td { border: 1px solid var(--ik-border); padding: 6px 10px; }
 
-          /* ── 空状态 ────────────────────────────────── */
+          /* 空状态 */
           .empty {
             padding: 48px 24px;
             text-align: center;
@@ -380,7 +368,7 @@
             border-radius: var(--radius-cut);
           }
 
-          /* ── 页脚 ──────────────────────────────────── */
+          /* 页脚 */
           .ik-footer {
             margin-top: 56px;
             padding: 28px 0 0;
@@ -394,7 +382,7 @@
           .ik-footer a:hover { text-decoration: underline; }
           .ik-footer .brand { color: #fff; font-weight: 800; letter-spacing: 0.3px; }
 
-          /* ── 响应式 ────────────────────────────────── */
+          /* 响应式 */
           @media (max-width: 640px) {
             .container { width: calc(100% - 24px); padding: 24px 0 48px; }
             .channel { padding: 26px 20px; }
@@ -414,7 +402,7 @@
           <xsl:apply-templates/>
           <footer class="ik-footer">
             <p><span class="brand">沫然Blog</span> · RSS 2.0 Feed</p>
-            <p>此页面由 <a href="https://github.com/moaradc/blog-content/blob/main/docs/xsl/rss.xsl">rss.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
+            <p>此页面由 <a href="/">rss.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
           </footer>
         </div>
         <script>
@@ -431,7 +419,6 @@
                 btn.textContent = orig;
               }, 1500);
             };
-            // 回退方案：用临时 textarea + execCommand('copy')
             var fallbackCopy = function () {
               var ta = document.createElement('textarea');
               ta.value = url;
@@ -450,11 +437,10 @@
               else flash('复制失败 ✗', false);
             };
             btn.addEventListener('click', function () {
-              // 优先用现代 Clipboard API（仅在安全上下文可用，如 https / localhost）
               if (window.isSecureContext &amp;&amp; navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(url).then(
                   function () { flash('已复制 ✓', true); },
-                  function () { fallbackCopy(); }  // API 失败时回退
+                  function () { fallbackCopy(); }
                 );
               } else {
                 fallbackCopy();
