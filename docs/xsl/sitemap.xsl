@@ -343,7 +343,6 @@
             <table>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>子 Sitemap 地址</th>
                   <th>更新时间</th>
                 </tr>
@@ -351,7 +350,6 @@
               <tbody>
                 <xsl:for-each select="sm:sitemap">
                   <tr>
-                    <td class="num"><xsl:value-of select="position()"/></td>
                     <td class="url">
                       <a href="{sm:loc}"><xsl:value-of select="sm:loc"/></a>
                     </td>
@@ -393,7 +391,6 @@
             <table>
               <thead>
                 <tr>
-                  <th>#</th>
                   <th>URL</th>
                   <th>最后修改</th>
                 </tr>
@@ -401,7 +398,6 @@
               <tbody>
                 <xsl:for-each select="sm:url">
                   <tr>
-                    <td class="num"><xsl:value-of select="position()"/></td>
                     <td class="url">
                       <a href="{sm:loc}"><xsl:value-of select="sm:loc"/></a>
                     </td>
