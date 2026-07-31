@@ -422,20 +422,42 @@
             var btn = document.querySelector('.copy-btn');
             if (!btn) return;
             var url = btn.getAttribute('data-url');
+            var orig = btn.textContent;
+            var flash = function (text, ok) {
+              if (ok) btn.classList.add('copied');
+              btn.textContent = text;
+              setTimeout(function () {
+                btn.classList.remove('copied');
+                btn.textContent = orig;
+              }, 1500);
+            };
+            // 回退方案：用临时 textarea + execCommand('copy')
+            var fallbackCopy = function () {
+              var ta = document.createElement('textarea');
+              ta.value = url;
+              ta.setAttribute('readonly', '');
+              ta.style.position = 'absolute';
+              ta.style.left = '-9999px';
+              ta.style.top = '0';
+              document.body.appendChild(ta);
+              ta.focus();
+              ta.select();
+              try { ta.setSelectionRange(0, ta.value.length); } catch (e) {}
+              var ok = false;
+              try { ok = document.execCommand('copy'); } catch (e) {}
+              document.body.removeChild(ta);
+              if (ok) flash('已复制 ✓', true);
+              else flash('复制失败 ✗', false);
+            };
             btn.addEventListener('click', function () {
-              var done = function () {
-                var t = btn.textContent;
-                btn.classList.add('copied');
-                btn.textContent = '已复制 ✓';
-                setTimeout(function () { btn.classList.remove('copied'); btn.textContent = t; }, 1500);
-              };
-              if (navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
-                navigator.clipboard.writeText(url).then(done, done);
+              // 优先用现代 Clipboard API（仅在安全上下文可用，如 https / localhost）
+              if (window.isSecureContext &amp;&amp; navigator.clipboard &amp;&amp; navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(url).then(
+                  function () { flash('已复制 ✓', true); },
+                  function () { fallbackCopy(); }  // API 失败时回退
+                );
               } else {
-                var ta = document.createElement('textarea');
-                ta.value = url; document.body.appendChild(ta); ta.select();
-                try { document.execCommand('copy'); } catch (e) {}
-                document.body.removeChild(ta); done();
+                fallbackCopy();
               }
             });
           })();
@@ -482,8 +504,7 @@
 
     <!-- 文章列表 -->
     <div class="section-head">
-      <h2 class="section-title">最新文章</h2>
-      <span class="section-count">共 <strong><xsl:value-of select="count(item)"/></strong> 条</span>
+      <h2 class="section-title">文章列表</h2>
     </div>
 
     <xsl:choose>
@@ -521,7 +542,7 @@
         <xsl:if test="category">
           <div class="item__tags">
             <xsl:for-each select="category">
-              <span class="tag">#<xsl:value-of select="."/></span>
+              <span class="tag"><xsl:value-of select="."/></span>
             </xsl:for-each>
           </div>
         </xsl:if>
