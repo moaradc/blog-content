@@ -18,6 +18,9 @@ try {
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
+// <?xml-stylesheet?> 引用 /xsl/rss.xsl（浏览器可读，阅读器忽略）
+const XSL_PI = '<?xml-stylesheet type="text/xsl" href="/xsl/rss.xsl"?>';
+
 const SITE_URL = site.blogUrl;            // RSS channel link 指向主站
 const RSS_SELF_URL = site.rssSelfUrl;
 const SITE_TITLE = site.title;
@@ -110,6 +113,7 @@ function generateRssFeed(allPosts, allRawPosts) {
 
   const lines = [];
   lines.push('<?xml version="1.0" encoding="utf-8"?>');
+  lines.push(XSL_PI);
   lines.push('<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">');
   lines.push("  <channel>");
   lines.push("    <title>" + escapeXml(SITE_TITLE) + "</title>");
