@@ -2,23 +2,13 @@
 <!--
   public/xsl/sitemap.xsl
   沫然Blog sitemap 可视化样式表
-
-  功能：让浏览器打开 sitemap.xml 时渲染成可读的 HTML 表格，而非裸 XML。
-  对爬虫无影响（爬虫忽略 <?xml-stylesheet?> 处理指令，只读 XML 节点）。
-
-  视觉语言对齐 KawaYiLab/InterKnot-Web：
-  - 深色底 (#0a0a0a) + 荧光黄绿主色 (#BFFF09)
-  - 非对称切角容器 (24px 24px 0 24px，左下收直角)
-  - 棋盘格 / 对角斜线纹理点缀
-  - 胶囊按钮 (9999px) + 斜体粗体小标签
-  - 选中/悬停行：主色背景 + 黑字（InterKnot 标准选中态规范）
 -->
 <xsl:stylesheet version="1.0"
                 xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
                 xmlns:sm="http://www.sitemaps.org/schemas/sitemap/0.9">
   <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
 
-  <!-- 根模板：输出 HTML 骨架，再 apply-templates 让 sitemapindex/urlset 模板填充 -->
+  <!-- 根模板 -->
   <xsl:template match="/">
     <html lang="zh-CN">
       <head>
@@ -51,7 +41,6 @@
             line-height: 1.6;
             min-height: 100vh;
             -webkit-font-smoothing: antialiased;
-            /* 极淡网格底纹，呼应 InterKnot 全局 grid pattern */
             background-image:
               linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
               linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px);
@@ -64,7 +53,7 @@
             padding: 40px 0 64px;
           }
 
-          /* ── 头部信息卡 ────────────────────────────── */
+          /* 头部信息卡 */
           .hero {
             position: relative;
             padding: 36px 32px;
@@ -73,7 +62,6 @@
             border-radius: var(--radius-cut);
             overflow: hidden;
           }
-          /* 右上角棋盘格点缀（InterKnot chessboard-background） */
           .hero::before {
             content: '';
             position: absolute;
@@ -154,7 +142,7 @@
           .stat--sm .stat__num { font-size: 0.85rem; }
           .stat--sm .stat__label { font-size: 11px; }
 
-          /* ── 说明横幅（对角斜线纹理，InterKnot linear-pattern-background） ── */
+          /* 说明横幅 */
           .banner {
             position: relative;
             margin-top: 20px;
@@ -179,7 +167,7 @@
           .banner a:hover { text-decoration: underline; }
           .banner > * { position: relative; }
 
-          /* ── 章节标题 ──────────────────────────────── */
+          /* 章节标题 */
           .section-head {
             display: flex;
             align-items: baseline;
@@ -201,7 +189,7 @@
           }
           .section-count strong { color: var(--ik-primary); font-weight: 800; }
 
-          /* ── 表格容器（非对称切角） ─────────────────── */
+          /* 表格容器 */
           .table-wrap {
             position: relative;
             padding: 4px;
@@ -236,7 +224,6 @@
             vertical-align: top;
           }
           tr:last-child td { border-bottom: none; }
-          /* 选中/悬停行：主色背景 + 黑字（InterKnot 标准选中态规范） */
           tbody tr { transition: background-color 0.12s ease, color 0.12s ease; }
           tbody tr:hover { background: var(--ik-primary); }
           tbody tr:hover td { color: #000; }
@@ -267,7 +254,7 @@
             font-size: 0.85rem;
           }
 
-          /* ── 空状态 ────────────────────────────────── */
+          /* 空状态 */
           .empty {
             padding: 48px 24px;
             text-align: center;
@@ -277,7 +264,7 @@
             border-radius: var(--radius-cut);
           }
 
-          /* ── 页脚 ──────────────────────────────────── */
+          /* 页脚 */
           .ik-footer {
             margin-top: 56px;
             padding: 28px 0 0;
@@ -291,7 +278,7 @@
           .ik-footer a:hover { text-decoration: underline; }
           .ik-footer .brand { color: #fff; font-weight: 800; letter-spacing: 0.3px; }
 
-          /* ── 响应式 ────────────────────────────────── */
+          /* 响应式 */
           @media (max-width: 640px) {
             .container { width: calc(100% - 24px); padding: 24px 0 48px; }
             .hero { padding: 26px 20px; }
@@ -311,7 +298,7 @@
           <xsl:apply-templates/>
           <footer class="ik-footer">
             <p><span class="brand">沫然Blog</span> · Sitemap</p>
-            <p>此页面由 <a href="https://github.com/moaradc/blog-content/blob/main/docs/xsl/sitemap.xsl">sitemap.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
+            <p>此页面由 <a href="/">sitemap.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
           </footer>
         </div>
       </body>
