@@ -8,16 +8,8 @@
 const domain = "raw-posts.945426.xyz";
 const blogDomain = "blog.945426.xyz";
 
-// 兜底：环境变量可能被误填为不带协议头的域名，自动补 https:// + 尾斜杠。
-function withProtocol(url, fallback) {
-  if (!url) return fallback;
-  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
-  if (!url.endsWith("/")) url += "/";
-  return url;
-}
-
-const siteUrl = withProtocol(process.env.SITE_URL, `https://${domain}/`);
-const blogUrl = withProtocol(process.env.BLOG_URL, `https://${blogDomain}/`);
+const siteUrl = process.env.SITE_URL || `https://${domain}/`;
+const blogUrl = process.env.BLOG_URL || `https://${blogDomain}/`;
 
 /**
  * 相对 URL → 绝对 URL。
@@ -31,6 +23,14 @@ function absUrl(url, base = siteUrl) {
   const b = base.replace(/\/$/, "");
   const p = url.startsWith("/") ? url : "/" + url;
   return b + p;
+}
+
+/**
+ * 文章详情页 URL（主站 + /details/article?id=<id>）。
+ * 主站 moaradc/test2 项目用的路由就是这个，不要写成 /posts/<id>。
+ */
+function postUrl(id) {
+  return blogUrl.replace(/\/$/, "") + "/details/article?id=" + encodeURIComponent(id);
 }
 
 const site = {
@@ -47,6 +47,7 @@ const site = {
   perPage: 16,
   sitemapShardSize: 10000,
   absUrl,
+  postUrl,
 };
 
 module.exports = site;

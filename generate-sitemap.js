@@ -20,7 +20,6 @@ const DOCS_DIR = join(__dirname, "docs");
 const POSTS_INDEX = join(DOCS_DIR, "posts.json");
 const SITEMAP_OUTPUT = join(DOCS_DIR, "sitemap.xml");
 
-const BLOG_URL_BASE = site.blogUrlBase;
 const SITEMAP_SHARD_SIZE = site.sitemapShardSize;
 const XSL_PI = '<?xml-stylesheet type="text/xsl" href="/xsl/sitemap.xsl"?>';
 
@@ -58,9 +57,9 @@ const sortedPosts = [...posts].sort((a, b) => {
   return db - da;
 });
 
-// canonical 全部指向主站 blogUrl
+// canonical 全部指向主站 blogUrl，路径为 /details/article?id=<id>
 const articleUrls = sortedPosts.map((p) => ({
-  loc: `${BLOG_URL_BASE}/posts/${encodeURIComponent(p.id)}`,
+  loc: site.postUrl(p.id),
   lastmod: toDateOnly(p.last_modified || p.date),
 }));
 
@@ -89,7 +88,7 @@ if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
   for (let i = 0; i < shardCount; i++) {
     const shardUrls = articleUrls.slice(i * SITEMAP_SHARD_SIZE, (i + 1) * SITEMAP_SHARD_SIZE);
     writeFileSync(join(DOCS_DIR, `sitemap-${i}.xml`), renderUrlSet(shardUrls), "utf-8");
-    shardFiles.push({ loc: `${BLOG_URL_BASE}/sitemap-${i}.xml` });
+    shardFiles.push({ loc: site.absUrl(`sitemap-${i}.xml`, site.blogUrl) });
   }
   // 清理多余分片
   for (const f of readdirSync(DOCS_DIR)) {

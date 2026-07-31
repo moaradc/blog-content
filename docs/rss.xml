@@ -12,7 +12,7 @@
     <webMaster>moara@foxmail.com (沫然)</webMaster>
     <item>
       <title>test2</title>
-      <link>https://blog.945426.xyz/posts/test2</link>
+      <link>https://blog.945426.xyz/details/article?id=test2</link>
       <guid isPermaLink="false">test2</guid>
       <pubDate>Fri, 31 Jul 2026 08:09:00 GMT</pubDate>
       <description>test22</description>
@@ -25,7 +25,7 @@
     </item>
     <item>
       <title>test</title>
-      <link>https://blog.945426.xyz/posts/test</link>
+      <link>https://blog.945426.xyz/details/article?id=test</link>
       <guid isPermaLink="false">test</guid>
       <pubDate>Sat, 25 Jul 2026 17:33:00 GMT</pubDate>
       <description>test</description>
@@ -33,11 +33,13 @@
 ]]></content:encoded>
       <category>Demo</category>
       <category>技术</category>
+      <category>杂项</category>
+      <category>Demo</category>
       <dc:creator>Admin</dc:creator>
     </item>
     <item>
       <title>Mermaid 渲染测试</title>
-      <link>https://blog.945426.xyz/posts/mermaid-test</link>
+      <link>https://blog.945426.xyz/details/article?id=mermaid-test</link>
       <guid isPermaLink="false">mermaid-test</guid>
       <pubDate>Mon, 20 Jul 2026 20:09:00 GMT</pubDate>
       <description>测试 Mermaid 图表渲染</description>
@@ -301,7 +303,7 @@ gitGraph
     </item>
     <item>
       <title>Markdown写作指南</title>
-      <link>https://blog.945426.xyz/posts/107</link>
+      <link>https://blog.945426.xyz/details/article?id=107</link>
       <guid isPermaLink="false">107</guid>
       <pubDate>Tue, 09 Jun 2026 10:00:00 GMT</pubDate>
       <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
@@ -342,7 +344,7 @@ gitGraph
     </item>
     <item>
       <title>Hello world!</title>
-      <link>https://blog.945426.xyz/posts/106</link>
+      <link>https://blog.945426.xyz/details/article?id=106</link>
       <guid isPermaLink="false">106</guid>
       <pubDate>Mon, 29 Dec 2025 17:55:00 GMT</pubDate>
       <description>Hello world!</description>
@@ -355,7 +357,7 @@ gitGraph
     </item>
     <item>
       <title>pixiv</title>
-      <link>https://blog.945426.xyz/posts/104</link>
+      <link>https://blog.945426.xyz/details/article?id=104</link>
       <guid isPermaLink="false">104</guid>
       <pubDate>Fri, 26 Dec 2025 08:59:00 GMT</pubDate>
       <content:encoded><![CDATA[<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0l000d7w32xne4num52gzj2DIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
@@ -370,7 +372,7 @@ gitGraph
     </item>
     <item>
       <title>代码高亮与排版组件演示</title>
-      <link>https://blog.945426.xyz/posts/103</link>
+      <link>https://blog.945426.xyz/details/article?id=103</link>
       <guid isPermaLink="false">103</guid>
       <pubDate>Fri, 12 Dec 2025 13:09:00 GMT</pubDate>
       <description>代码高亮与排版组件演示</description>
@@ -495,7 +497,7 @@ footer {
     </item>
     <item>
       <title>周五的公园与猫</title>
-      <link>https://blog.945426.xyz/posts/102</link>
+      <link>https://blog.945426.xyz/details/article?id=102</link>
       <guid isPermaLink="false">102</guid>
       <pubDate>Sat, 22 Nov 2025 10:30:00 GMT</pubDate>
       <content:encoded><![CDATA[<p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
@@ -511,7 +513,7 @@ footer {
     </item>
     <item>
       <title>月下独酌：李白诗中的孤独与自由</title>
-      <link>https://blog.945426.xyz/posts/101</link>
+      <link>https://blog.945426.xyz/details/article?id=101</link>
       <guid isPermaLink="false">101</guid>
       <pubDate>Fri, 21 Nov 2025 13:09:00 GMT</pubDate>
       <description>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</description>

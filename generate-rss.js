@@ -160,8 +160,8 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
   for (const post of allPosts) {
-    // 文章 URL：主站 + /posts/<id>
-    const postUrl = site.absUrl("posts/" + encodeURIComponent(post.id), site.blogUrl);
+    // 文章详情页 URL：主站 /details/article?id=<id>
+    const postUrl = site.postUrl(post.id);
 
     const rawBody = (bodyMap[post.id] || "").trim();
     const contentHtml = marked.parse(rawBody);
