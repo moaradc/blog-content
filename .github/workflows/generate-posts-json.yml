@@ -9,13 +9,23 @@ name: Generate posts.json
 #   - generate-posts.js 保持全量：posts.json 是全量索引，跳过任何文件都会让首页缺卡片
 #
 # 流水线顺序（关键，不能乱）：
-#   1. clean-frontmatter.js  (增量清理 frontmatter + 替换 /img/ → 绝对 URL)
-#   2. generate-posts.js     (全量生成 posts.json + posts-{n}.json 分页)
-#   3. generate-sitemap.js   (基于 posts.json 生成 sitemap.xml)
+#   1. clean-frontmatter.js        (增量清理 frontmatter + 替换 /img/ → 绝对 URL)
+#   2. generate-posts.js           (全量生成 posts.json + posts-{n}.json 分页)
+#   3. generate-sitemap.js         (基于 posts.json 生成 sitemap.xml)
+#   4. generate-article-html.js    (基于 docs/posts/*.md 生成每篇 SEO HTML)
 #
 # 注：generate-sitemap.yml 已合并到本工作流，已删除。
 #     sitemap 不再独立扫描 .md，而是消费 posts.json，避免重复解析 + 保证顺序一致。
 # 配置统一从 site.js 读取；如需覆盖，设置环境变量 BLOG_URL / SITE_URL（仓库 Variables）。
+#
+# generate-article-html.js（v1.1）：
+#   - 读取 template/article.html 模板
+#   - 从主仓 GitHub raw 拉取 users.js / config.js（不依赖 blog-content 本地副本）
+#   - 对每篇 .md 渲染 marked + 截摘要 + 填充 SEO meta
+#   - 输出 docs/posts/{id}.html
+#   - HTML 中所有 CSS/JS 通过 https://blog.945426.xyz/assets/... 绝对 URL 引用主仓
+#   - 主仓 vercel.json 把 /posts/{id} rewrite 到 raw-posts/posts/{id}.html
+#   - 见 IMPLEMENTATION.md
 on:
   push:
     branches: [main]
@@ -23,6 +33,8 @@ on:
       - "docs/posts/**"
       - "generate-posts.js"
       - "generate-sitemap.js"
+      - "generate-article-html.js"
+      - "template/article.html"
       - "clean-frontmatter.js"
       - "site.js"
       - ".github/workflows/generate-posts-json.yml"
@@ -118,6 +130,12 @@ jobs:
           BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-sitemap.js
 
+      - name: Generate article SEO HTML
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          BLOG_URL: ${{ vars.BLOG_URL }}
+        run: node generate-article-html.js
+
       - name: Commit and push if changed
         run: |
           git config user.name "moaradc"
@@ -126,7 +144,7 @@ jobs:
           if git diff --cached --quiet; then
             echo "ℹ️  无变化，跳过提交"
           else
-            git commit -m "chore: auto-clean frontmatter + generate posts.json + sitemap [skip ci]"
+            git commit -m "chore: auto-clean frontmatter + generate posts.json + sitemap + article HTML [skip ci]"
             git push
             echo "✅ 已提交"
           fi

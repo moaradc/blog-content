@@ -26,11 +26,15 @@ function absUrl(url, base = siteUrl) {
 }
 
 /**
- * 文章详情页 URL（主站 + /details/article?id=<id>）。
- * 主站 moaradc/test2 项目用的路由就是这个，不要写成 /posts/<id>。
+ * 文章详情页 URL（主站 + /posts/<id>）。
+ *
+ * 历史：曾用 /details/article?id=<id>（SPA 路由，爬虫看到空壳）。
+ * 现在：每篇文章由 blog-content Action 生成静态 SEO HTML（docs/posts/<id>.html），
+ *       主仓 vercel.json 用 rewrite 把 /posts/<id> 透传到 raw-posts.945426.xyz/posts/<id>.html。
+ *       爬虫看到完整 head 元数据 + 摘要正文，禁用 JS 也有 noscript 兜底。
  */
 function postUrl(id) {
-  return blogUrl.replace(/\/$/, "") + "/details/article?id=" + encodeURIComponent(id);
+  return blogUrl.replace(/\/$/, "") + "/posts/" + encodeURIComponent(id);
 }
 
 const site = {
