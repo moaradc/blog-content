@@ -149,6 +149,10 @@
             color: var(--ik-muted);
             letter-spacing: 0.3px;
           }
+          /* 缩小版统计胶囊（用于精简展示） */
+          .stat--sm { padding: 7px 13px; }
+          .stat--sm .stat__num { font-size: 0.85rem; }
+          .stat--sm .stat__label { font-size: 11px; }
 
           /* ── 说明横幅（对角斜线纹理，InterKnot linear-pattern-background） ── */
           .banner {
@@ -375,16 +379,12 @@
       <h1 class="hero-title">站点地图</h1>
       <p class="hero-desc">沫然Blog 的站点地图，列出所有可被搜索引擎抓取的 URL。</p>
       <div class="stats">
-        <span class="stat"><span class="stat__num"><xsl:value-of select="count(sm:url)"/></span><span class="stat__label">个 URL</span></span>
-      </div>
-      <div class="banner">
-        📄 这个 Sitemap 包含 <strong><xsl:value-of select="count(sm:url)"/></strong> 个 URL。<a href="/">← 返回首页</a>
+        <span class="stat stat--sm"><span class="stat__num"><xsl:value-of select="count(sm:url)"/></span><span class="stat__label">个 URL</span></span>
       </div>
     </section>
 
     <div class="section-head">
       <h2 class="section-title">URL 列表</h2>
-      <span class="section-count">共 <strong><xsl:value-of select="count(sm:url)"/></strong> 条</span>
     </div>
 
     <xsl:choose>
