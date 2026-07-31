@@ -527,12 +527,11 @@
           <h3 class="item__title">
             <a href="{link}"><xsl:value-of select="title"/></a>
           </h3>
-          <span class="item__num">#<xsl:value-of select="position()"/></span>
         </div>
 
         <div class="item__meta">
           <xsl:if test="pubDate">
-            <span class="item__date">📅 <xsl:value-of select="substring(pubDate, 1, 16)"/></span>
+            <span class="item__date"><xsl:value-of select="substring(pubDate, 1, 16)"/></span>
           </xsl:if>
           <xsl:if test="dc:creator">
             <span class="item__author"><xsl:value-of select="dc:creator"/></span>
@@ -547,14 +546,9 @@
           </div>
         </xsl:if>
 
-        <xsl:choose>
-          <xsl:when test="description">
-            <p class="item__excerpt"><xsl:value-of select="description"/></p>
-          </xsl:when>
-          <xsl:otherwise>
-            <p class="item__excerpt empty">（无摘要，展开下方预览查看正文）</p>
-          </xsl:otherwise>
-        </xsl:choose>
+        <xsl:if test="description">
+          <p class="item__excerpt"><xsl:value-of select="description"/></p>
+        </xsl:if>
 
         <div class="item__actions">
           <a class="item__cta" href="{link}">阅读全文 <span class="arrow">→</span></a>
