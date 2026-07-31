@@ -6,6 +6,14 @@
 // 4. 确保 frontmatter 和 body 之间有空行
 // 5. 把 /img/ 相对路径替换为绝对 URL（site.siteUrl）
 //    不误伤已经是绝对 URL（https://xxx/img/1.jpg）的链接
+// 6. 把 YAML 块状列表规范化为 inline JSON 数组：
+//      category:
+//        - Demo
+//        - 杂项
+//    转为：
+//      category: ["Demo", "杂项"]
+//    原因：PagesCMS 写回的 frontmatter 会被自动折成块状列表，
+//    inline JSON 数组形式更紧凑、可读、人手编辑也不易错。
 //
 // 用法:
 //   全量:    node clean-frontmatter.js
@@ -125,6 +133,42 @@ function getFieldValue(field) {
   return val.replace(/^['"]|['"]$/g, "");
 }
 
+/**
+ * 把 YAML 块状列表规范化为 inline JSON 数组：
+ *   category:
+ *     - Demo
+ *     - 杂项
+ * 转为：
+ *   category: ["Demo", "杂项"]
+ *
+ * - 仅处理首行形如 `key:` 或 `key: ` 的字段（值为空，表示后续是块状列表）
+ * - 后续行必须全部是 `  - xxx` 列表项，否则保持原样不动（安全退化）
+ * - 列表项若已被引号包裹，先剥掉外层引号再用双引号重新包裹
+ * - 内部双引号会被转义为 \"
+ */
+function normalizeField(field) {
+  if (field.rawLines.length <= 1) return field;
+  const firstLine = field.rawLines[0];
+  const m = firstLine.match(/^(\w[\w_-]*):\s*$/);
+  if (!m) return field;
+  const key = m[1];
+
+  const items = [];
+  for (let i = 1; i < field.rawLines.length; i++) {
+    const line = field.rawLines[i];
+    const im = line.match(/^\s+-\s+(.+?)\s*$/);
+    if (!im) return field; // 不是标准列表项，原样返回不冒险
+    let item = im[1];
+    // 剥掉外层单/双引号
+    item = item.replace(/^['"]|['"]$/g, "");
+    // 转义内部双引号
+    item = item.replace(/"/g, '\\"');
+    items.push(`"${item}"`);
+  }
+  if (items.length === 0) return field;
+  return { key, rawLines: [`${key}: [${items.join(", ")}]`] };
+}
+
 /** 处理单个 md 文件 */
 function cleanFile(filePath) {
   const raw = readFileSync(filePath, "utf-8");
@@ -151,8 +195,11 @@ function cleanFile(filePath) {
     cleanedFields.push(field);
   }
 
+  // 把 YAML 块状列表规范化为 inline JSON 数组
+  const normalizedFields = cleanedFields.map(normalizeField);
+
   // 按指定顺序排序
-  cleanedFields.sort((a, b) => {
+  normalizedFields.sort((a, b) => {
     const ia = FIELD_ORDER.indexOf(a.key);
     const ib = FIELD_ORDER.indexOf(b.key);
     if (ia === -1 && ib === -1) return 0;
@@ -162,7 +209,7 @@ function cleanFile(filePath) {
   });
 
   // 重建 frontmatter
-  const fmLines = cleanedFields.flatMap((f) => f.rawLines);
+  const fmLines = normalizedFields.flatMap((f) => f.rawLines);
   const newFm = "---\n" + fmLines.join("\n") + "\n---";
 
   // body 确保以单个空行开头（移除开头多余空行）

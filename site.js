@@ -16,8 +16,17 @@
 const domain = "raw-posts.945426.xyz";             // 内容 CDN 域名（GitHub Pages 绑定）
 const blogDomain = "blog.945426.xyz";              // 主站权威域名（用户真正访问的）
 
-const siteUrl = process.env.SITE_URL || `https://${domain}/`;
-const blogUrl = process.env.BLOG_URL || `https://${blogDomain}/`;
+// 兜底：环境变量可能被误填为不带协议头的域名（如 "blog.945426.xyz"），
+// 此时补上 https://，避免 sitemap 的 <loc> 缺协议头被 Google 拒收。
+function withProtocol(url, fallback) {
+  if (!url) return fallback;
+  if (!/^https?:\/\//i.test(url)) url = "https://" + url;
+  if (!url.endsWith("/")) url += "/";
+  return url;
+}
+
+const siteUrl = withProtocol(process.env.SITE_URL, `https://${domain}/`);
+const blogUrl = withProtocol(process.env.BLOG_URL, `https://${blogDomain}/`);
 
 const site = {
   // === 内容 CDN（图片/媒体资源 + posts.json/rss.xml/sitemap.xml 托管） ===
