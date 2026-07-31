@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-31T00:51:55.198Z",
+  "generatedAt": "2026-07-31T01:13:04.677Z",
   "perPage": 16,
   "total": 9,
   "pageCount": 1,
@@ -20,7 +20,8 @@
       "date": "2026-07-25 17:33",
       "last_modified": "2026-07-25 17:33",
       "author": "Admin",
-      "category": ["Demo","技术"],
+      "category": ["Demo","技术","杂项"],
+      "tags": ["Demo"],
       "desc": "test"
     },
     {
