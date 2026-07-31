@@ -298,7 +298,7 @@
           <xsl:apply-templates/>
           <footer class="ik-footer">
             <p><span class="brand">沫然Blog</span> · Sitemap</p>
-            <p>此页面由 <a href="/xsl/sitemap.xsl">sitemap.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
+            <p>此页面由 <a href="/xsl/sitemap.xsl">sitemap.xsl</a> 自动渲染 · <a href="/">返回首页</a> · <a href="/rss.xml">RSS</a></p>
           </footer>
         </div>
       </body>
