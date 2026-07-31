@@ -100,5 +100,5 @@ if (articleUrls.length <= SITEMAP_SHARD_SIZE) {
   writeFileSync(SITEMAP_OUTPUT, renderSitemapIndex(shardFiles), "utf-8");
 }
 
-console.log(`✅ 生成 sitemap.xml: ${articleUrls.length} 篇文章 URL`);
+console.log(`✅ 生成 sitemap.xml`);
 console.log(`   输出: ${SITEMAP_OUTPUT}`);

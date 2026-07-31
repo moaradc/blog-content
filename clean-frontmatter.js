@@ -173,10 +173,10 @@ if (argv.length > 0) {
     .filter((p) => existsSync(p) || (console.warn(`⚠️  跳过不存在的文件: ${p}`), false))
     .filter((p) => p.endsWith(".md"))
     .map((p) => p.split("/").pop());
-  console.log(`🧹 增量清理 ${files.length} 个 markdown 文件`);
+  console.log(`🧹 增量清理 markdown 文件`);
 } else {
   files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
-  console.log(`🧹 全量清理 ${files.length} 个 markdown 文件`);
+  console.log(`🧹 全量清理 markdown 文件`);
 }
 
 let changed = 0;
@@ -187,4 +187,4 @@ for (const file of files.sort()) {
   }
 }
 
-console.log(`\n✅ 完成: ${changed}/${files.length} 个文件被修改`);
+console.log(`\n✅ 完成`);

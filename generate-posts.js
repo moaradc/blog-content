@@ -36,7 +36,7 @@ if (!existsSync(POSTS_DIR)) {
 const posts = [];
 const rawPosts = [];
 const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
-console.log(`📄 扫描到 ${files.length} 个 markdown 文件`);
+console.log(`📄 扫描 markdown 文件`);
 
 for (const file of files.sort()) {
   // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致
@@ -124,7 +124,7 @@ function stringifyIndex(obj) {
 mkdirSync(DOCS_DIR, { recursive: true });
 const indexObj = { generatedAt, perPage: PER_PAGE, total, pageCount, posts: visibleSorted };
 writeFileSync(POSTS_OUTPUT, stringifyIndex(indexObj) + "\n", "utf-8");
-console.log(`\n✅ 生成 posts.json 索引: ${total} 篇可见文章 / ${pageCount} 页 (perPage=${PER_PAGE})`);
+console.log(`\n✅ 生成 posts.json`);
 console.log(`   输出: ${POSTS_OUTPUT}`);
 
 for (let pg = 0; pg < pageCount; pg++) {
@@ -132,7 +132,7 @@ for (let pg = 0; pg < pageCount; pg++) {
   const pageObj = { page: pg, perPage: PER_PAGE, total, pageCount, posts: slice };
   writeFileSync(join(DOCS_DIR, `posts-${pg}.json`), stringifyIndex(pageObj) + "\n", "utf-8");
 }
-console.log(`   生成 ${pageCount} 个分页文件: posts-0.json .. posts-${pageCount - 1}.json`);
+console.log(`   生成分页文件`);
 
 // === 清理多余的 posts-{n}.json（文章减少时） ===
 let cleaned = 0;
@@ -149,4 +149,4 @@ for (const entry of readdirSync(DOCS_DIR)) {
     }
   }
 }
-if (cleaned > 0) console.log(`   已清理 ${cleaned} 个过期分页文件`);
+if (cleaned > 0) console.log(`   已清理过期分页文件`);
