@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/xsl/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://blog.945426.xyz/details/article?id=zzz</loc><lastmod>2026-07-31</lastmod></url>
   <url><loc>https://blog.945426.xyz/details/article?id=test2</loc><lastmod>2026-07-31</lastmod></url>
   <url><loc>https://blog.945426.xyz/details/article?id=test</loc><lastmod>2026-07-25</lastmod></url>
   <url><loc>https://blog.945426.xyz/details/article?id=mermaid-test</loc><lastmod>2026-07-20</lastmod></url>
