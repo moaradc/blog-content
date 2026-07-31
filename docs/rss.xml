@@ -17,7 +17,7 @@
       <guid isPermaLink="false">zzz</guid>
       <pubDate>Fri, 31 Jul 2026 11:20:00 GMT</pubDate>
       <description>zzzz</description>
-      <content:encoded><![CDATA[<p>zzzz</p><p>zzzzzz</p>
+      <content:encoded><![CDATA[<p>zzzzzz</p>
 ]]></content:encoded>
       <category>Demo</category>
       <category>杂项</category>
@@ -30,7 +30,7 @@
       <guid isPermaLink="false">test2</guid>
       <pubDate>Fri, 31 Jul 2026 08:09:00 GMT</pubDate>
       <description>test22</description>
-      <content:encoded><![CDATA[<p>test22</p><p>test2</p>
+      <content:encoded><![CDATA[<p>test2</p>
 ]]></content:encoded>
       <category>Demo</category>
       <category>杂项</category>
@@ -43,7 +43,7 @@
       <guid isPermaLink="false">test</guid>
       <pubDate>Sat, 25 Jul 2026 17:33:00 GMT</pubDate>
       <description>test</description>
-      <content:encoded><![CDATA[<p>test</p><p>test</p>
+      <content:encoded><![CDATA[<p>test</p>
 ]]></content:encoded>
       <category>Demo</category>
       <category>技术</category>
@@ -57,7 +57,7 @@
       <guid isPermaLink="false">mermaid-test</guid>
       <pubDate>Mon, 20 Jul 2026 20:09:00 GMT</pubDate>
       <description>测试 Mermaid 图表渲染</description>
-      <content:encoded><![CDATA[<p>测试 Mermaid 图表渲染</p><p>本文仅用于测试 Mermaid 各类图表的渲染。</p>
+      <content:encoded><![CDATA[<p>本文仅用于测试 Mermaid 各类图表的渲染。</p>
 <h3>1. Flowchart 流程图</h3>
 <pre><code class="language-mermaid">
 flowchart TD
@@ -321,7 +321,7 @@ gitGraph
       <guid isPermaLink="false">107</guid>
       <pubDate>Tue, 09 Jun 2026 10:00:00 GMT</pubDate>
       <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
-      <content:encoded><![CDATA[<p>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</p><h2>什么是Markdown？</h2>
+      <content:encoded><![CDATA[<h2>什么是Markdown？</h2>
 <p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
 <h2>基本语法</h2>
 <h3>文本格式</h3>
@@ -362,7 +362,7 @@ gitGraph
       <guid isPermaLink="false">106</guid>
       <pubDate>Mon, 29 Dec 2025 17:55:00 GMT</pubDate>
       <description>Hello world!</description>
-      <content:encoded><![CDATA[<p>Hello world!</p><p>Hello world!</p>
+      <content:encoded><![CDATA[<p>Hello world!</p>
 <p><music id="cry"></music></p>
 ]]></content:encoded>
       <category>Demo</category>
@@ -390,7 +390,7 @@ gitGraph
       <guid isPermaLink="false">103</guid>
       <pubDate>Fri, 12 Dec 2025 13:09:00 GMT</pubDate>
       <description>代码高亮与排版组件演示</description>
-      <content:encoded><![CDATA[<p>代码高亮与排版组件演示</p><p>本文用于测试博客的代码块渲染逻辑、复制功能以及折叠/展开功能。</p>
+      <content:encoded><![CDATA[<p>本文用于测试博客的代码块渲染逻辑、复制功能以及折叠/展开功能。</p>
 <h3>1. JavaScript 基础示例</h3>
 <p>这是最基础的 JS 代码块，使用 <code>language-js</code>。</p>
 <pre><code class="language-js">// 欢迎来到控制台
@@ -531,7 +531,7 @@ footer {
       <guid isPermaLink="false">101</guid>
       <pubDate>Fri, 21 Nov 2025 13:09:00 GMT</pubDate>
       <description>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</description>
-      <content:encoded><![CDATA[<p><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="月下独酌：李白诗中的孤独与自由" /></p><p>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</p><p>夜色如水，明月当空。读李白的《月下独酌》，总能在字里行间感受到一种独特的孤独之美。</p>
+      <content:encoded><![CDATA[<p><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="月下独酌：李白诗中的孤独与自由" /></p><p>夜色如水，明月当空。读李白的《月下独酌》，总能在字里行间感受到一种独特的孤独之美。</p>
 <h2>一、诗中的画面</h2>
 <p>“花间一壶酒，独酌无相亲。举杯邀明月，对影成三人。”开篇四句，便勾勒出一幅绝美的月夜独饮图。花丛之中，一人独坐，看似寂寞，却因邀月对影而瞬间热闹起来。</p>
 <blockquote>

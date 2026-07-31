@@ -139,9 +139,6 @@ function generateRssFeed(allPosts, allRawPosts) {
       const imageUrl = site.absUrl(post.image);
       fullContent += '<p><img src="' + escapeXml(imageUrl) + '" alt="' + escapeXml(post.title) + '" /></p>';
     }
-    if (post.desc) {
-      fullContent += "<p>" + escapeXml(post.desc) + "</p>";
-    }
     fullContent += contentHtml;
 
     lines.push("    <item>");
