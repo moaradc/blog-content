@@ -1,0 +1,27 @@
+# _headers — Cloudflare Pages / Workers 风格的响应头配置
+#
+# ⚠️ 当前 moaradc/blog-content 用 GitHub Pages 部署，GitHub Pages 不支持 _headers 文件。
+# 此文件作为文档备用，未来迁移到 Cloudflare Pages / Workers 时可直接启用。
+#
+# 参考 afoim/af_blog-data 的 _headers：
+# - .md 文件显式声明 text/markdown; charset=utf-8（GitHub Pages 默认 text/plain 无 charset，中文可能乱码）
+# - RSS 用 application/xml 而不是 application/rss+xml（后者浏览器不当可渲染 XML，会摊成纯文本）
+
+/posts/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/*.md
+  Content-Type: text/markdown; charset=utf-8
+
+/posts.json
+  Content-Type: application/json; charset=utf-8
+
+/posts-*.json
+  Content-Type: application/json; charset=utf-8
+
+# RSS feed：用 application/xml 让浏览器走 XML 树查看器（application/rss+xml 浏览器不当可渲染 XML）
+/rss.xml
+  Content-Type: application/xml; charset=utf-8
+
+/sitemap.xml
+  Content-Type: application/xml; charset=utf-8

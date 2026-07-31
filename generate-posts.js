@@ -14,49 +14,12 @@
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
 const { join } = require("path");
 const site = require("./site");
+const { parseFrontmatter } = require("./parse-frontmatter");
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const DOCS_DIR = join(__dirname, "docs");
 const POSTS_OUTPUT = join(DOCS_DIR, "posts.json");
 const PER_PAGE = site.perPage;
-
-/** 解析类 YAML frontmatter 为对象（支持 inline 数组 + 块状列表） */
-function parseFrontmatter(fm) {
-  const result = {};
-  let currentKey = null;
-  let currentList = [];
-
-  for (const line of fm.split("\n")) {
-    const kvMatch = line.match(/^(\w[\w_-]*):\s*(.*)$/);
-    if (kvMatch) {
-      if (currentKey && currentList.length) result[currentKey] = [...currentList];
-      currentKey = kvMatch[1];
-      const val = kvMatch[2].trim();
-      if (val === "") {
-        currentList = [];
-      } else if (val.startsWith("[")) {
-        result[currentKey] = val
-          .slice(1, -1).split(",")
-          .map((s) => s.trim().replace(/^['"]|['"]$/g, ""))
-          .filter(Boolean);
-        currentKey = null;
-      } else if (val === "true" || val === "false") {
-        result[currentKey] = val === "true";
-        currentKey = null;
-      } else {
-        result[currentKey] = val.replace(/^['"]|['"]$/g, "");
-        currentKey = null;
-      }
-      continue;
-    }
-    const liMatch = line.match(/^\s*-\s+(.*)$/);
-    if (liMatch && currentKey) {
-      currentList.push(liMatch[1].trim().replace(/^['"]|['"]$/g, ""));
-    }
-  }
-  if (currentKey && currentList.length) result[currentKey] = [...currentList];
-  return result;
-}
 
 function parseMarkdown(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
