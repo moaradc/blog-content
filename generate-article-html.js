@@ -401,7 +401,7 @@ for (const file of files.sort()) {
 
   const breadcrumbJsonLd = buildBreadcrumbJsonLd([
     { name: "首页", url: "/" },
-    { name: "文章", url: "/details/archives" },
+    { name: "归档", url: "/details/archives" },
     { name: title, url: `/posts/${slug}` },
   ]);
 
