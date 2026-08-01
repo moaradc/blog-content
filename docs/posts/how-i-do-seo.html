@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>纯前端博客的 SEO 自救 | 沫然Blog</title>
+    <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
+
+    <meta name="description" content="博客文章放在独立仓库，主站构建后是个空壳，爬虫什么都看不到。记录一下怎么填上这个坑的。" />
+    <meta name="keywords" content="SEO,Astro,前后端分离" />
+    <meta name="author" content="沫然" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://blog.945426.xyz/posts/how-i-do-seo" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="纯前端博客的 SEO 自救" />
+    <meta property="og:description" content="博客文章放在独立仓库，主站构建后是个空壳，爬虫什么都看不到。记录一下怎么填上这个坑的。" />
+    <meta property="og:url" content="https://blog.945426.xyz/posts/how-i-do-seo" />
+    <meta property="og:site_name" content="沫然Blog" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="article:published_time" content="2026-08-01T07:00:00.000Z" />
+    <meta property="article:author" content="沫然" />
+    <meta property="article:tag" content="技术" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" />
+
+    <!-- JSON-LD 结构化数据 -->
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"纯前端博客的 SEO 自救","description":"博客文章放在独立仓库，主站构建后是个空壳，爬虫什么都看不到。记录一下怎么填上这个坑的。","image":"https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&w=1200&auto=format&fit=crop","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/how-i-do-seo"},"author":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"datePublished":"2026-08-01T07:00:00.000Z","dateModified":"2026-08-01T07:00:00.000Z","url":"https://blog.945426.xyz/posts/how-i-do-seo","articleBody":"问题 博客用 Astro 写的，部署在 Vercel。文章 markdown 单独放在一个公开仓库，走 GitHub Pages 当 CDN。分仓的理由很简单——一百多篇文章加图片三百多兆，塞主仓里每次 clone 都要等半天。 但分仓有个后遗症：文章详情页构建出来就四行，title 写着 加载中... ，body 里一个空 div，正文全靠 article.js 运行时 fetch markdown 再渲染。用户看着没问题，爬虫看到的就一空壳。 Google 收录倒是收了，但搜出来标题永远是 加载中 。 试过的弯路 中途参考了 test2 仓库的方案——主仓加个 Vercel Edge Function，请求文章页时服务端拉 markdown、marked 渲染、注入 SEO head，返回完整 HTML。 本来想按 UA 分流：爬虫走 Function 预渲染，浏览器走静态空壳，省 Function 调用次数。结果发现根本分不动——爬虫 UA 会变，今天 Googlebot 明天 ClaudeBot 后天不知道什么 Bot，正则永远写不全。漏一个就是空壳。 那不分了，所有请求都走 Function？Vercel 免费额度 100 万次/月，平时够用，但哪天被 V2EX 一转发或者 AI 爬虫一扫，配额直接见底，超了就 503。 而且那套方案要加六个文件，Edge Function 加 SEO 注入库加 render 模块加 inject 模块，光看代码就头大。 想了想，能用静态 HTML 解决的事，干嘛要跑 Function。放弃了。 最后怎么做的 还是分仓那条路，只是让内容仓的 GitHub Action 多干一件事：扫描所有 markdown，给每篇生成一个带完整 SEO 的静态 HTML。 流水线长这样： 写文章 → push 到内容仓 → GitHub Action 跑四步：清理 frontmatter、生成 posts.json 索引、生成 sitemap、生成每篇 SEO HTML → commit 回去，Pages 自动部署。 用户访问 blog.945426.xyz/posts/101 的时候，Vercel rewrite 到 raw-posts/posts/101.html，拿到完整 HTML。配置层字符串映射，零次 Function 调用。 主仓就加了一条 rewrite 规则，其他什么都没动。 生成器干的事也不复杂：读 markdown，marked 渲染全文，填模板占位符，输出 HTML。JSON-LD 塞了两个——BlogPosting 带 articleBody 全文，加个三级面包屑。Google 富媒体测试一跑，两项全绿。 article.js 的配合 这里有个关键点。生成的 HTML 已经有完整正文了，article.js 运行时要是还 fetch 一遍 markdown 再渲染，那就白搞了——多一次网络请求，还闪一下。 改了 initArticle：先看 detail-content 有没有内容，有就跳过 fetch，直接用。frontmatter 数据通过 data-article-meta 属性传过去，JSON parse 一下就行。 效果：首屏直接是完整正文，不闪，还少一次请求。 踩的坑 说起来都是泪。 @custom-media 不展开。 主仓 CSS 用了 @custom-media --mobile 命名断点，本来 PostCSS 构建时展开。内容仓放了一份 CSS 副本不走 PostCSS， @media (--mobile) 浏览器不认识，移动端布局直接塌。最后把 CSS 全迁到 public 固定路径，手动把 @media 全展开成字面量。 跨域资源 404。 内容仓 HTML 在 raw-posts 域名，CSS/JS 在主仓域名。一开始用相对路径，浏览器解析成 raw-posts 上的路径，没有，404。改成主仓绝对 URL，又撞上主仓 middleware 的 403 保护。后来确认跨源 link 标签的 Sec-Fetch-Mode 是 no-cors 不被拦，才通。 作者头像 404。 users.js 里头像是相对路径，在 raw-posts 域名下解析过去还是 404。article.js 里加了个域名检测，非主仓就自动补前缀。 Cloudflare 乱注入脚本。 raw-posts 走 Cloudflare，CF 检测到 HTML 里有 email 就自动替换成混淆链接，还塞了个 email-decode.min.js。但主仓在 Vercel 没这层，访问 /cdn-cgi 就 404。最后把模板里 .profile-social 留空，让 article.js 运行时填，HTML 里彻底没有 email 字符串。 上下一篇链接拼错。 article.js 里 href 写的是 ?id=102 ，在 /posts/101 页面点击会拼成 /posts/101?id=102。改成绝对路径 /posts/102 才对。 禁用 JS 一直转圈。 加载遮罩默认显示，靠 article.js 隐藏。禁用 JS 就永远转，正文被遮住。加了 noscript 样式强制隐藏 loader 才好。 每个坑都不大，但连着踩也是心累。 增量生成 生成器一开始是全量扫描，发一篇文章也把一百篇全重新生成一遍。后来改成增量，跟 clean-frontmatter.js 一个套路——workflow 用 git diff 取变更的文件，传给生成器，只处理改动的那些篇。删掉的文件也传进来，顺手清理对应的 HTML。 日常发文现在只生成一篇，秒完。 就这样 回头看方案挺朴素的——构建期把活干完，运行时纯静态。没什么花活，但中间踩的坑不少。 放弃了 Edge Function 那套方案，不是因为不好，是没必要。静态 HTML 能搞定的事，别上 Function。"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"纯前端博客的 SEO 自救","item":"https://blog.945426.xyz/posts/how-i-do-seo"}]}]</script>
+
+    <!-- 第三方资源 -->
+    <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Waline 评论样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+    <!-- highlight.js 主题 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+
+    <!-- 本站 CSS -->
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
+
+    <!-- 第三方库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+    <!-- 本站 JS -->
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
+</head>
+<body>
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__band">
+        <div class="marquee__row marquee__row--ltr"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--rtl"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--ltr marquee__row--offset"><div class="marquee__track"></div></div>
+    </div>
+</div>
+
+<div id="global-loader">
+    <div class="loader-spinner"></div>
+</div>
+
+<nav>
+    <div class="nav-left">
+        <div class="logo" onclick="transitionTo('/')" style="cursor: pointer; font-weight:900; font-size:1.1rem;">MOARA.</div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索文章..." oninput="handleSearch(this)" onkeydown="if(event.key==='Enter') triggerSearch()" id="detailSearchInput" />
+            <div class="search-suggestions"></div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn mobile-search-btn" onclick="toggleMobileSearch()" title="搜索">
+            <i class="ri-search-line"></i>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="切换主题">
+            <i class="ri-sun-line" id="theme-icon"></i>
+        </button>
+        <button class="icon-btn" onclick="transitionTo('/')" title="回到首页">
+            <i class="ri-home-4-line"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- 文章容器 -->
+<div id="article-view" data-article-id="how-i-do-seo" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;纯前端博客的 SEO 自救&quot;,&quot;date&quot;:&quot;2026-08-01 15:00&quot;,&quot;last_modified&quot;:&quot;2026-08-01 15:00&quot;,&quot;author&quot;:&quot;Admin&quot;,&quot;category&quot;:[&quot;技术&quot;],&quot;tags&quot;:[&quot;SEO&quot;,&quot;Astro&quot;,&quot;前后端分离&quot;],&quot;image&quot;:&quot;https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&amp;w=1200&amp;auto=format&amp;fit=crop&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false}">
+
+    <div class="article-hero-wrapper">
+        <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
+        <div class="article-hero-overlay-gradient"></div>
+        <div class="article-hero-content">
+            <h1 class="article-big-title" id="detail-title">纯前端博客的 SEO 自救</h1>
+            <div id="detail-category-container" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 0.5rem;"><span class="category-badge" style="background: var(--accent-3); color: #ffffff; padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">技术</span></div>
+            <div class="article-meta">
+                <span style="display: flex; align-items: center;">
+                    <div class="info-wrapper" id="mod-info-wrapper" style="display:none;">
+                        <div class="info-icon" onclick="toggleModInfo(event)">i</div>
+                        <div class="modified-tooltip" id="mod-tooltip"></div>
+                    </div>
+                    <i class="ri-calendar-line"></i> <span id="detail-date">2026年8月1日</span>
+                </span>
+                <span id="detail-words" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-read-time" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-pageview" style="display: flex; align-items: center; gap: 5px;"><i class="ri-eye-line"></i><span class="waline-pageview-count" data-path="/article/how-i-do-seo">...</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout-grid">
+
+        <aside class="sidebar-column">
+            <div class="sidebar-sticky-wrapper">
+
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="沫然" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">沫然</h3>
+                            <p class="profile-bio" id="bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                    <div class="profile-stats-divider"></div>
+                    <div class="profile-stats-container">
+                        <div class="p-stat-item" title="发布日期">
+                            <i class="ri-calendar-line"></i>
+                            <span id="sidebar-date">2026年8月1日</span>
+                        </div>
+                        <div class="p-stat-item" id="sidebar-mod-wrapper" style="display:none;" title="最后修改">
+                            <i class="ri-edit-box-line"></i>
+                            <span id="sidebar-mod-date"></span>
+                        </div>
+                        <div class="p-stat-item" title="文章字数">
+                            <i class="ri-file-word-line"></i>
+                            <span id="sidebar-words">...</span>
+                        </div>
+                        <div class="p-stat-item" title="预计阅读时长">
+                            <i class="ri-time-line"></i>
+                            <span id="sidebar-time">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card latency-card" id="pc-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="pc-latency-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="sidebar-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="sidebar-cat-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="sidebar-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="sidebar-tag-cloud"></div>
+                </div>
+
+                <div class="sidebar-card toc-card-pc" id="pc-toc-wrapper" style="display:none;">
+                    <div class="toc-title"><i class="ri-list-check"></i> 目录导航</div>
+                    <ul class="toc-list-pc" id="pc-toc-list"></ul>
+                </div>
+
+            </div>
+        </aside>
+
+        <main class="article-column">
+
+            <div class="toc-box mobile-only-toc" id="toc-box" style="display: none;">
+                <div class="toc-header" onclick="toggleTOC()">
+                    <span><i class="ri-list-check"></i> 文章目录</span>
+                    <i class="ri-arrow-down-s-line" id="toc-icon"></i>
+                </div>
+                <div class="toc-content" id="toc-content">
+                    <ul class="toc-list" id="toc-list"></ul>
+                </div>
+            </div>
+
+            <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
+            <article class="article-body" id="detail-content">
+                <h2>问题</h2>
+<p>博客用 Astro 写的，部署在 Vercel。文章 markdown 单独放在一个公开仓库，走 GitHub Pages 当 CDN。分仓的理由很简单——一百多篇文章加图片三百多兆，塞主仓里每次 clone 都要等半天。</p>
+<p>但分仓有个后遗症：文章详情页构建出来就四行，title 写着&quot;加载中...&quot;，body 里一个空 div，正文全靠 article.js 运行时 fetch markdown 再渲染。用户看着没问题，爬虫看到的就一空壳。</p>
+<p>Google 收录倒是收了，但搜出来标题永远是&quot;加载中&quot;。</p>
+<h2>试过的弯路</h2>
+<p>中途参考了 test2 仓库的方案——主仓加个 Vercel Edge Function，请求文章页时服务端拉 markdown、marked 渲染、注入 SEO head，返回完整 HTML。</p>
+<p>本来想按 UA 分流：爬虫走 Function 预渲染，浏览器走静态空壳，省 Function 调用次数。结果发现根本分不动——爬虫 UA 会变，今天 Googlebot 明天 ClaudeBot 后天不知道什么 Bot，正则永远写不全。漏一个就是空壳。</p>
+<p>那不分了，所有请求都走 Function？Vercel 免费额度 100 万次/月，平时够用，但哪天被 V2EX 一转发或者 AI 爬虫一扫，配额直接见底，超了就 503。</p>
+<p>而且那套方案要加六个文件，Edge Function 加 SEO 注入库加 render 模块加 inject 模块，光看代码就头大。</p>
+<p>想了想，能用静态 HTML 解决的事，干嘛要跑 Function。放弃了。</p>
+<h2>最后怎么做的</h2>
+<p>还是分仓那条路，只是让内容仓的 GitHub Action 多干一件事：扫描所有 markdown，给每篇生成一个带完整 SEO 的静态 HTML。</p>
+<p>流水线长这样：</p>
+<p>写文章 → push 到内容仓 → GitHub Action 跑四步：清理 frontmatter、生成 posts.json 索引、生成 sitemap、生成每篇 SEO HTML → commit 回去，Pages 自动部署。</p>
+<p>用户访问 blog.945426.xyz/posts/101 的时候，Vercel rewrite 到 raw-posts/posts/101.html，拿到完整 HTML。配置层字符串映射，零次 Function 调用。</p>
+<p>主仓就加了一条 rewrite 规则，其他什么都没动。</p>
+<p>生成器干的事也不复杂：读 markdown，marked 渲染全文，填模板占位符，输出 HTML。JSON-LD 塞了两个——BlogPosting 带 articleBody 全文，加个三级面包屑。Google 富媒体测试一跑，两项全绿。</p>
+<h2>article.js 的配合</h2>
+<p>这里有个关键点。生成的 HTML 已经有完整正文了，article.js 运行时要是还 fetch 一遍 markdown 再渲染，那就白搞了——多一次网络请求，还闪一下。</p>
+<p>改了 initArticle：先看 detail-content 有没有内容，有就跳过 fetch，直接用。frontmatter 数据通过 data-article-meta 属性传过去，JSON parse 一下就行。</p>
+<p>效果：首屏直接是完整正文，不闪，还少一次请求。</p>
+<h2>踩的坑</h2>
+<p>说起来都是泪。</p>
+<p><strong>@custom-media 不展开。</strong> 主仓 CSS 用了 <code>@custom-media --mobile</code> 命名断点，本来 PostCSS 构建时展开。内容仓放了一份 CSS 副本不走 PostCSS，<code>@media (--mobile)</code> 浏览器不认识，移动端布局直接塌。最后把 CSS 全迁到 public 固定路径，手动把 @media 全展开成字面量。</p>
+<p><strong>跨域资源 404。</strong> 内容仓 HTML 在 raw-posts 域名，CSS/JS 在主仓域名。一开始用相对路径，浏览器解析成 raw-posts 上的路径，没有，404。改成主仓绝对 URL，又撞上主仓 middleware 的 403 保护。后来确认跨源 link 标签的 Sec-Fetch-Mode 是 no-cors 不被拦，才通。</p>
+<p><strong>作者头像 404。</strong> users.js 里头像是相对路径，在 raw-posts 域名下解析过去还是 404。article.js 里加了个域名检测，非主仓就自动补前缀。</p>
+<p><strong>Cloudflare 乱注入脚本。</strong> raw-posts 走 Cloudflare，CF 检测到 HTML 里有 email 就自动替换成混淆链接，还塞了个 email-decode.min.js。但主仓在 Vercel 没这层，访问 /cdn-cgi 就 404。最后把模板里 .profile-social 留空，让 article.js 运行时填，HTML 里彻底没有 email 字符串。</p>
+<p><strong>上下一篇链接拼错。</strong> article.js 里 href 写的是 <code>?id=102</code>，在 /posts/101 页面点击会拼成 /posts/101?id=102。改成绝对路径 /posts/102 才对。</p>
+<p><strong>禁用 JS 一直转圈。</strong> 加载遮罩默认显示，靠 article.js 隐藏。禁用 JS 就永远转，正文被遮住。加了 noscript 样式强制隐藏 loader 才好。</p>
+<p>每个坑都不大，但连着踩也是心累。</p>
+<h2>增量生成</h2>
+<p>生成器一开始是全量扫描，发一篇文章也把一百篇全重新生成一遍。后来改成增量，跟 clean-frontmatter.js 一个套路——workflow 用 git diff 取变更的文件，传给生成器，只处理改动的那些篇。删掉的文件也传进来，顺手清理对应的 HTML。</p>
+<p>日常发文现在只生成一篇，秒完。</p>
+<h2>就这样</h2>
+<p>回头看方案挺朴素的——构建期把活干完，运行时纯静态。没什么花活，但中间踩的坑不少。</p>
+<p>放弃了 Edge Function 那套方案，不是因为不好，是没必要。静态 HTML 能搞定的事，别上 Function。</p>
+
+            </article>
+
+            <div class="article-navigation" id="article-navigation"></div>
+
+            <div class="article-copyright">本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>协议，转载请注明出处。</div>
+
+            <div class="mobile-bottom-cards">
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="沫然" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">沫然</h3>
+                            <p class="profile-bio" id="mobile-bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                </div>
+
+                <div class="sidebar-card latency-card" id="mobile-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="mobile-latency-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="mobile-bottom-cat-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="mobile-bottom-tag-cloud"></div>
+                </div>
+            </div>
+
+            <div id="waline"></div>
+
+            <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px dashed var(--text-color); text-align: center; font-size: 0.8rem; opacity: 0.6;">
+                &copy; MOARA. All rights reserved.
+            </div>
+
+    <!-- 禁用 JS 兜底 -->
+            <noscript>
+                <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
+                    <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
+                    <p style="margin: 1rem 0 0;">
+                        <a href="https://raw-posts.945426.xyz/posts/how-i-do-seo.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">查看原始 Markdown</a>
+                        &nbsp;
+                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回首页</a>
+                    </p>
+                </div>
+            </noscript>
+        </main>
+    </div>
+</div>
+
+<div class="lightbox-overlay" id="lightbox">
+    <div class="lightbox-img-wrapper">
+        <img src="" alt="Preview" class="lightbox-img" id="lightbox-img" />
+    </div>
+    <div class="lightbox-controls" onclick="event.stopPropagation()">
+        <div class="lb-btn" id="lb-prev"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="lb-btn" id="lb-next"><i class="ri-arrow-right-s-line"></i></div>
+        <div class="lb-btn" id="lb-rot-l"><i class="ri-anticlockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-rot-r"><i class="ri-clockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-out"><i class="ri-zoom-out-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-in"><i class="ri-zoom-in-line"></i></div>
+        <div class="lb-btn" id="lb-info"><i class="ri-information-line"></i></div>
+        <div class="lb-btn" id="lb-close"><i class="ri-close-circle-line"></i></div>
+    </div>
+    <div class="lightbox-thumbnails" id="lb-thumbnails"></div>
+    <div class="lb-info-panel" id="lb-info-panel" onclick="event.stopPropagation()">
+        <div class="lb-info-row"><span class="lb-info-label">文件名</span><span id="lb-info-name" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">尺寸</span><span id="lb-info-size" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">描述</span><span id="lb-info-alt" class="lb-info-value-full">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">地址</span><a id="lb-info-src" href="#" target="_blank" rel="noopener">-</a></div>
+    </div>
+</div>
+
+<div class="scroll-controls" id="scrollControls">
+    <div class="scroll-actions-wrapper">
+        <div class="scroll-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="回到顶部">
+            <i class="ri-arrow-up-line"></i>
+        </div>
+        <div class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'})" title="去到底部">
+            <i class="ri-arrow-down-line"></i>
+        </div>
+    </div>
+    <div class="mobile-scroll-row">
+        <div class="scroll-btn toc-btn" onclick="toggleTocPopup()" title="文章目录">
+            <i class="ri-list-check"></i>
+        </div>
+        <div class="scroll-btn direction-btn" onclick="handleDirectionScroll()" title="滚动">
+            <i class="ri-arrow-down-line" id="direction-icon"></i>
+        </div>
+    </div>
+    <div class="scroll-btn toggle-handler" onclick="toggleScrollWidget()" title="收起/展开">
+        <div class="progress-track"></div>
+        <div class="progress-fill" id="scroll-progress-fill"></div>
+        <span class="progress-num" id="scroll-progress-num">0</span>
+        <i class="ri-arrow-right-s-line toggle-icon" id="scroll-toggle-icon"></i>
+    </div>
+    <div class="toc-popup" id="toc-popup">
+        <div class="toc-popup-title"><i class="ri-list-check"></i> 目录导航</div>
+        <ul class="toc-popup-list" id="toc-popup-list"></ul>
+    </div>
+</div>
+
+<!-- 文章渲染 -->
+<script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
+
+</body>
+</html>

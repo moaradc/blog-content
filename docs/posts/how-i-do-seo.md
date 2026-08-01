@@ -8,7 +8,6 @@ tags: ["SEO", "Astro", "前后端分离"]
 desc: 博客文章放在独立仓库，主站构建后是个空壳，爬虫什么都看不到。记录一下怎么填上这个坑的。
 image: https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&w=1200&auto=format&fit=crop
 ---
-
 ## 问题
 
 博客用 Astro 写的，部署在 Vercel。文章 markdown 单独放在一个公开仓库，走 GitHub Pages 当 CDN。分仓的理由很简单——一百多篇文章加图片三百多兆，塞主仓里每次 clone 都要等半天。
