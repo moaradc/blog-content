@@ -1,7 +1,12 @@
 name: Generate posts.json
 
-# 触发条件：push 到 main 时（posts/ 目录或脚本有改动）
+# 触发条件：push 到 cms 时（posts/ 目录或脚本有改动）
 # 自动生成 posts.json + 分页 + sitemap.xml，不需要手动触发
+#
+# ⚠️ 迁移说明：本 workflow 原本监听 main 分支，迁到 Cloudflare Workers 后
+#    源码和自动产物都搬到 cms 分支，触发分支相应改成 cms。
+#    产物 commit 回 cms（checkout 出来的就是 cms，git push 默认推回 cms）。
+#    release.yml 会从 cms 拷 docs/ 到 main 的 dist/。
 #
 # 性能优化：
 #   - clean-frontmatter.js 增量执行：只清理本次 push 涉及的 .md 文件
@@ -28,7 +33,7 @@ name: Generate posts.json
 #   - 见 IMPLEMENTATION.md
 on:
   push:
-    branches: [main]
+    branches: [cms]
     paths:
       - "docs/posts/**"
       - "generate-posts.js"
@@ -163,5 +168,5 @@ jobs:
           else
             git commit -m "chore: auto-clean frontmatter + generate posts.json + sitemap + article HTML [skip ci]"
             git push
-            echo "✅ 已提交"
+            echo "✅ 已提交到 cms 分支"
           fi
