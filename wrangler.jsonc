@@ -1,20 +1,4 @@
 {
-  // Cloudflare Workers Static Assets 配置
-  // main 分支根目录的 dist/ 由 release.yml 工作流构建并推上来。
-  // Cloudflare Workers Builds 配置：分支 = main，构建命令留空，输出目录 = 根目录。
-  //
-  // 关键字段说明：
-  //   name              —— Worker 名字，自己起一个，建议和 Pages 域名对齐
-  //   compatibility_date—— 写你配置 wrangler 时的当天日期即可
-  //   account_id        —— 在 Cloudflare 控制台右下角能看到，部署时也会从环境变量读
-  //   assets.directory  —— 静态资源目录，必须是 ./dist
-  //   html_handling     —— drop-trailing-slash：/posts/123/ 自动跳 /posts/123
-  //   not_found_handling—— 404-page：找不到文件时返回 dist 里的 404.html
-  //                        （blog-content 目前没生成 404.html，先用 none；
-  //                          之后想自定义 404 可以在 docs/ 放一个 404.html，
-  //                          generate-* 脚本会原样带过去）
-  //   nodejs_compat     —— 纯静态资源其实用不到，但开着不碍事，方便后续加 Worker 逻辑
-  //   observability     —— 控制台能看到请求日志，调试方便
   "name": "blog-content",
   "compatibility_date": "2026-08-01",
   "assets": {
