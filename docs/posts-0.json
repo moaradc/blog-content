@@ -1,20 +1,9 @@
 {
   "page": 0,
   "perPage": 16,
-  "total": 11,
+  "total": 10,
   "pageCount": 1,
   "posts": [
-    {
-      "id": "how-i-do-seo",
-      "title": "折腾博客 SEO 这件事",
-      "date": "2026-08-01 12:00",
-      "last_modified": "2026-08-01 12:00",
-      "author": "Admin",
-      "category": ["技术"],
-      "tags": ["SEO","Astro"],
-      "desc": "博客文章放在另一个仓库，主站构建后是个空壳，爬虫什么都看不到。记录一下怎么把这个坑填上的。",
-      "image": "https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&w=1200&auto=format&fit=crop"
-    },
     {
       "id": "zzz",
       "title": "zzz",
