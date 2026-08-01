@@ -8,7 +8,6 @@ tags: ["SEO", "Astro", "前后端分离"]
 desc: 一个 Astro 纯静态博客，文章数据放在独立仓库通过 CDN 提供。本文记录从 SPA 空壳到爬虫可见完整正文的 SEO 落地过程，以及中途放弃的 Edge Function 方案。
 image: https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&w=1200&auto=format&fit=crop
 ---
-
 ## 起点和一个不能接受的事实
 
 博客主站用 Astro 静态构建，部署在 Vercel；文章 markdown 放在独立的公开仓库，通过 GitHub Pages 提供 CDN 服务（`raw-posts.945426.xyz`）。主仓私有，内容仓公开，两者彻底分离——这是为了 100 多篇博文加上千张图片共 300MB 资源不拖累主仓的 CI/CD。

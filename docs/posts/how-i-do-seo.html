@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>我是怎么给纯前端博客做 SEO 的 | 沫然Blog</title>
+    <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
+
+    <!-- ========= SEO Meta ========= -->
+    <meta name="description" content="一个 Astro 纯静态博客，文章数据放在独立仓库通过 CDN 提供。本文记录从 SPA 空壳到爬虫可见完整正文的 SEO 落地过程，以及中途放弃的 Edge Function 方案。" />
+    <meta name="keywords" content="SEO,Astro,前后端分离" />
+    <meta name="author" content="沫然" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://blog.945426.xyz/posts/how-i-do-seo" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="我是怎么给纯前端博客做 SEO 的" />
+    <meta property="og:description" content="一个 Astro 纯静态博客，文章数据放在独立仓库通过 CDN 提供。本文记录从 SPA 空壳到爬虫可见完整正文的 SEO 落地过程，以及中途放弃的 Edge Function 方案。" />
+    <meta property="og:url" content="https://blog.945426.xyz/posts/how-i-do-seo" />
+    <meta property="og:site_name" content="沫然Blog" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="article:published_time" content="2026-08-01T04:00:00.000Z" />
+    <meta property="article:author" content="沫然" />
+    <meta property="article:tag" content="技术" />
+    <meta property="og:image" content="https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&amp;w=1200&amp;auto=format&amp;fit=crop" />
+
+    <!-- JSON-LD 结构化数据 -->
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"我是怎么给纯前端博客做 SEO 的","description":"一个 Astro 纯静态博客，文章数据放在独立仓库通过 CDN 提供。本文记录从 SPA 空壳到爬虫可见完整正文的 SEO 落地过程，以及中途放弃的 Edge Function 方案。","image":"https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&w=1200&auto=format&fit=crop","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/how-i-do-seo"},"author":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"datePublished":"2026-08-01T04:00:00.000Z","dateModified":"2026-08-01T04:00:00.000Z","url":"https://blog.945426.xyz/posts/how-i-do-seo","articleBody":"起点和一个不能接受的事实 博客主站用 Astro 静态构建，部署在 Vercel；文章 markdown 放在独立的公开仓库，通过 GitHub Pages 提供 CDN 服务（ raw-posts.945426.xyz ）。主仓私有，内容仓公开，两者彻底分离——这是为了 100 多篇博文加上千张图片共 300MB 资源不拖累主仓的 CI/CD。 但分离有个代价：文章详情页 article.astro 构建后只有 4 行—— title 加载中... /title 加一个空 div id= article-view ，正文靠 article.js 运行时 fetch markdown 再用 marked 渲染。爬虫看到的是空壳，SEO 完全失效。 目标和约束 需要做到： 每篇文章有独立静态 HTML，含完整 head 元数据 + 正文 主仓零构建——发文只触发内容仓的 Action，不触发主仓 CI 纯前端——无 Node 运行时、无 Edge Function、无 SSR 旧链接 /details/article?id=xxx 继续可用 方案：内容仓构建期生成 SEO HTML 最终落地的方案很直接：在内容仓的 GitHub Action 里加一个生成器脚本，扫描 docs/posts/*.md ，为每篇文章生成一个带完整 SEO 的静态 HTML。 工作流 PagesCMS 写文章 → push 到 blog-content/docs/posts/{id}.md ↓ GitHub Action 自动触发（4 步流水线） 1. clean-frontmatter.js 增量清理 frontmatter 2. generate-posts.js 生成 posts.json 索引 3. generate-sitemap.js 生成 sitemap.xml 4. generate-article-html.js 生成每篇 SEO HTML ← 新增 ↓ git commit + push [skip ci] ↓ GitHub Pages 部署 → raw-posts.945426.xyz ↓ 用户访问 blog.945426.xyz/posts/{id} → Vercel rewrite（配置层字符串映射，0 次 Function 调用） → raw-posts.945426.xyz/posts/{id}.html 主仓 vercel.json 加一条 rewrite 规则： { source : /posts/:id , destination : https://raw-posts.945426.xyz/posts/:id.html } 生成器做了什么 对每篇 markdown： 解析 frontmatter（title/date/author/category/tags/image 等） 用 marked 渲染全文为 HTML，与客户端 article.js 的 marked 配置字节级对齐（ breaks: true, gfm: true ） protectCustomTags 保护 music / gallery / spoiler 等自定义标签不被 marked 截断 填充模板占位符：title/description/canonical/OG/JSON-LD/完整正文 输出 docs/posts/{id}.html JSON-LD 用数组形式注入两项： BlogPosting （含 articleBody 纯文本全文）+ BreadcrumbList （3 级面包屑：首页 → 归档 → 当前文章）。 article.js 的配合改动 这是方案的关键一环。生成的 HTML 已经含完整正文，如果 article.js 运行时还 fetch .md 再渲染一次，就浪费了。 改动： initArticle() 检测 #detail-content 是否已有正文子元素。有就跳过 fetch，直接从 data-article-meta 属性读取 frontmatter JSON 构造 data 对象；没有就走旧路径 fetch md（兼容旧路由）。 const existingContent = document.getElementById(&#39;detail-content&#39;); const hasPrerenderedContent = existingContent existingContent.children.length 0; if (hasPrerenderedContent) { // 从 data-article-meta 读取 frontmatter，跳过 fetch const view = document.getElementById(&#39;article-view&#39;); const meta = JSON.parse(view.dataset.articleMeta); data = { ...meta, content: existingContent.innerHTML }; } else { // 旧路径：fetch .md + marked 渲染 const response = await fetch(POSTS_MD_BASE + articleId + &#39;.md&#39;); // ... } 收益：运行时零 fetch .md，浏览器首屏直接显示完整正文，无闪烁。 为什么放弃了 Edge Function 方案 中途认真考虑过参考 test2 仓库的方案：主仓加一个 Vercel Edge Function，请求 /posts/{id} 时服务端 fetch markdown + marked 渲染 + 注入 SEO head，返回完整 HTML。 这个方案看起来更优雅——单仓维护、同源资源、框架式注入。但有两个硬伤： 1. UA 分流不可行 最初设想用 vercel.json 的 has 条件按 UA 分流：爬虫请求走 Edge Function 预渲染，浏览器请求走静态空壳。这样浏览器 0 次 Function 调用，省 Vercel 配额。 但爬虫 UA 会变。新爬虫（DeepSeek、各种 AI Agent）UA 不在正则里，会被当浏览器放行，爬虫拿到空壳——回到原点。 如果改成所有 UA 都走 Edge Function（test2 最终方案），每次访问消耗 1 次 Function 调用。Vercel Hobby 免费额度 100 万次/月，日常流量够用，但一旦被 Reddit/V2EX 转发或 AI 爬虫扫站，配额瞬间爆掉，超限直接 503。 2. 复杂度高，收益不抵成本 Edge Function 方案需要： api/prerender.ts + src/lib/seo/route-meta.ts + render-article.ts + inject.ts + [slug].astro + BaseLayout 注入点 + middleware 改造。6 个新文件，逻辑复杂。 而内容仓生成器方案只需要：1 个生成器脚本 + 1 个模板 + 1 条 vercel rewrite + article.js 加几行跳过逻辑。运行时 0 次 Function 调用，纯静态。 构建期一次性渲染，永远比运行时渲染好。 碰到的实质性问题 1. @custom-media 不展开导致移动端布局崩溃 主仓 CSS 用了 @custom-media --mobile (max-width: 767px); 命名断点，原本由 postcss-custom-media 在构建期展开。但内容仓生成的 HTML 引用主仓 CSS 时，CSS 已经过 PostCSS 处理——看似没问题。 实际 v1.0 方案在内容仓维护了一份 CSS 副本（不走 PostCSS）， @media (--mobile) 浏览器不识别，移动端响应式全部失效，访问 raw-posts.945426.xyz/posts/101 时布局塌方。 解法：主仓把 global.css 和 article.css 迁到 public/assets/css/ （固定路径，无构建 hash），手动把所有 @media (--xxx) 展开为字面量 @media (max-width: 767px) ，删除 @custom-media 声明和 postcss-custom-media 插件。 2. 跨域资源引用 + middleware 拦截 内容仓 HTML 部署在 raw-posts.945426.xyz ，CSS/JS 在 blog.945426.xyz 。最初用相对路径 /assets/css/global.css ，浏览器解析成 raw-posts.945426.xyz/assets/css/global.css ——但 raw-posts 没有这些文件，404。 改成主仓绝对 URL https://blog.945426.xyz/assets/css/global.css 后，又撞上主仓 middleware.ts 的 PROTECTED_PREFIXES —— Sec-Fetch-Mode: navigate 时拦截 /assets/css|js|data-scripts/ 。 确认跨源 link / script 的 Sec-Fetch-Mode 是 no-cors 不被拦截后，方案才跑通。 3. 作者头像 404 users.js 里 Anonymous 的 avatar 是相对路径 /assets/img/users/anonymous.webp 。内容仓 HTML 在 raw-posts 域名下，相对路径解析成 raw-posts.945426.xyz/assets/img/users/anonymous.webp ——404，因为图片在主仓。 解法： article.js 检测当前 origin 非主仓时，自动给相对路径 avatar 加主仓前缀。 4. Cloudflare Email Obfuscation 注入 404 脚本 raw-posts.945426.xyz 通过 Cloudflare，CF 启用了 Email Address Obfuscation。HTML 里的 mailto:moara@foxmail.com 被 CF 自动替换成混淆链接，并注入 /cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js 。 但主仓 blog.945426.xyz 在 Vercel，没有 CF 这层，访问 /cdn-cgi/* 直接 404，控制台报错。 5. 上/下一篇导航链接拼接错误 article.js 的 renderArticleNavigation 用 href= ?id=${prevArticle.id} 相对查询参数。在 /posts/103 页面点击会拼成 /posts/103?id=104 ——错误。 改成绝对路径 href= /posts/${prevArticle.id} 解决。 6. 禁用 JS 一直显示加载页面 #global-loader 默认显示，由 article.js 的 playIntroAnimation 隐藏。禁用 JS 时 loader 永远不隐藏，遮住完整正文。 解法： noscript style 强制隐藏 loader + 恢复 GSAP 初始隐藏的元素 opacity。 增量生成 最后一步优化：生成器从全量扫描改为增量。 与 clean-frontmatter.js 一致的增量模式——workflow 用 git diff --name-only 取变更的 .md 文件路径，通过命令行参数传给生成器。日常发文只重新生成 1 篇 HTM"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"我是怎么给纯前端博客做 SEO 的","item":"https://blog.945426.xyz/posts/how-i-do-seo"}]}]</script>
+
+    <!-- ========= 资源库（公共 CDN） ========= -->
+    <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Waline 评论样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+    <!-- highlight.js 主题 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+
+    <!-- ========= 本站 CSS（直接引用主仓 blog.945426.xyz，固定路径无 hash） ========= -->
+    <!-- v1.1 改动：不再在 blog-content 维护副本，降低维护成本 -->
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
+
+    <!-- ========= 第三方功能库 ========= -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+    <!-- ========= 本站 JS（直接引用主仓 blog.945426.xyz） ========= -->
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
+</head>
+<body>
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__band">
+        <div class="marquee__row marquee__row--ltr"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--rtl"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--ltr marquee__row--offset"><div class="marquee__track"></div></div>
+    </div>
+</div>
+
+<div id="global-loader">
+    <div class="loader-spinner"></div>
+</div>
+
+<nav>
+    <div class="nav-left">
+        <div class="logo" onclick="transitionTo('/')" style="cursor: pointer; font-weight:900; font-size:1.1rem;">MOARA.</div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索文章..." oninput="handleSearch(this)" onkeydown="if(event.key==='Enter') triggerSearch()" id="detailSearchInput" />
+            <div class="search-suggestions"></div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn mobile-search-btn" onclick="toggleMobileSearch()" title="搜索">
+            <i class="ri-search-line"></i>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="切换主题">
+            <i class="ri-sun-line" id="theme-icon"></i>
+        </button>
+        <button class="icon-btn" onclick="transitionTo('/')" title="回到首页">
+            <i class="ri-home-4-line"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- 文章详情容器：
+     - data-article-id：让 article.js 识别当前文章
+     - data-article-meta：序列化 frontmatter JSON，article.js v1.2 跳过 fetch .md 时读取此属性 -->
+<div id="article-view" data-article-id="how-i-do-seo" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;我是怎么给纯前端博客做 SEO 的&quot;,&quot;date&quot;:&quot;2026-08-01 12:00&quot;,&quot;last_modified&quot;:&quot;2026-08-01 12:00&quot;,&quot;author&quot;:&quot;Admin&quot;,&quot;category&quot;:[&quot;技术&quot;],&quot;tags&quot;:[&quot;SEO&quot;,&quot;Astro&quot;,&quot;前后端分离&quot;],&quot;image&quot;:&quot;https://images.unsplash.com/photo-1432888622747-4eb9a8efeb07?q=80&amp;w=1200&amp;auto=format&amp;fit=crop&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false}">
+
+    <!-- Hero 区域 -->
+    <div class="article-hero-wrapper">
+        <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
+        <div class="article-hero-overlay-gradient"></div>
+        <div class="article-hero-content">
+            <h1 class="article-big-title" id="detail-title">我是怎么给纯前端博客做 SEO 的</h1>
+            <div id="detail-category-container" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 0.5rem;"><span class="category-badge" style="background: var(--accent-3); color: #ffffff; padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">技术</span></div>
+            <div class="article-meta">
+                <span style="display: flex; align-items: center;">
+                    <div class="info-wrapper" id="mod-info-wrapper" style="display:none;">
+                        <div class="info-icon" onclick="toggleModInfo(event)">i</div>
+                        <div class="modified-tooltip" id="mod-tooltip"></div>
+                    </div>
+                    <i class="ri-calendar-line"></i> <span id="detail-date">2026年8月1日</span>
+                </span>
+                <span id="detail-words" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-read-time" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-pageview" style="display: flex; align-items: center; gap: 5px;"><i class="ri-eye-line"></i><span class="waline-pageview-count" data-path="/article/how-i-do-seo">...</span></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 正文区域 -->
+    <div class="layout-grid">
+
+        <!-- 左侧侧边栏 (PC端固定) -->
+        <aside class="sidebar-column">
+            <div class="sidebar-sticky-wrapper">
+
+                <!-- 整合版博主信息卡片 -->
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="沫然" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">沫然</h3>
+                            <p class="profile-bio" id="bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                    <div class="profile-stats-divider"></div>
+                    <div class="profile-stats-container">
+                        <div class="p-stat-item" title="发布日期">
+                            <i class="ri-calendar-line"></i>
+                            <span id="sidebar-date">2026年8月1日</span>
+                        </div>
+                        <div class="p-stat-item" id="sidebar-mod-wrapper" style="display:none;" title="最后修改">
+                            <i class="ri-edit-box-line"></i>
+                            <span id="sidebar-mod-date"></span>
+                        </div>
+                        <div class="p-stat-item" title="文章字数">
+                            <i class="ri-file-word-line"></i>
+                            <span id="sidebar-words">...</span>
+                        </div>
+                        <div class="p-stat-item" title="预计阅读时长">
+                            <i class="ri-time-line"></i>
+                            <span id="sidebar-time">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 延迟检测 (PC端) -->
+                <div class="sidebar-card latency-card" id="pc-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="pc-latency-list"></div>
+                </div>
+
+                <!-- 分类卡片 -->
+                <div class="sidebar-card extra-card" id="sidebar-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="sidebar-cat-list"></div>
+                </div>
+
+                <!-- 标签卡片 -->
+                <div class="sidebar-card extra-card" id="sidebar-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="sidebar-tag-cloud"></div>
+                </div>
+
+                <!-- PC端目录卡片 -->
+                <div class="sidebar-card toc-card-pc" id="pc-toc-wrapper" style="display:none;">
+                    <div class="toc-title"><i class="ri-list-check"></i> 目录导航</div>
+                    <ul class="toc-list-pc" id="pc-toc-list"></ul>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- 右侧正文区域 -->
+        <main class="article-column">
+
+            <!-- 移动端专用目录 -->
+            <div class="toc-box mobile-only-toc" id="toc-box" style="display: none;">
+                <div class="toc-header" onclick="toggleTOC()">
+                    <span><i class="ri-list-check"></i> 文章目录</span>
+                    <i class="ri-arrow-down-s-line" id="toc-icon"></i>
+                </div>
+                <div class="toc-content" id="toc-content">
+                    <ul class="toc-list" id="toc-list"></ul>
+                </div>
+            </div>
+
+            <!-- 文章正文：article.js 运行后会用完整 md 渲染替换此处的摘要 -->
+            <article class="article-body" id="detail-content">
+                <h2>起点和一个不能接受的事实</h2>
+<p>博客主站用 Astro 静态构建，部署在 Vercel；文章 markdown 放在独立的公开仓库，通过 GitHub Pages 提供 CDN 服务（<code>raw-posts.945426.xyz</code>）。主仓私有，内容仓公开，两者彻底分离——这是为了 100 多篇博文加上千张图片共 300MB 资源不拖累主仓的 CI/CD。</p>
+<p>但分离有个代价：文章详情页 <code>article.astro</code> 构建后只有 4 行——<code>&lt;title&gt;加载中...&lt;/title&gt;</code> 加一个空 <code>&lt;div id=&quot;article-view&quot;&gt;</code>，正文靠 <code>article.js</code> 运行时 <code>fetch</code> markdown 再用 marked 渲染。爬虫看到的是空壳，SEO 完全失效。</p>
+<h2>目标和约束</h2>
+<p>需要做到：</p>
+<ol>
+<li>每篇文章有独立静态 HTML，含完整 head 元数据 + 正文</li>
+<li>主仓零构建——发文只触发内容仓的 Action，不触发主仓 CI</li>
+<li>纯前端——无 Node 运行时、无 Edge Function、无 SSR</li>
+<li>旧链接 <code>/details/article?id=xxx</code> 继续可用</li>
+</ol>
+<h2>方案：内容仓构建期生成 SEO HTML</h2>
+<p>最终落地的方案很直接：在内容仓的 GitHub Action 里加一个生成器脚本，扫描 <code>docs/posts/*.md</code>，为每篇文章生成一个带完整 SEO 的静态 HTML。</p>
+<h3>工作流</h3>
+<pre><code>PagesCMS 写文章 → push 到 blog-content/docs/posts/{id}.md
+                          ↓
+              GitHub Action 自动触发（4 步流水线）
+              1. clean-frontmatter.js     增量清理 frontmatter
+              2. generate-posts.js        生成 posts.json 索引
+              3. generate-sitemap.js      生成 sitemap.xml
+              4. generate-article-html.js 生成每篇 SEO HTML ← 新增
+                          ↓
+              git commit + push [skip ci]
+                          ↓
+              GitHub Pages 部署 → raw-posts.945426.xyz
+                          ↓
+              用户访问 blog.945426.xyz/posts/{id}
+              → Vercel rewrite（配置层字符串映射，0 次 Function 调用）
+              → raw-posts.945426.xyz/posts/{id}.html
+</code></pre>
+<p>主仓 <code>vercel.json</code> 加一条 rewrite 规则：</p>
+<pre><code class="language-json">{
+  &quot;source&quot;: &quot;/posts/:id&quot;,
+  &quot;destination&quot;: &quot;https://raw-posts.945426.xyz/posts/:id.html&quot;
+}
+</code></pre>
+<h3>生成器做了什么</h3>
+<p>对每篇 markdown：</p>
+<ol>
+<li>解析 frontmatter（title/date/author/category/tags/image 等）</li>
+<li>用 marked 渲染全文为 HTML，与客户端 <code>article.js</code> 的 marked 配置字节级对齐（<code>breaks: true, gfm: true</code>）</li>
+<li><code>protectCustomTags</code> 保护 <code>&lt;music&gt;</code>/<code>&lt;gallery&gt;</code>/<code>&lt;spoiler&gt;</code> 等自定义标签不被 marked 截断</li>
+<li>填充模板占位符：title/description/canonical/OG/JSON-LD/完整正文</li>
+<li>输出 <code>docs/posts/{id}.html</code></li>
+</ol>
+<p>JSON-LD 用数组形式注入两项：<code>BlogPosting</code>（含 <code>articleBody</code> 纯文本全文）+ <code>BreadcrumbList</code>（3 级面包屑：首页 → 归档 → 当前文章）。</p>
+<h3>article.js 的配合改动</h3>
+<p>这是方案的关键一环。生成的 HTML 已经含完整正文，如果 <code>article.js</code> 运行时还 <code>fetch .md</code> 再渲染一次，就浪费了。</p>
+<p>改动：<code>initArticle()</code> 检测 <code>#detail-content</code> 是否已有正文子元素。有就跳过 fetch，直接从 <code>data-article-meta</code> 属性读取 frontmatter JSON 构造 data 对象；没有就走旧路径 fetch md（兼容旧路由）。</p>
+<pre><code class="language-javascript">const existingContent = document.getElementById(&#39;detail-content&#39;);
+const hasPrerenderedContent = existingContent &amp;&amp; existingContent.children.length &gt; 0;
+
+if (hasPrerenderedContent) {
+  // 从 data-article-meta 读取 frontmatter，跳过 fetch
+  const view = document.getElementById(&#39;article-view&#39;);
+  const meta = JSON.parse(view.dataset.articleMeta);
+  data = { ...meta, content: existingContent.innerHTML };
+} else {
+  // 旧路径：fetch .md + marked 渲染
+  const response = await fetch(POSTS_MD_BASE + articleId + &#39;.md&#39;);
+  // ...
+}
+</code></pre>
+<p>收益：运行时零 fetch .md，浏览器首屏直接显示完整正文，无闪烁。</p>
+<h2>为什么放弃了 Edge Function 方案</h2>
+<p>中途认真考虑过参考 test2 仓库的方案：主仓加一个 Vercel Edge Function，请求 <code>/posts/{id}</code> 时服务端 fetch markdown + marked 渲染 + 注入 SEO head，返回完整 HTML。</p>
+<p>这个方案看起来更优雅——单仓维护、同源资源、框架式注入。但有两个硬伤：</p>
+<h3>1. UA 分流不可行</h3>
+<p>最初设想用 <code>vercel.json</code> 的 <code>has</code> 条件按 UA 分流：爬虫请求走 Edge Function 预渲染，浏览器请求走静态空壳。这样浏览器 0 次 Function 调用，省 Vercel 配额。</p>
+<p>但爬虫 UA 会变。新爬虫（DeepSeek、各种 AI Agent）UA 不在正则里，会被当浏览器放行，爬虫拿到空壳——回到原点。</p>
+<p>如果改成所有 UA 都走 Edge Function（test2 最终方案），每次访问消耗 1 次 Function 调用。Vercel Hobby 免费额度 100 万次/月，日常流量够用，但一旦被 Reddit/V2EX 转发或 AI 爬虫扫站，配额瞬间爆掉，超限直接 503。</p>
+<h3>2. 复杂度高，收益不抵成本</h3>
+<p>Edge Function 方案需要：<code>api/prerender.ts</code> + <code>src/lib/seo/route-meta.ts</code> + <code>render-article.ts</code> + <code>inject.ts</code> + <code>[slug].astro</code> + BaseLayout 注入点 + middleware 改造。6 个新文件，逻辑复杂。</p>
+<p>而内容仓生成器方案只需要：1 个生成器脚本 + 1 个模板 + 1 条 vercel rewrite + article.js 加几行跳过逻辑。运行时 0 次 Function 调用，纯静态。</p>
+<p><strong>构建期一次性渲染，永远比运行时渲染好。</strong></p>
+<h2>碰到的实质性问题</h2>
+<h3>1. @custom-media 不展开导致移动端布局崩溃</h3>
+<p>主仓 CSS 用了 <code>@custom-media --mobile (max-width: 767px);</code> 命名断点，原本由 <code>postcss-custom-media</code> 在构建期展开。但内容仓生成的 HTML 引用主仓 CSS 时，CSS 已经过 PostCSS 处理——看似没问题。</p>
+<p>实际 v1.0 方案在内容仓维护了一份 CSS 副本（不走 PostCSS），<code>@media (--mobile)</code> 浏览器不识别，移动端响应式全部失效，访问 <code>raw-posts.945426.xyz/posts/101</code> 时布局塌方。</p>
+<p>解法：主仓把 <code>global.css</code> 和 <code>article.css</code> 迁到 <code>public/assets/css/</code>（固定路径，无构建 hash），手动把所有 <code>@media (--xxx)</code> 展开为字面量 <code>@media (max-width: 767px)</code>，删除 <code>@custom-media</code> 声明和 <code>postcss-custom-media</code> 插件。</p>
+<h3>2. 跨域资源引用 + middleware 拦截</h3>
+<p>内容仓 HTML 部署在 <code>raw-posts.945426.xyz</code>，CSS/JS 在 <code>blog.945426.xyz</code>。最初用相对路径 <code>/assets/css/global.css</code>，浏览器解析成 <code>raw-posts.945426.xyz/assets/css/global.css</code>——但 raw-posts 没有这些文件，404。</p>
+<p>改成主仓绝对 URL <code>https://blog.945426.xyz/assets/css/global.css</code> 后，又撞上主仓 <code>middleware.ts</code> 的 <code>PROTECTED_PREFIXES</code>——<code>Sec-Fetch-Mode: navigate</code> 时拦截 <code>/assets/css|js|data-scripts/</code>。</p>
+<p>确认跨源 <code>&lt;link&gt;</code> / <code>&lt;script&gt;</code> 的 <code>Sec-Fetch-Mode</code> 是 <code>no-cors</code> 不被拦截后，方案才跑通。</p>
+<h3>3. 作者头像 404</h3>
+<p><code>users.js</code> 里 <code>Anonymous</code> 的 avatar 是相对路径 <code>/assets/img/users/anonymous.webp</code>。内容仓 HTML 在 raw-posts 域名下，相对路径解析成 <code>raw-posts.945426.xyz/assets/img/users/anonymous.webp</code>——404，因为图片在主仓。</p>
+<p>解法：<code>article.js</code> 检测当前 origin 非主仓时，自动给相对路径 avatar 加主仓前缀。</p>
+<h3>4. Cloudflare Email Obfuscation 注入 404 脚本</h3>
+<p><code>raw-posts.945426.xyz</code> 通过 Cloudflare，CF 启用了 Email Address Obfuscation。HTML 里的 <code>mailto:moara@foxmail.com</code> 被 CF 自动替换成混淆链接，并注入 <code>/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js</code>。</p>
+<p>但主仓 <code>blog.945426.xyz</code> 在 Vercel，没有 CF 这层，访问 <code>/cdn-cgi/*</code> 直接 404，控制台报错。</p>
+<h3>5. 上/下一篇导航链接拼接错误</h3>
+<p><code>article.js</code> 的 <code>renderArticleNavigation</code> 用 <code>href=&quot;?id=${prevArticle.id}&quot;</code> 相对查询参数。在 <code>/posts/103</code> 页面点击会拼成 <code>/posts/103?id=104</code>——错误。</p>
+<p>改成绝对路径 <code>href=&quot;/posts/${prevArticle.id}&quot;</code> 解决。</p>
+<h3>6. 禁用 JS 一直显示加载页面</h3>
+<p><code>#global-loader</code> 默认显示，由 <code>article.js</code> 的 <code>playIntroAnimation</code> 隐藏。禁用 JS 时 loader 永远不隐藏，遮住完整正文。</p>
+<p>解法：<code>&lt;noscript&gt;&lt;style&gt;</code> 强制隐藏 loader + 恢复 GSAP 初始隐藏的元素 opacity。</p>
+<h2>增量生成</h2>
+<p>最后一步优化：生成器从全量扫描改为增量。</p>
+<p>与 <code>clean-frontmatter.js</code> 一致的增量模式——workflow 用 <code>git diff --name-only</code> 取变更的 .md 文件路径，通过命令行参数传给生成器。日常发文只重新生成 1 篇 HTML，不再全量重建 100 篇。</p>
+<p>已删除的 .md 路径也传进来，生成器检测到 .md 不存在时清理对应 .html。</p>
+<h2>最终架构</h2>
+<pre><code>blog-content 仓库（公开，GitHub Pages）
+├── docs/posts/*.md           ← PagesCMS 写入
+├── template/article.html     ← HTML 模板
+├── generate-article-html.js  ← 生成器（增量）
+└── docs/posts/{id}.html      ← Action 生成
+
+MOARA 仓库（私有，Vercel）
+├── vercel.json               ← /posts/:id rewrite 到 raw-posts
+├── public/assets/css/        ← 固定路径 CSS（无 hash）
+├── public/assets/js/article.js ← 检测已有正文跳过 fetch
+└── src/pages/details/article.astro ← 保留作旧路由兼容
+</code></pre>
+<h2>验证</h2>
+<p>Google 富媒体测试工具检测到两项有效内容：</p>
+<ul>
+<li><strong>BlogPosting</strong>：headline / description / image / author / datePublished / articleBody（完整正文纯文本）/ mainEntityOfPage 全部识别</li>
+<li><strong>BreadcrumbList</strong>：3 级面包屑全部解析</li>
+</ul>
+<p>无警告，无错误。</p>
+<h2>小结</h2>
+<p>整个方案的核心就一句话：<strong>构建期一次性渲染，运行时零成本。</strong></p>
+<p>具体落地时碰到的坑不少——@custom-media 不展开、跨域 middleware 拦截、头像相对路径、CF email 混淆、导航链接拼接、禁用 JS 加载遮罩——每一个都是实质性问题，但都是可解的。</p>
+<p>放弃 Edge Function 方案是因为&quot;运行时渲染&quot;这个方向本身就比&quot;构建期渲染&quot;差。能用静态 HTML 解决的事，不要用 Function。</p>
+
+            </article>
+
+            <!-- 文章底部导航栏（article.js 填充） -->
+            <div class="article-navigation" id="article-navigation"></div>
+
+            <!-- 版权声明 -->
+            <div class="article-copyright">本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>协议，转载请注明出处。</div>
+
+            <!-- 移动端底部扩展卡片 -->
+            <div class="mobile-bottom-cards">
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="沫然" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">沫然</h3>
+                            <p class="profile-bio" id="mobile-bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                </div>
+
+                <div class="sidebar-card latency-card" id="mobile-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="mobile-latency-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="mobile-bottom-cat-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="mobile-bottom-tag-cloud"></div>
+                </div>
+            </div>
+
+            <!-- 评论区 -->
+            <div id="waline"></div>
+
+            <!-- 页脚版权 -->
+            <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px dashed var(--text-color); text-align: center; font-size: 0.8rem; opacity: 0.6;">
+                &copy; MOARA. All rights reserved.
+            </div>
+
+            <!-- 禁用 JS 兜底：v1.2 已直出完整正文，noscript 仅提示交互功能不可用 -->
+            <noscript>
+                <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
+                    <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
+                    <p style="margin: 1rem 0 0;">
+                        <a href="https://raw-posts.945426.xyz/posts/how-i-do-seo.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">查看原始 Markdown</a>
+                        &nbsp;
+                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回首页</a>
+                    </p>
+                </div>
+            </noscript>
+        </main>
+    </div>
+</div>
+
+<!-- 图片预览遮罩层 -->
+<div class="lightbox-overlay" id="lightbox">
+    <div class="lightbox-img-wrapper">
+        <img src="" alt="Preview" class="lightbox-img" id="lightbox-img" />
+    </div>
+    <div class="lightbox-controls" onclick="event.stopPropagation()">
+        <div class="lb-btn" id="lb-prev"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="lb-btn" id="lb-next"><i class="ri-arrow-right-s-line"></i></div>
+        <div class="lb-btn" id="lb-rot-l"><i class="ri-anticlockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-rot-r"><i class="ri-clockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-out"><i class="ri-zoom-out-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-in"><i class="ri-zoom-in-line"></i></div>
+        <div class="lb-btn" id="lb-info"><i class="ri-information-line"></i></div>
+        <div class="lb-btn" id="lb-close"><i class="ri-close-circle-line"></i></div>
+    </div>
+    <div class="lightbox-thumbnails" id="lb-thumbnails"></div>
+    <div class="lb-info-panel" id="lb-info-panel" onclick="event.stopPropagation()">
+        <div class="lb-info-row"><span class="lb-info-label">文件名</span><span id="lb-info-name" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">尺寸</span><span id="lb-info-size" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">描述</span><span id="lb-info-alt" class="lb-info-value-full">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">地址</span><a id="lb-info-src" href="#" target="_blank" rel="noopener">-</a></div>
+    </div>
+</div>
+
+<!-- 滚动控制按钮 -->
+<div class="scroll-controls" id="scrollControls">
+    <div class="scroll-actions-wrapper">
+        <div class="scroll-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="回到顶部">
+            <i class="ri-arrow-up-line"></i>
+        </div>
+        <div class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'})" title="去到底部">
+            <i class="ri-arrow-down-line"></i>
+        </div>
+    </div>
+    <div class="mobile-scroll-row">
+        <div class="scroll-btn toc-btn" onclick="toggleTocPopup()" title="文章目录">
+            <i class="ri-list-check"></i>
+        </div>
+        <div class="scroll-btn direction-btn" onclick="handleDirectionScroll()" title="滚动">
+            <i class="ri-arrow-down-line" id="direction-icon"></i>
+        </div>
+    </div>
+    <div class="scroll-btn toggle-handler" onclick="toggleScrollWidget()" title="收起/展开">
+        <div class="progress-track"></div>
+        <div class="progress-fill" id="scroll-progress-fill"></div>
+        <span class="progress-num" id="scroll-progress-num">0</span>
+        <i class="ri-arrow-right-s-line toggle-icon" id="scroll-toggle-icon"></i>
+    </div>
+    <div class="toc-popup" id="toc-popup">
+        <div class="toc-popup-title"><i class="ri-list-check"></i> 目录导航</div>
+        <ul class="toc-popup-list" id="toc-popup-list"></ul>
+    </div>
+</div>
+
+<!-- ========= 文章渲染入口（直接引用主仓 article.js） ========= -->
+<script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
+
+</body>
+</html>
