@@ -55,6 +55,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
+          ref: cms
           fetch-depth: 0  # 增量 diff 需要完整历史
 
       - name: Setup Node.js

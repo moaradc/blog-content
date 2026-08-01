@@ -22,11 +22,13 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      # Pages CMS 侧边栏「部署到线上」按钮触发时会无条件带 payload，
-      # 不声明这里 GitHub 会返回 422 Unexpected inputs provided
+      # Pages CMS 侧边栏「发布到线上」按钮触发时会无条件带 payload，
+      # 文档要求 workflow 声明 payload 为 required: true。
+      # 在 GitHub Actions 页面手动跑时，随便填一段 JSON 即可（本 workflow 不消费它）。
       payload:
-        description: Pages CMS 传入的上下文（未使用）
-        required: false
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
 
 permissions:
   contents: write
