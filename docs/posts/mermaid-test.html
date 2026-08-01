@@ -33,7 +33,7 @@
     
 
     <!-- JSON-LD 结构化数据 -->
-    <script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","headline":"Mermaid 渲染测试","description":"测试 Mermaid 图表渲染","datePublished":"2026-07-20T12:09:00.000Z","dateModified":"2026-07-20T12:09:00.000Z","author":{"@type":"Person","name":"沫然"},"publisher":{"@type":"Organization","name":"沫然Blog","logo":{"@type":"ImageObject","url":"https://blog.945426.xyz/favicon.jpg"}},"mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/mermaid-test"},"articleSection":"Demo","keywords":"Demo"}</script>
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Mermaid 渲染测试","description":"测试 Mermaid 图表渲染","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/mermaid-test"},"author":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"datePublished":"2026-07-20T12:09:00.000Z","dateModified":"2026-07-20T12:09:00.000Z","url":"https://blog.945426.xyz/posts/mermaid-test","articleBody":"本文仅用于测试 Mermaid 各类图表的渲染。 1. Flowchart 流程图 flowchart TD A[用户访问博客] -- B{是否首次访问} B -- 是 -- C[加载文章列表] B -- 否 -- D[读取本地缓存] C -- E[渲染 marked] D -- E E -- F{是否含代码块} F -- 是 -- G[加载 hljs 高亮] F -- 否 -- H[完成] G -- H 2. Sequence Diagram 时序图 sequenceDiagram participant U as 浏览器 participant F as 前端 Astro participant R as raw-posts CDN participant W as Waline server U- F: 打开 /details/article?id=103 F- R: fetch posts.json R-- F: 文章元数据 F- R: fetch [103.md](http://103.md) R-- F: markdown 内容 F- F: marked.parse + hljs F- W: 加载评论组件 W-- U: 渲染评论框 3. Class Diagram 类图 classDiagram class Article { +String id +String title +String author +Date published +render() String } class TOC { +Array~TOCItem~ items +generate(html) void +highlightActive() void } class Comment { +String userId +String content +Date createdAt } Article -- TOC : has Article -- Comment : has many 4. State Diagram 状态图 stateDiagram-v2 [*] -- 加载中 加载中 -- 渲染中 : fetch 成功 加载中 -- 错误 : 网络失败 渲染中 -- 已完成 : marked + hljs 完成 渲染中 -- 错误 : 解析异常 已完成 -- [*] 错误 -- 加载中 : 用户重试 5. Gantt Chart 甘特图 gantt title 博客重构计划 dateFormat YYYY-MM-DD section 前端 设计文章页样式 :a1, 2026-07-01, 7d 实现 TOC 组件 :a2, after a1, 4d 接入 Waline 评论 :a3, after a2, 3d section 后端 搭建内容仓库 :b1, 2026-07-01, 5d 配置 GitHub Actions :b2, after b1, 3d 生成 posts.json :b3, after b2, 2d section 部署 Vercel 上线 :c1, after a3, 1d 6. Pie Chart 饼图 pie showData title 博客文章类型分布 技术笔记 : 45 生活随笔 : 25 教程文档 : 20 项目复盘 : 10 7. ER Diagram 实体关系图 erDiagram POST ||--o{ COMMENT : has POST ||--o{ TAG : tagged POST { string id PK string title string author date published } COMMENT { string id PK string post_id FK string user_id text content } TAG { string id PK string name } 8. User Journey 用户旅程 journey title 读者访问文章的体验 section 进入 搜索引擎: 5: 读者 点击链接: 5: 读者 首屏加载: 3: 读者 section 阅读 渲染正文: 5: 读者 滚动浏览: 5: 读者 点击 TOC: 4: 读者 section 互动 留下评论: 3: 读者 分享文章: 2: 读者 9. Git Graph 提交图 gitGraph commit id: init commit id: add posts.json branch feature/toc checkout feature/toc commit id: toc sidebar commit id: mobile toc checkout main merge feature/toc commit id: release v1 branch fix/comments commit id: waline fix checkout main merge fix/comments commit id: release v1.1"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"文章","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Mermaid 渲染测试","item":"https://blog.945426.xyz/posts/mermaid-test"}]}]</script>
 
     <!-- ========= 资源库（公共 CDN） ========= -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
@@ -98,8 +98,10 @@
     </div>
 </nav>
 
-<!-- 文章详情容器：data-article-id 让 article.js 能识别当前文章 -->
-<div id="article-view" data-article-id="mermaid-test" data-content-type="md">
+<!-- 文章详情容器：
+     - data-article-id：让 article.js 识别当前文章
+     - data-article-meta：序列化 frontmatter JSON，article.js v1.2 跳过 fetch .md 时读取此属性 -->
+<div id="article-view" data-article-id="mermaid-test" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Mermaid 渲染测试&quot;,&quot;date&quot;:&quot;2026-07-20 20:09&quot;,&quot;last_modified&quot;:&quot;2026-07-20 20:09&quot;,&quot;author&quot;:&quot;Admin&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false}">
 
     <!-- Hero 区域 -->
     <div class="article-hero-wrapper">
@@ -255,7 +257,225 @@ sequenceDiagram
 
     participant W as Waline server
 
-    U-&gt;&gt;F: 打开 /details/ar</code></pre>
+    U-&gt;&gt;F: 打开 /details/article?id=103
+
+    F-&gt;&gt;R: fetch posts.json
+
+    R--&gt;&gt;F: 文章元数据
+
+    F-&gt;&gt;R: fetch [103.md](http://103.md)
+
+    R--&gt;&gt;F: markdown 内容
+
+    F-&gt;&gt;F: marked.parse + hljs
+
+    F-&gt;&gt;W: 加载评论组件
+
+    W--&gt;&gt;U: 渲染评论框
+</code></pre>
+<h3>3. Class Diagram 类图</h3>
+<pre><code class="language-mermaid">
+classDiagram
+
+    class Article {
+
+        +String id
+
+        +String title
+
+        +String author
+
+        +Date published
+
+        +render() String
+
+    }
+
+    class TOC {
+
+        +Array~TOCItem~ items
+
+        +generate(html) void
+
+        +highlightActive() void
+
+    }
+
+    class Comment {
+
+        +String userId
+
+        +String content
+
+        +Date createdAt
+
+    }
+
+    Article --&gt; TOC : has
+
+    Article --&gt; Comment : has many
+</code></pre>
+<h3>4. State Diagram 状态图</h3>
+<pre><code class="language-mermaid">
+stateDiagram-v2
+
+    [*] --&gt; 加载中
+
+    加载中 --&gt; 渲染中 : fetch 成功
+
+    加载中 --&gt; 错误 : 网络失败
+
+    渲染中 --&gt; 已完成 : marked + hljs 完成
+
+    渲染中 --&gt; 错误 : 解析异常
+
+    已完成 --&gt; [*]
+
+    错误 --&gt; 加载中 : 用户重试
+</code></pre>
+<h3>5. Gantt Chart 甘特图</h3>
+<pre><code class="language-mermaid">
+gantt
+
+    title 博客重构计划
+
+    dateFormat  YYYY-MM-DD
+
+    section 前端
+
+    设计文章页样式      :a1, 2026-07-01, 7d
+
+    实现 TOC 组件       :a2, after a1, 4d
+
+    接入 Waline 评论    :a3, after a2, 3d
+
+    section 后端
+
+    搭建内容仓库        :b1, 2026-07-01, 5d
+
+    配置 GitHub Actions :b2, after b1, 3d
+
+    生成 posts.json     :b3, after b2, 2d
+
+    section 部署
+
+    Vercel 上线         :c1, after a3, 1d
+</code></pre>
+<h3>6. Pie Chart 饼图</h3>
+<pre><code class="language-mermaid">
+pie showData
+
+    title 博客文章类型分布
+
+    &quot;技术笔记&quot; : 45
+
+    &quot;生活随笔&quot; : 25
+
+    &quot;教程文档&quot; : 20
+
+    &quot;项目复盘&quot; : 10
+</code></pre>
+<h3>7. ER Diagram 实体关系图</h3>
+<pre><code class="language-mermaid">
+erDiagram
+
+    POST ||--o{ COMMENT : has
+
+    POST ||--o{ TAG : tagged
+
+    POST {
+
+        string id PK
+
+        string title
+
+        string author
+
+        date published
+
+    }
+
+    COMMENT {
+
+        string id PK
+
+        string post_id FK
+
+        string user_id
+
+        text content
+
+    }
+
+    TAG {
+
+        string id PK
+
+        string name
+
+    }
+</code></pre>
+<h3>8. User Journey 用户旅程</h3>
+<pre><code class="language-mermaid">
+journey
+
+    title 读者访问文章的体验
+
+    section 进入
+
+      搜索引擎: 5: 读者
+
+      点击链接: 5: 读者
+
+      首屏加载: 3: 读者
+
+    section 阅读
+
+      渲染正文: 5: 读者
+
+      滚动浏览: 5: 读者
+
+      点击 TOC: 4: 读者
+
+    section 互动
+
+      留下评论: 3: 读者
+
+      分享文章: 2: 读者
+</code></pre>
+<h3>9. Git Graph 提交图</h3>
+<pre><code class="language-mermaid">
+gitGraph
+
+    commit id: &quot;init&quot;
+
+    commit id: &quot;add posts.json&quot;
+
+    branch feature/toc
+
+    checkout feature/toc
+
+    commit id: &quot;toc sidebar&quot;
+
+    commit id: &quot;mobile toc&quot;
+
+    checkout main
+
+    merge feature/toc
+
+    commit id: &quot;release v1&quot;
+
+    branch fix/comments
+
+    commit id: &quot;waline fix&quot;
+
+    checkout main
+
+    merge fix/comments
+
+    commit id: &quot;release v1.1&quot;
+</code></pre>
+
             </article>
 
             <!-- 文章底部导航栏（article.js 填充） -->
@@ -317,15 +537,14 @@ sequenceDiagram
                 &copy; MOARA. All rights reserved.
             </div>
 
-            <!-- 禁用 JS 兜底 -->
+            <!-- 禁用 JS 兜底：v1.2 已直出完整正文，noscript 仅提示交互功能不可用 -->
             <noscript>
                 <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
-                    <h2 style="margin-top:0;">完整正文需要 JavaScript 渲染</h2>
-                    <p>本站使用 marked.js 在浏览器端渲染 Markdown 正文。您当前禁用了 JavaScript，以下内容仅显示摘要。</p>
-                    <p>
-                        <a href="https://raw-posts.945426.xyz/posts/mermaid-test.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">阅读原始 Markdown 文件</a>
+                    <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
+                    <p style="margin: 1rem 0 0;">
+                        <a href="https://raw-posts.945426.xyz/posts/mermaid-test.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">查看原始 Markdown</a>
                         &nbsp;
-                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回博客首页</a>
+                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回首页</a>
                     </p>
                 </div>
             </noscript>

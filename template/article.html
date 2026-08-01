@@ -98,8 +98,10 @@
     </div>
 </nav>
 
-<!-- 文章详情容器：data-article-id 让 article.js 能识别当前文章 -->
-<div id="article-view" data-article-id="{{id}}" data-content-type="{{contentType}}">
+<!-- 文章详情容器：
+     - data-article-id：让 article.js 识别当前文章
+     - data-article-meta：序列化 frontmatter JSON，article.js v1.2 跳过 fetch .md 时读取此属性 -->
+<div id="article-view" data-article-id="{{id}}" data-content-type="{{contentType}}" data-article-meta="{{articleMetaJson}}">
 
     <!-- Hero 区域 -->
     <div class="article-hero-wrapper">
@@ -282,15 +284,14 @@
                 &copy; MOARA. All rights reserved.
             </div>
 
-            <!-- 禁用 JS 兜底 -->
+            <!-- 禁用 JS 兜底：v1.2 已直出完整正文，noscript 仅提示交互功能不可用 -->
             <noscript>
                 <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
-                    <h2 style="margin-top:0;">完整正文需要 JavaScript 渲染</h2>
-                    <p>本站使用 marked.js 在浏览器端渲染 Markdown 正文。您当前禁用了 JavaScript，以下内容仅显示摘要。</p>
-                    <p>
-                        <a href="https://raw-posts.945426.xyz/posts/{{id}}.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">阅读原始 Markdown 文件</a>
+                    <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
+                    <p style="margin: 1rem 0 0;">
+                        <a href="https://raw-posts.945426.xyz/posts/{{id}}.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">查看原始 Markdown</a>
                         &nbsp;
-                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回博客首页</a>
+                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回首页</a>
                     </p>
                 </div>
             </noscript>

@@ -1,16 +1,17 @@
 // generate-article-html.js
 // 扫描 docs/posts/*.md，根据 template/article.html 生成每篇文章的 SEO HTML。
 //
-// v1.1 关键改动：
-//   - 不再从 blog-content 本地 docs/assets/ 读 users.js / config.js
-//   - 改为从主仓 GitHub raw URL 拉取（moaradc/MOARA@main/public/assets/data-scripts/）
-//   - 失败时 fallback 到默认值，不阻断生成
+// v1.2 关键改动（相对 v1.1）：
+//   - 完整正文直出（不再截 600 字摘要）：marked 渲染全文 → #detail-content
+//   - article.js 运行时跳过 fetch .md，直接用 HTML 已有的正文
+//   - protectCustomTags 与 article.js 客户端字节级对齐（music/gallery/spoiler/details-box/todo-list）
+//   - SEO 字段对齐 test2：articleBody（纯文本全文）+ BreadcrumbList + 完整 BlogPosting
+//   - marked 配置与客户端一致：breaks=true, gfm=true
 //
 // 关键产物：docs/posts/{id}.html
-//   - 完整 <head> 元数据（title/description/keywords/canonical/OG/Twitter/JSON-LD）
-//   - 预渲染摘要正文（前 600 字 HTML，爬虫可见）
+//   - 完整 <head> 元数据（title/description/keywords/canonical/OG/JSON-LD）
+//   - 完整正文（marked 渲染全文，爬虫和浏览器都直接可见）
 //   - data-article-id 属性让 article.js 识别当前文章
-//   - <noscript> 兜底链接到原始 md
 //   - 所有 CSS/JS 通过 https://blog.945426.xyz/assets/... 绝对 URL 引用主仓
 //
 // 触发：generate-posts-json.yml（在 generate-sitemap.js 之后运行）
@@ -18,7 +19,6 @@
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
 const { join } = require("path");
-const https = require("https");
 const site = require("./site");
 const { parseFrontmatter } = require("./parse-frontmatter");
 
@@ -30,13 +30,25 @@ try {
   marked = { parse: (s) => s };
 }
 
+// marked 配置与 article.js 客户端一致：breaks=true（每个 \n 都是 <br>）、gfm=true（GFM 表格/任务列表/删除线）
+marked.setOptions({ breaks: true, gfm: true });
+
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const TEMPLATE_FILE = join(__dirname, "template", "article.html");
 const DOCS_DIR = join(__dirname, "docs");
 
 // 主仓部署 URL（用于拉取 users.js / config.js 数据）
-// 用 blog.945426.xyz 而非 raw.githubusercontent.com，因为主仓是私有仓库
 const MOARA_ASSETS_BASE = "https://blog.945426.xyz/assets/data-scripts";
+
+// 站点元数据（与 test2 src/lib/seo/route-meta.ts SITE_META 对齐）
+const SITE_META = {
+  name: "沫然Blog",
+  url: "https://blog.945426.xyz",
+  author: "沫然",
+  description: "沫然的个人博客 —— 技术、生活、闲谈、创作、归档",
+  ogImage: "/assets/img/icon/moara.webp",
+  rssUrl: "/rss.xml",
+};
 
 // === 加载模板 ===
 if (!existsSync(TEMPLATE_FILE)) {
@@ -46,20 +58,17 @@ if (!existsSync(TEMPLATE_FILE)) {
 const template = readFileSync(TEMPLATE_FILE, "utf-8");
 console.log(`📄 加载模板: ${TEMPLATE_FILE}`);
 
-// === 从主仓 GitHub raw 拉取 users.js / config.js ===
+// === 从主仓部署 URL 拉取 users.js / config.js ===
 function fetchSync(url) {
-  // 同步包装：用 Node 子进程 execSync 调 curl（最简单）
   try {
     const { execSync } = require("child_process");
-    const out = execSync(`curl -sSL --max-time 10 "${url}"`, { encoding: "utf-8" });
-    return out;
+    return execSync(`curl -sSL --max-time 10 "${url}"`, { encoding: "utf-8" });
   } catch (e) {
     return null;
   }
 }
 
 function evalDataScript(content, varName) {
-  // data-scripts 是 `const varName = {...};` 形式
   // 用 vm.runInNewContext 跑，const 在 vm context 里不挂全局，
   // 所以先用正则把 `const varName =` 改成 `var varName =` 让它挂到 context 对象
   try {
@@ -92,7 +101,91 @@ if (configJsContent) {
 }
 console.log(`  ✅ categoryConfig: ${Object.keys(categoryConfig).join(", ")}`);
 
+// === Markdown 渲染管线（与 article.js 客户端字节级对齐） ===
+
+/**
+ * 保护自定义 HTML 组件标签，防止 marked.js 截断。
+ * 与 article.js protectCustomTags 完全一致。
+ */
+function protectCustomTags(text) {
+  const placeholders = [];
+
+  // 1. 匹配成对的自定义标签: <music ...>...</music>, <gallery ...>...</gallery>
+  const pairedTagRegex = /<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi;
+  text = text.replace(pairedTagRegex, (match) => {
+    const idx = placeholders.length;
+    placeholders.push(match);
+    return `\n%%CUSTOM_TAG_${idx}%%\n`;
+  });
+
+  // 2. <div class="details-box">...</div></div></div>（三层嵌套）
+  const divBlockRegex = /<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi;
+  text = text.replace(divBlockRegex, (match) => {
+    const idx = placeholders.length;
+    placeholders.push(match);
+    return `\n%%CUSTOM_TAG_${idx}%%\n`;
+  });
+
+  // 3. <span class='spoiler'>...</span>
+  const spoilerRegex = /<span\b[^>]*class=['"][^'"]*spoiler[^'"]*['"][^>]*>[\s\S]*?<\/span>/gi;
+  text = text.replace(spoilerRegex, (match) => {
+    const idx = placeholders.length;
+    placeholders.push(match);
+    return `%%CUSTOM_TAG_${idx}%%`;
+  });
+
+  // 4. <ul class="todo-list">...</ul>
+  const todoRegex = /<ul\b[^>]*class=['"][^'"]*todo-list[^'"]*['"][^>]*>[\s\S]*?<\/ul>/gi;
+  text = text.replace(todoRegex, (match) => {
+    const idx = placeholders.length;
+    placeholders.push(match);
+    return `\n%%CUSTOM_TAG_${idx}%%\n`;
+  });
+
+  // 5. 通用兜底：<details-box|todo-item|music-card|gallery-item>...</...>
+  const genericBlockRegex = /<(details-box|todo-item|music-card|gallery-item)[^>]*>[\s\S]*?<\/\1>/gi;
+  text = text.replace(genericBlockRegex, (match) => {
+    const idx = placeholders.length;
+    placeholders.push(match);
+    return `\n%%CUSTOM_TAG_${idx}%%\n`;
+  });
+
+  return { text, placeholders };
+}
+
+/**
+ * 恢复被保护的自定义标签。
+ * 与 article.js restoreCustomTags 完全一致。
+ */
+function restoreCustomTags(html, placeholders) {
+  let out = html;
+  placeholders.forEach((original, idx) => {
+    out = out.replace(`<p>%%CUSTOM_TAG_${idx}%%</p>`, original);
+    out = out.replace(`%%CUSTOM_TAG_${idx}%%`, original);
+  });
+  return out;
+}
+
+/**
+ * 完整 Markdown 渲染管线。
+ * 与 article.js renderMarkdown 完全一致。
+ */
+function renderMarkdown(mdText) {
+  const parsed = parseMarkdown(mdText);
+  const { text: protectedBody, placeholders } = protectCustomTags(parsed.body);
+  let html = marked.parse(protectedBody, { breaks: true, gfm: true });
+  html = restoreCustomTags(html, placeholders);
+  return { metadata: parsed.frontmatter, html };
+}
+
+function parseMarkdown(raw) {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (!match) return { frontmatter: {}, body: raw };
+  return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
+}
+
 // === 工具函数 ===
+
 function escapeHtml(s) {
   return String(s == null ? "" : s)
     .replace(/&/g, "&amp;")
@@ -129,53 +222,38 @@ function toIsoDate(dateStr) {
 }
 
 /**
- * 截取 HTML 到指定字符数（保留完整标签）
+ * 从 HTML 字符串提取纯文本并截取摘要，用于 meta description。
+ * 与 test2 src/lib/seo/route-meta.ts makeExcerpt 一致。
  */
-function truncateHtml(html, maxChars) {
-  if (html.length <= maxChars) return html;
-  let truncated = html.slice(0, maxChars);
-  const lastLt = truncated.lastIndexOf("<");
-  const lastGt = truncated.lastIndexOf(">");
-  if (lastLt > lastGt) {
-    truncated = truncated.slice(0, lastLt);
-  }
-  // 闭合未关的标签
-  const openTags = [];
-  const tagRegex = /<\/?([a-zA-Z][a-zA-Z0-9]*)\b[^>]*?(\/?)>/g;
-  let m;
-  while ((m = tagRegex.exec(truncated)) !== null) {
-    const isClosing = m[0].startsWith("</");
-    const isSelfClosing = m[2] === "/" || ["br", "img", "hr", "input", "meta", "link"].includes(m[1].toLowerCase());
-    if (isSelfClosing) continue;
-    if (isClosing) {
-      const idx = openTags.lastIndexOf(m[1].toLowerCase());
-      if (idx !== -1) openTags.splice(idx, 1);
-    } else {
-      openTags.push(m[1].toLowerCase());
-    }
-  }
-  for (let i = openTags.length - 1; i >= 0; i--) {
-    truncated += `</${openTags[i]}>`;
-  }
-  return truncated;
-}
-
-function extractPlainText(mdBody, maxChars) {
-  let text = mdBody
-    .replace(/^---[\s\S]*?---\n?/, "")
-    .replace(/```[\s\S]*?```/g, " ")
-    .replace(/`[^`]*`/g, " ")
-    .replace(/!\[[^\]]*\]\([^)]*\)/g, " ")
-    .replace(/\[[^\]]*\]\([^)]*\)/g, " ")
+function makeExcerpt(html, maxLen = 160) {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
     .replace(/<[^>]+>/g, " ")
-    .replace(/^#+\s+/gm, " ")
-    .replace(/^\s*[-*+]\s+/gm, " ")
-    .replace(/^\s*>\s+/gm, " ")
-    .replace(/\*\*([^*]+)\*\*/g, "$1")
-    .replace(/\*([^*]+)\*/g, "$1")
+    .replace(/&[a-z]+;/gi, " ")
     .replace(/\s+/g, " ")
     .trim();
-  return text.slice(0, maxChars);
+  if (text.length <= maxLen) return text;
+  const slice = text.slice(0, maxLen);
+  const lastSpace = slice.lastIndexOf(" ");
+  return (lastSpace > maxLen * 0.6 ? slice.slice(0, lastSpace) : slice) + "...";
+}
+
+/**
+ * 从 HTML 提取纯文本（去标签、去脚本、去样式、合并空白），用于 JSON-LD articleBody。
+ * 截断到 5000 字符避免 JSON-LD 过大。
+ * 与 test2 buildArticleJsonLd articleBody 逻辑一致。
+ */
+function extractArticleBody(html, maxLen = 5000) {
+  const text = html
+    .replace(/<script[\s\S]*?<\/script>/gi, "")
+    .replace(/<style[\s\S]*?<\/style>/gi, "")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&[a-z]+;/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, maxLen);
+  return text || undefined;
 }
 
 function renderCategoryBadges(categories) {
@@ -193,30 +271,57 @@ function getCategoryText(categories) {
   return categories.join(", ");
 }
 
-function buildJsonLd(post, authorName, coverUrl, canonicalUrl, description) {
-  const ld = {
+/**
+ * 生成 BreadcrumbList JSON-LD 对象。
+ * 与 test2 buildBreadcrumbJsonLd 一致：3 级面包屑（首页 → 文章列表 → 当前文章）。
+ */
+function buildBreadcrumbJsonLd(trail) {
+  const base = SITE_META.url.replace(/\/$/, "");
+  const items = trail.map((item) => ({
+    name: item.name,
+    url: item.url.startsWith("http") ? item.url : `${base}${item.url}`,
+  }));
+  return {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: items.map((item, idx) => ({
+      "@type": "ListItem",
+      position: idx + 1,
+      name: item.name,
+      item: item.url,
+    })),
+  };
+}
+
+/**
+ * 生成 BlogPosting JSON-LD（文章详情页）。
+ * 字段对齐 test2 buildArticleJsonLd：含 articleBody 纯文本正文。
+ */
+function buildArticleJsonLd(opts) {
+  const base = SITE_META.url.replace(/\/$/, "");
+  const image = opts.image || `${base}${SITE_META.ogImage}`;
+  const authorName = opts.authorName || SITE_META.author;
+
+  const jsonLd = {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
-    headline: post.title || "",
-    description: description,
-    datePublished: toIsoDate(post.date),
-    dateModified: toIsoDate(post.last_modified || post.date),
-    author: { "@type": "Person", name: authorName },
-    publisher: {
-      "@type": "Organization",
-      name: site.title,
-      logo: { "@type": "ImageObject", url: "https://blog.945426.xyz/favicon.jpg" },
-    },
-    mainEntityOfPage: { "@type": "WebPage", "@id": canonicalUrl },
+    headline: opts.title,
+    description: opts.description,
+    image,
+    mainEntityOfPage: { "@type": "WebPage", "@id": opts.url },
+    author: { "@type": "Person", name: authorName, url: `${base}/` },
+    publisher: { "@type": "Person", name: SITE_META.author, url: `${base}/` },
+    datePublished: opts.datePublished || new Date().toISOString(),
+    dateModified: opts.dateModified || opts.datePublished || new Date().toISOString(),
+    url: opts.url,
   };
-  if (coverUrl) {
-    ld.image = { "@type": "ImageObject", url: coverUrl };
+
+  const articleBody = extractArticleBody(opts.articleBodyHtml || "");
+  if (articleBody) {
+    jsonLd.articleBody = articleBody;
   }
-  if (post.category && post.category.length) {
-    ld.articleSection = post.category.join(", ");
-    ld.keywords = (post.tags || []).join(", ");
-  }
-  return JSON.stringify(ld);
+
+  return jsonLd;
 }
 
 // === 扫描文章 ===
@@ -271,19 +376,52 @@ for (const file of files.sort()) {
   const coverUrl = fm.image || fm.coverImage || "";
   const contentType = fm.content_type || (fm.type === "note" ? "note" : "md");
 
-  let excerptHtml;
-  if (fm.type === "note" && body.trim()) {
-    excerptHtml = marked.parse(body.trim());
-  } else {
-    const fullHtml = marked.parse(body);
-    excerptHtml = truncateHtml(fullHtml, 600);
-  }
+  // === v1.2 关键改动：完整正文（marked 渲染全文） ===
+  // protectCustomTags + marked.parse + restoreCustomTags，与 article.js 客户端字节级对齐
+  const { html: fullContentHtml } = renderMarkdown(raw);
 
-  const description = (fm.desc || extractPlainText(body, 200)).slice(0, 200);
+  // description：frontmatter.desc 优先，否则从渲染后 HTML 提取摘要
+  const description = (fm.desc || makeExcerpt(fullContentHtml, 160)).slice(0, 200);
+
   const canonicalUrl = `https://${site.blogDomain}/posts/${slug}`;
   const categoryBadgesHtml = renderCategoryBadges(categories);
   const categoryText = getCategoryText(categories);
-  const jsonld = buildJsonLd({ title, date: dateStr, last_modified: lastMod, category: categories, tags }, authorName, coverUrl, canonicalUrl, description);
+
+  // JSON-LD：BlogPosting + BreadcrumbList
+  const articleJsonLd = buildArticleJsonLd({
+    title,
+    description,
+    url: canonicalUrl,
+    image: coverUrl || undefined,
+    datePublished: toIsoDate(dateStr),
+    dateModified: toIsoDate(lastMod),
+    authorName,
+    articleBodyHtml: fullContentHtml,
+  });
+
+  const breadcrumbJsonLd = buildBreadcrumbJsonLd([
+    { name: "首页", url: "/" },
+    { name: "文章", url: "/details/archives" },
+    { name: title, url: `/posts/${slug}` },
+  ]);
+
+  // 两个 JSON-LD 用数组形式注入
+  const jsonld = JSON.stringify([articleJsonLd, breadcrumbJsonLd]);
+
+  // article.js v1.2 跳过 fetch .md 时读取的 frontmatter（序列化为 data-article-meta 属性）
+  // 注意：HTML 属性值用双引号，JSON 内部双引号需转义为 &quot;
+  const articleMetaObj = {
+    title,
+    date: dateStr,
+    last_modified: lastMod,
+    author: authorKey,
+    category: categories,
+    tags,
+    image: coverUrl,
+    type: fm.type || "article",
+    locked: !!fm.locked,
+  };
+  const articleMetaJson = escapeAttr(JSON.stringify(articleMetaObj));
 
   const coverOgHtml = coverUrl
     ? `<meta property="og:image" content="${escapeAttr(coverUrl)}" />`
@@ -306,7 +444,8 @@ for (const file of files.sort()) {
     .replace(/\{\{categoryText\}\}/g, escapeAttr(categoryText))
     .replace(/\{\{categoryBadgesHtml\}\}/g, categoryBadgesHtml)
     .replace(/\{\{contentType\}\}/g, escapeAttr(contentType))
-    .replace(/\{\{excerptHtml\}\}/g, excerptHtml)
+    .replace(/\{\{articleMetaJson\}\}/g, articleMetaJson)
+    .replace(/\{\{excerptHtml\}\}/g, fullContentHtml)  // v1.2：完整正文（变量名保留 excerptHtml 不改模板）
     .replace(/\{\{coverOgHtml\}\}/g, coverOgHtml)
     .replace(/\{\{coverTwitterHtml\}\}/g, coverTwitterHtml)
     .replace(/\{\{twitterCardType\}\}/g, twitterCardType)
@@ -314,7 +453,7 @@ for (const file of files.sort()) {
 
   writeFileSync(join(POSTS_DIR, `${slug}.html`), html, "utf-8");
   existingHtmls.delete(`${slug}.html`);
-  console.log(`  ✅ ${slug}.html: ${title}`);
+  console.log(`  ✅ ${slug}.html: ${title} (${fullContentHtml.length} bytes 正文)`);
   generated++;
 }
 
