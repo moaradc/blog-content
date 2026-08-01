@@ -330,13 +330,32 @@ if (!existsSync(POSTS_DIR)) {
   process.exit(1);
 }
 
-const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
-console.log(`📄 扫描到 ${files.length} 篇 markdown 文件`);
+// 增量模式：命令行传变更的 .md 文件路径（与 clean-frontmatter.js 一致）
+//   node generate-article-html.js docs/posts/101.md docs/posts/102.md
+//   已删除的 .md 路径也传进来（用于清理对应 .html）
+// 无参数时全量扫描（fallback，如初次提交或手动全量重建）
+const argv = process.argv.slice(2);
+let files;
+if (argv.length > 0) {
+  // 保留所有 .md 路径（含已删除的），用于后续清理逻辑
+  // 只处理仍存在的 .md 生成 HTML；已删除的 .md 在清理阶段处理对应 .html
+  files = argv
+    .map((p) => p.replace(/^.*\//, ""))
+    .filter((f) => f.endsWith(".md") && f !== "README.md");
+  const existing = files.filter((f) => existsSync(join(POSTS_DIR, f)));
+  const deleted = files.filter((f) => !existsSync(join(POSTS_DIR, f)));
+  console.log(`📄 增量生成 ${existing.length} 篇文章 HTML` + (deleted.length > 0 ? `，清理 ${deleted.length} 篇已删除文章的 HTML` : ""));
+  files = existing;
+} else {
+  files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
+  console.log(`📄 全量生成 ${files.length} 篇文章 HTML`);
+}
 
 let generated = 0;
 let skipped = 0;
 let cleaned = 0;
 
+// 收集所有已存在的 .html（用于清理孤儿）
 const existingHtmls = new Set();
 for (const f of readdirSync(POSTS_DIR)) {
   if (f.endsWith(".html")) existingHtmls.add(f);
@@ -457,14 +476,35 @@ for (const file of files.sort()) {
   generated++;
 }
 
-// === 清理无对应 .md 的 .html ===
-for (const orphan of existingHtmls) {
-  try {
-    unlinkSync(join(POSTS_DIR, orphan));
-    console.log(`  🗑️  清理孤儿 HTML: ${orphan}`);
-    cleaned++;
-  } catch (e) {
-    console.warn(`  ⚠️  清理 ${orphan} 失败: ${e.message}`);
+// === 清理无对应 .md 的 .html（仅全量模式，避免增量模式误删其他文章的 HTML）===
+const isIncremental = argv.length > 0;
+if (isIncremental) {
+  // 增量模式：只清理被传入且已删除的 .md 对应的 .html
+  // （argv 里的 .md 如果不存在了，对应 .html 需清理）
+  for (const argFile of argv) {
+    const slug = argFile.replace(/^.*\//, "").replace(/\.md$/, "");
+    const mdPath = join(POSTS_DIR, `${slug}.md`);
+    const htmlPath = join(POSTS_DIR, `${slug}.html`);
+    if (!existsSync(mdPath) && existsSync(htmlPath)) {
+      try {
+        unlinkSync(htmlPath);
+        console.log(`  🗑️  清理已删除文章的 HTML: ${slug}.html`);
+        cleaned++;
+      } catch (e) {
+        console.warn(`  ⚠️  清理 ${slug}.html 失败: ${e.message}`);
+      }
+    }
+  }
+} else {
+  // 全量模式：扫描所有 .html，无对应 .md 的清理掉
+  for (const orphan of existingHtmls) {
+    try {
+      unlinkSync(join(POSTS_DIR, orphan));
+      console.log(`  🗑️  清理孤儿 HTML: ${orphan}`);
+      cleaned++;
+    } catch (e) {
+      console.warn(`  ⚠️  清理 ${orphan} 失败: ${e.message}`);
+    }
   }
 }
 

@@ -91,12 +91,16 @@ jobs:
               echo "ℹ️  本次 push 没有改动任何 .md 文件（可能只改了脚本），跳过 clean"
               echo "incremental=true" >> "$GITHUB_OUTPUT"
               echo "files=" >> "$GITHUB_OUTPUT"
+              # all_files 含删除的文件路径，给 generate-article-html.js 清理 .html 用
+              echo "all_files=${FILES[*]}" >> "$GITHUB_OUTPUT"
             else
               echo "📝 增量更新 ${#EXISTING[@]} 个文件:"
               printf '  - %s\n' "${EXISTING[@]}"
               # 用空格分隔传给 node（路径不含空格，安全）
               echo "incremental=true" >> "$GITHUB_OUTPUT"
               echo "files=${EXISTING[*]}" >> "$GITHUB_OUTPUT"
+              # all_files 含删除的文件路径，给 generate-article-html.js 清理 .html 用
+              echo "all_files=${FILES[*]}" >> "$GITHUB_OUTPUT"
             fi
           fi
 
@@ -134,7 +138,20 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           BLOG_URL: ${{ vars.BLOG_URL }}
-        run: node generate-article-html.js
+          # all_files 含删除的文件路径，generate-article-html.js 会清理对应 .html
+          CHANGED_FILES: ${{ steps.changed.outputs.all_files }}
+          INCREMENTAL: ${{ steps.changed.outputs.incremental }}
+        run: |
+          if [ "$INCREMENTAL" = "true" ] && [ -n "$CHANGED_FILES" ]; then
+            echo "📄 增量生成: $CHANGED_FILES"
+            # shellcheck disable=SC2086  # 故意不引用，让空格分隔多个路径
+            node generate-article-html.js $CHANGED_FILES
+          elif [ "$INCREMENTAL" = "true" ]; then
+            echo "ℹ️  跳过 generate-article-html（没有 .md 文件变更）"
+          else
+            echo "📄 全量生成（fallback）"
+            node generate-article-html.js
+          fi
 
       - name: Commit and push if changed
         run: |
