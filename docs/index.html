@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="robots" content="noindex">
-  <title>沫然Blog Content · 文章索引</title>
+  <title>沫然Blog · 内容仓库</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📄</text></svg>">
 
   <!-- marked (markdown 渲染，仅文章详情页用) -->
@@ -459,9 +459,9 @@
   <div class="container">
     <!-- Channel 头部 -->
     <section class="channel">
-      <span class="eyebrow">Content Index</span>
+      <span class="eyebrow">Raw Feed</span>
       <h1 class="channel-title">沫然Blog Content</h1>
-      <p class="channel-desc">文章与媒体的存储仓库，提供 JSON 索引、RSS 订阅、SEO 静态 HTML 与原始 Markdown。</p>
+      <p class="channel-desc">文章与媒体的存储仓库，提供 RSS 订阅、SEO 静态 HTML 与原始 Markdown。</p>
 
       <div class="channel-meta" id="channel-meta">
         <span class="meta-item"><strong id="meta-total">-</strong> 篇文章</span>
@@ -492,8 +492,8 @@
     </div>
 
     <footer class="ik-footer">
-      <p><span class="brand">沫然Blog</span> · Content Index</p>
-      <p>主站 <a href="https://blog.945426.xyz/">blog.945426.xyz</a> · RSS <a href="/rss.xml">rss.xml</a> · 站点地图 <a href="/sitemap.xml">sitemap.xml</a> · JSON <a href="/posts.json">posts.json</a></p>
+      <p>本页为内容存储页，请访问主站</p>
+      <p><a href="https://blog.945426.xyz/">主站</a> · <a href="/rss.xml">RSS</a> · <a href="/sitemap.xml">站点地图</a></p>
     </footer>
   </div>
 
@@ -574,8 +574,6 @@
       // 摘要
       if (post.desc) {
         head += '<p class="item__excerpt">' + escapeHtml(post.desc) + '</p>';
-      } else {
-        head += '<p class="item__excerpt empty">（无摘要）</p>';
       }
 
       // 操作按钮
