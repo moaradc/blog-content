@@ -6,7 +6,6 @@
     <title>Mermaid 渲染测试 | 沫然Blog</title>
     <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
 
-    <!-- ========= SEO Meta ========= -->
     <meta name="description" content="测试 Mermaid 图表渲染" />
     <meta name="keywords" content="Demo" />
     <meta name="author" content="沫然" />
@@ -29,7 +28,7 @@
     <!-- JSON-LD 结构化数据 -->
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Mermaid 渲染测试","description":"测试 Mermaid 图表渲染","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/mermaid-test"},"author":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"datePublished":"2026-07-20T12:09:00.000Z","dateModified":"2026-07-20T12:09:00.000Z","url":"https://blog.945426.xyz/posts/mermaid-test","articleBody":"本文仅用于测试 Mermaid 各类图表的渲染。 1. Flowchart 流程图 flowchart TD A[用户访问博客] -- B{是否首次访问} B -- 是 -- C[加载文章列表] B -- 否 -- D[读取本地缓存] C -- E[渲染 marked] D -- E E -- F{是否含代码块} F -- 是 -- G[加载 hljs 高亮] F -- 否 -- H[完成] G -- H 2. Sequence Diagram 时序图 sequenceDiagram participant U as 浏览器 participant F as 前端 Astro participant R as raw-posts CDN participant W as Waline server U- F: 打开 /details/article?id=103 F- R: fetch posts.json R-- F: 文章元数据 F- R: fetch [103.md](http://103.md) R-- F: markdown 内容 F- F: marked.parse + hljs F- W: 加载评论组件 W-- U: 渲染评论框 3. Class Diagram 类图 classDiagram class Article { +String id +String title +String author +Date published +render() String } class TOC { +Array~TOCItem~ items +generate(html) void +highlightActive() void } class Comment { +String userId +String content +Date createdAt } Article -- TOC : has Article -- Comment : has many 4. State Diagram 状态图 stateDiagram-v2 [*] -- 加载中 加载中 -- 渲染中 : fetch 成功 加载中 -- 错误 : 网络失败 渲染中 -- 已完成 : marked + hljs 完成 渲染中 -- 错误 : 解析异常 已完成 -- [*] 错误 -- 加载中 : 用户重试 5. Gantt Chart 甘特图 gantt title 博客重构计划 dateFormat YYYY-MM-DD section 前端 设计文章页样式 :a1, 2026-07-01, 7d 实现 TOC 组件 :a2, after a1, 4d 接入 Waline 评论 :a3, after a2, 3d section 后端 搭建内容仓库 :b1, 2026-07-01, 5d 配置 GitHub Actions :b2, after b1, 3d 生成 posts.json :b3, after b2, 2d section 部署 Vercel 上线 :c1, after a3, 1d 6. Pie Chart 饼图 pie showData title 博客文章类型分布 技术笔记 : 45 生活随笔 : 25 教程文档 : 20 项目复盘 : 10 7. ER Diagram 实体关系图 erDiagram POST ||--o{ COMMENT : has POST ||--o{ TAG : tagged POST { string id PK string title string author date published } COMMENT { string id PK string post_id FK string user_id text content } TAG { string id PK string name } 8. User Journey 用户旅程 journey title 读者访问文章的体验 section 进入 搜索引擎: 5: 读者 点击链接: 5: 读者 首屏加载: 3: 读者 section 阅读 渲染正文: 5: 读者 滚动浏览: 5: 读者 点击 TOC: 4: 读者 section 互动 留下评论: 3: 读者 分享文章: 2: 读者 9. Git Graph 提交图 gitGraph commit id: init commit id: add posts.json branch feature/toc checkout feature/toc commit id: toc sidebar commit id: mobile toc checkout main merge feature/toc commit id: release v1 branch fix/comments commit id: waline fix checkout main merge fix/comments commit id: release v1.1"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Mermaid 渲染测试","item":"https://blog.945426.xyz/posts/mermaid-test"}]}]</script>
 
-    <!-- ========= 资源库（公共 CDN） ========= -->
+    <!-- 第三方资源 -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
 
@@ -38,17 +37,16 @@
     <!-- highlight.js 主题 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
-    <!-- ========= 本站 CSS（直接引用主仓 blog.945426.xyz，固定路径无 hash） ========= -->
-    <!-- v1.1 改动：不再在 blog-content 维护副本，降低维护成本 -->
+    <!-- 本站 CSS -->
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- ========= 第三方功能库 ========= -->
+    <!-- 第三方库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
-    <!-- ========= 本站 JS（直接引用主仓 blog.945426.xyz） ========= -->
+    <!-- 本站 JS -->
     <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
     <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
@@ -92,12 +90,9 @@
     </div>
 </nav>
 
-<!-- 文章详情容器：
-     - data-article-id：让 article.js 识别当前文章
-     - data-article-meta：序列化 frontmatter JSON，article.js v1.2 跳过 fetch .md 时读取此属性 -->
+<!-- 文章容器 -->
 <div id="article-view" data-article-id="mermaid-test" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Mermaid 渲染测试&quot;,&quot;date&quot;:&quot;2026-07-20 20:09&quot;,&quot;last_modified&quot;:&quot;2026-07-20 20:09&quot;,&quot;author&quot;:&quot;Admin&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false}">
 
-    <!-- Hero 区域 -->
     <div class="article-hero-wrapper">
         <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
         <div class="article-hero-overlay-gradient"></div>
@@ -119,14 +114,11 @@
         </div>
     </div>
 
-    <!-- 正文区域 -->
     <div class="layout-grid">
 
-        <!-- 左侧侧边栏 (PC端固定) -->
         <aside class="sidebar-column">
             <div class="sidebar-sticky-wrapper">
 
-                <!-- 整合版博主信息卡片 -->
                 <div class="sidebar-card profile-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
@@ -162,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- 延迟检测 (PC端) -->
                 <div class="sidebar-card latency-card" id="pc-latency-card">
                     <div class="latency-card-header">
                         <span><i class="ri-signal-tower-line"></i> 线路检测</span>
@@ -173,7 +164,6 @@
                     <div class="latency-list" id="pc-latency-list"></div>
                 </div>
 
-                <!-- 分类卡片 -->
                 <div class="sidebar-card extra-card" id="sidebar-categories-card" style="display:none;">
                     <div class="extra-card-title">
                         <span><i class="ri-folder-2-line"></i> 分类</span>
@@ -182,7 +172,6 @@
                     <div class="sidebar-list-content" id="sidebar-cat-list"></div>
                 </div>
 
-                <!-- 标签卡片 -->
                 <div class="sidebar-card extra-card" id="sidebar-tags-card" style="display:none;">
                     <div class="extra-card-title">
                         <span><i class="ri-price-tag-3-line"></i> 标签</span>
@@ -191,7 +180,6 @@
                     <div class="sidebar-tags-content" id="sidebar-tag-cloud"></div>
                 </div>
 
-                <!-- PC端目录卡片 -->
                 <div class="sidebar-card toc-card-pc" id="pc-toc-wrapper" style="display:none;">
                     <div class="toc-title"><i class="ri-list-check"></i> 目录导航</div>
                     <ul class="toc-list-pc" id="pc-toc-list"></ul>
@@ -200,10 +188,8 @@
             </div>
         </aside>
 
-        <!-- 右侧正文区域 -->
         <main class="article-column">
 
-            <!-- 移动端专用目录 -->
             <div class="toc-box mobile-only-toc" id="toc-box" style="display: none;">
                 <div class="toc-header" onclick="toggleTOC()">
                     <span><i class="ri-list-check"></i> 文章目录</span>
@@ -214,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- 文章正文：article.js 运行后会用完整 md 渲染替换此处的摘要 -->
+            <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
             <article class="article-body" id="detail-content">
                 <p>本文仅用于测试 Mermaid 各类图表的渲染。</p>
 <h3>1. Flowchart 流程图</h3>
@@ -472,13 +458,10 @@ gitGraph
 
             </article>
 
-            <!-- 文章底部导航栏（article.js 填充） -->
             <div class="article-navigation" id="article-navigation"></div>
 
-            <!-- 版权声明 -->
             <div class="article-copyright">本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>协议，转载请注明出处。</div>
 
-            <!-- 移动端底部扩展卡片 -->
             <div class="mobile-bottom-cards">
                 <div class="sidebar-card profile-card">
                     <div class="profile-header">
@@ -523,15 +506,13 @@ gitGraph
                 </div>
             </div>
 
-            <!-- 评论区 -->
             <div id="waline"></div>
 
-            <!-- 页脚版权 -->
             <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px dashed var(--text-color); text-align: center; font-size: 0.8rem; opacity: 0.6;">
                 &copy; MOARA. All rights reserved.
             </div>
 
-            <!-- 禁用 JS 兜底：v1.2 已直出完整正文，noscript 仅提示交互功能不可用 -->
+    <!-- 禁用 JS 兜底 -->
             <noscript>
                 <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
                     <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
@@ -546,7 +527,6 @@ gitGraph
     </div>
 </div>
 
-<!-- 图片预览遮罩层 -->
 <div class="lightbox-overlay" id="lightbox">
     <div class="lightbox-img-wrapper">
         <img src="" alt="Preview" class="lightbox-img" id="lightbox-img" />
@@ -570,7 +550,6 @@ gitGraph
     </div>
 </div>
 
-<!-- 滚动控制按钮 -->
 <div class="scroll-controls" id="scrollControls">
     <div class="scroll-actions-wrapper">
         <div class="scroll-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="回到顶部">
@@ -600,7 +579,7 @@ gitGraph
     </div>
 </div>
 
-<!-- ========= 文章渲染入口（直接引用主仓 article.js） ========= -->
+<!-- 文章渲染 -->
 <script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
 
 </body>

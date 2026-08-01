@@ -6,7 +6,6 @@
     <title>Markdown写作指南 | 沫然Blog</title>
     <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
 
-    <!-- ========= SEO Meta ========= -->
     <meta name="description" content="一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。" />
     <meta name="keywords" content="Markdown,教程" />
     <meta name="author" content="沫然" />
@@ -29,7 +28,7 @@
     <!-- JSON-LD 结构化数据 -->
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown写作指南","description":"一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/107"},"author":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"沫然","url":"https://blog.945426.xyz/"},"datePublished":"2026-06-09T02:00:00.000Z","dateModified":"2026-06-09T02:00:00.000Z","url":"https://blog.945426.xyz/posts/107","articleBody":"什么是Markdown？ Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。 基本语法 文本格式 粗体文本 使用双星号 斜体文本 使用单星号 删除线 使用双波浪号 代码 行内代码： console.log(&#39;Hello&#39;) 代码块： function greet(name) { return `Hello, ${name}!`; } 列表 第一项 第二项 第三项 引用 Markdown让写作回归本质，专注于内容而非排版。 链接与图片 访问GitHub"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown写作指南","item":"https://blog.945426.xyz/posts/107"}]}]</script>
 
-    <!-- ========= 资源库（公共 CDN） ========= -->
+    <!-- 第三方资源 -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
 
@@ -38,17 +37,16 @@
     <!-- highlight.js 主题 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
-    <!-- ========= 本站 CSS（直接引用主仓 blog.945426.xyz，固定路径无 hash） ========= -->
-    <!-- v1.1 改动：不再在 blog-content 维护副本，降低维护成本 -->
+    <!-- 本站 CSS -->
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- ========= 第三方功能库 ========= -->
+    <!-- 第三方库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
-    <!-- ========= 本站 JS（直接引用主仓 blog.945426.xyz） ========= -->
+    <!-- 本站 JS -->
     <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
     <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
@@ -92,12 +90,9 @@
     </div>
 </nav>
 
-<!-- 文章详情容器：
-     - data-article-id：让 article.js 识别当前文章
-     - data-article-meta：序列化 frontmatter JSON，article.js v1.2 跳过 fetch .md 时读取此属性 -->
+<!-- 文章容器 -->
 <div id="article-view" data-article-id="107" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown写作指南&quot;,&quot;date&quot;:&quot;2026-06-09 10:00&quot;,&quot;last_modified&quot;:&quot;2026-06-09 10:00&quot;,&quot;author&quot;:&quot;Admin&quot;,&quot;category&quot;:[&quot;技术&quot;],&quot;tags&quot;:[&quot;Markdown&quot;,&quot;教程&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false}">
 
-    <!-- Hero 区域 -->
     <div class="article-hero-wrapper">
         <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
         <div class="article-hero-overlay-gradient"></div>
@@ -119,14 +114,11 @@
         </div>
     </div>
 
-    <!-- 正文区域 -->
     <div class="layout-grid">
 
-        <!-- 左侧侧边栏 (PC端固定) -->
         <aside class="sidebar-column">
             <div class="sidebar-sticky-wrapper">
 
-                <!-- 整合版博主信息卡片 -->
                 <div class="sidebar-card profile-card">
                     <div class="profile-header">
                         <div class="profile-avatar">
@@ -162,7 +154,6 @@
                     </div>
                 </div>
 
-                <!-- 延迟检测 (PC端) -->
                 <div class="sidebar-card latency-card" id="pc-latency-card">
                     <div class="latency-card-header">
                         <span><i class="ri-signal-tower-line"></i> 线路检测</span>
@@ -173,7 +164,6 @@
                     <div class="latency-list" id="pc-latency-list"></div>
                 </div>
 
-                <!-- 分类卡片 -->
                 <div class="sidebar-card extra-card" id="sidebar-categories-card" style="display:none;">
                     <div class="extra-card-title">
                         <span><i class="ri-folder-2-line"></i> 分类</span>
@@ -182,7 +172,6 @@
                     <div class="sidebar-list-content" id="sidebar-cat-list"></div>
                 </div>
 
-                <!-- 标签卡片 -->
                 <div class="sidebar-card extra-card" id="sidebar-tags-card" style="display:none;">
                     <div class="extra-card-title">
                         <span><i class="ri-price-tag-3-line"></i> 标签</span>
@@ -191,7 +180,6 @@
                     <div class="sidebar-tags-content" id="sidebar-tag-cloud"></div>
                 </div>
 
-                <!-- PC端目录卡片 -->
                 <div class="sidebar-card toc-card-pc" id="pc-toc-wrapper" style="display:none;">
                     <div class="toc-title"><i class="ri-list-check"></i> 目录导航</div>
                     <ul class="toc-list-pc" id="pc-toc-list"></ul>
@@ -200,10 +188,8 @@
             </div>
         </aside>
 
-        <!-- 右侧正文区域 -->
         <main class="article-column">
 
-            <!-- 移动端专用目录 -->
             <div class="toc-box mobile-only-toc" id="toc-box" style="display: none;">
                 <div class="toc-header" onclick="toggleTOC()">
                     <span><i class="ri-list-check"></i> 文章目录</span>
@@ -214,7 +200,7 @@
                 </div>
             </div>
 
-            <!-- 文章正文：article.js 运行后会用完整 md 渲染替换此处的摘要 -->
+            <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
             <article class="article-body" id="detail-content">
                 <h2>什么是Markdown？</h2>
 <p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
@@ -248,13 +234,10 @@
 
             </article>
 
-            <!-- 文章底部导航栏（article.js 填充） -->
             <div class="article-navigation" id="article-navigation"></div>
 
-            <!-- 版权声明 -->
             <div class="article-copyright">本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>协议，转载请注明出处。</div>
 
-            <!-- 移动端底部扩展卡片 -->
             <div class="mobile-bottom-cards">
                 <div class="sidebar-card profile-card">
                     <div class="profile-header">
@@ -299,15 +282,13 @@
                 </div>
             </div>
 
-            <!-- 评论区 -->
             <div id="waline"></div>
 
-            <!-- 页脚版权 -->
             <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px dashed var(--text-color); text-align: center; font-size: 0.8rem; opacity: 0.6;">
                 &copy; MOARA. All rights reserved.
             </div>
 
-            <!-- 禁用 JS 兜底：v1.2 已直出完整正文，noscript 仅提示交互功能不可用 -->
+    <!-- 禁用 JS 兜底 -->
             <noscript>
                 <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
                     <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
@@ -322,7 +303,6 @@
     </div>
 </div>
 
-<!-- 图片预览遮罩层 -->
 <div class="lightbox-overlay" id="lightbox">
     <div class="lightbox-img-wrapper">
         <img src="" alt="Preview" class="lightbox-img" id="lightbox-img" />
@@ -346,7 +326,6 @@
     </div>
 </div>
 
-<!-- 滚动控制按钮 -->
 <div class="scroll-controls" id="scrollControls">
     <div class="scroll-actions-wrapper">
         <div class="scroll-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="回到顶部">
@@ -376,7 +355,7 @@
     </div>
 </div>
 
-<!-- ========= 文章渲染入口（直接引用主仓 article.js） ========= -->
+<!-- 文章渲染 -->
 <script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
 
 </body>

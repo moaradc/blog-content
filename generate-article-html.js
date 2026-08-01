@@ -1,21 +1,7 @@
 // generate-article-html.js
-// 扫描 docs/posts/*.md，根据 template/article.html 生成每篇文章的 SEO HTML。
-//
-// v1.2 关键改动（相对 v1.1）：
-//   - 完整正文直出（不再截 600 字摘要）：marked 渲染全文 → #detail-content
-//   - article.js 运行时跳过 fetch .md，直接用 HTML 已有的正文
-//   - protectCustomTags 与 article.js 客户端字节级对齐（music/gallery/spoiler/details-box/todo-list）
-//   - SEO 字段对齐 test2：articleBody（纯文本全文）+ BreadcrumbList + 完整 BlogPosting
-//   - marked 配置与客户端一致：breaks=true, gfm=true
-//
-// 关键产物：docs/posts/{id}.html
-//   - 完整 <head> 元数据（title/description/keywords/canonical/OG/JSON-LD）
-//   - 完整正文（marked 渲染全文，爬虫和浏览器都直接可见）
-//   - data-article-id 属性让 article.js 识别当前文章
-//   - 所有 CSS/JS 通过 https://blog.945426.xyz/assets/... 绝对 URL 引用主仓
-//
-// 触发：generate-posts-json.yml（在 generate-sitemap.js 之后运行）
-// 用法: node generate-article-html.js
+// 扫描 docs/posts/*.md，用 template/article.html 生成每篇 SEO HTML。
+// 用法: node generate-article-html.js [docs/posts/101.md docs/posts/102.md ...]
+//   无参数 = 全量，有参数 = 增量（只处理传入文件）
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
 const { join } = require("path");
@@ -30,17 +16,15 @@ try {
   marked = { parse: (s) => s };
 }
 
-// marked 配置与 article.js 客户端一致：breaks=true（每个 \n 都是 <br>）、gfm=true（GFM 表格/任务列表/删除线）
+// 与 article.js 客户端一致
 marked.setOptions({ breaks: true, gfm: true });
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const TEMPLATE_FILE = join(__dirname, "template", "article.html");
 const DOCS_DIR = join(__dirname, "docs");
 
-// 主仓部署 URL（用于拉取 users.js / config.js 数据）
 const MOARA_ASSETS_BASE = "https://blog.945426.xyz/assets/data-scripts";
 
-// 站点元数据（与 test2 src/lib/seo/route-meta.ts SITE_META 对齐）
 const SITE_META = {
   name: "沫然Blog",
   url: "https://blog.945426.xyz",
@@ -50,7 +34,6 @@ const SITE_META = {
   rssUrl: "/rss.xml",
 };
 
-// === 加载模板 ===
 if (!existsSync(TEMPLATE_FILE)) {
   console.error(`❌ 模板不存在: ${TEMPLATE_FILE}`);
   process.exit(1);
@@ -58,7 +41,6 @@ if (!existsSync(TEMPLATE_FILE)) {
 const template = readFileSync(TEMPLATE_FILE, "utf-8");
 console.log(`📄 加载模板: ${TEMPLATE_FILE}`);
 
-// === 从主仓部署 URL 拉取 users.js / config.js ===
 function fetchSync(url) {
   try {
     const { execSync } = require("child_process");
@@ -101,12 +83,8 @@ if (configJsContent) {
 }
 console.log(`  ✅ categoryConfig: ${Object.keys(categoryConfig).join(", ")}`);
 
-// === Markdown 渲染管线（与 article.js 客户端字节级对齐） ===
+// Markdown 渲染（与 article.js 字节级对齐）
 
-/**
- * 保护自定义 HTML 组件标签，防止 marked.js 截断。
- * 与 article.js protectCustomTags 完全一致。
- */
 function protectCustomTags(text) {
   const placeholders = [];
 
@@ -153,10 +131,6 @@ function protectCustomTags(text) {
   return { text, placeholders };
 }
 
-/**
- * 恢复被保护的自定义标签。
- * 与 article.js restoreCustomTags 完全一致。
- */
 function restoreCustomTags(html, placeholders) {
   let out = html;
   placeholders.forEach((original, idx) => {
@@ -166,10 +140,6 @@ function restoreCustomTags(html, placeholders) {
   return out;
 }
 
-/**
- * 完整 Markdown 渲染管线。
- * 与 article.js renderMarkdown 完全一致。
- */
 function renderMarkdown(mdText) {
   const parsed = parseMarkdown(mdText);
   const { text: protectedBody, placeholders } = protectCustomTags(parsed.body);
@@ -184,7 +154,7 @@ function parseMarkdown(raw) {
   return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
 }
 
-// === 工具函数 ===
+// 工具函数
 
 function escapeHtml(s) {
   return String(s == null ? "" : s)
@@ -221,10 +191,6 @@ function toIsoDate(dateStr) {
   return d.toISOString();
 }
 
-/**
- * 从 HTML 字符串提取纯文本并截取摘要，用于 meta description。
- * 与 test2 src/lib/seo/route-meta.ts makeExcerpt 一致。
- */
 function makeExcerpt(html, maxLen = 160) {
   const text = html
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -239,11 +205,6 @@ function makeExcerpt(html, maxLen = 160) {
   return (lastSpace > maxLen * 0.6 ? slice.slice(0, lastSpace) : slice) + "...";
 }
 
-/**
- * 从 HTML 提取纯文本（去标签、去脚本、去样式、合并空白），用于 JSON-LD articleBody。
- * 截断到 5000 字符避免 JSON-LD 过大。
- * 与 test2 buildArticleJsonLd articleBody 逻辑一致。
- */
 function extractArticleBody(html, maxLen = 5000) {
   const text = html
     .replace(/<script[\s\S]*?<\/script>/gi, "")
@@ -271,10 +232,6 @@ function getCategoryText(categories) {
   return categories.join(", ");
 }
 
-/**
- * 生成 BreadcrumbList JSON-LD 对象。
- * 与 test2 buildBreadcrumbJsonLd 一致：3 级面包屑（首页 → 文章列表 → 当前文章）。
- */
 function buildBreadcrumbJsonLd(trail) {
   const base = SITE_META.url.replace(/\/$/, "");
   const items = trail.map((item) => ({
@@ -293,10 +250,6 @@ function buildBreadcrumbJsonLd(trail) {
   };
 }
 
-/**
- * 生成 BlogPosting JSON-LD（文章详情页）。
- * 字段对齐 test2 buildArticleJsonLd：含 articleBody 纯文本正文。
- */
 function buildArticleJsonLd(opts) {
   const base = SITE_META.url.replace(/\/$/, "");
   const image = opts.image || `${base}${SITE_META.ogImage}`;
@@ -324,16 +277,13 @@ function buildArticleJsonLd(opts) {
   return jsonLd;
 }
 
-// === 扫描文章 ===
+// 扫描文章
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
 // 增量模式：命令行传变更的 .md 文件路径（与 clean-frontmatter.js 一致）
-//   node generate-article-html.js docs/posts/101.md docs/posts/102.md
-//   已删除的 .md 路径也传进来（用于清理对应 .html）
-// 无参数时全量扫描（fallback，如初次提交或手动全量重建）
 const argv = process.argv.slice(2);
 let files;
 if (argv.length > 0) {
@@ -355,7 +305,7 @@ let generated = 0;
 let skipped = 0;
 let cleaned = 0;
 
-// 收集所有已存在的 .html（用于清理孤儿）
+// 收集已存在的 .html
 const existingHtmls = new Set();
 for (const f of readdirSync(POSTS_DIR)) {
   if (f.endsWith(".html")) existingHtmls.add(f);
@@ -476,7 +426,7 @@ for (const file of files.sort()) {
   generated++;
 }
 
-// === 清理无对应 .md 的 .html（仅全量模式，避免增量模式误删其他文章的 HTML）===
+// 清理孤儿 HTML
 const isIncremental = argv.length > 0;
 if (isIncremental) {
   // 增量模式：只清理被传入且已删除的 .md 对应的 .html
