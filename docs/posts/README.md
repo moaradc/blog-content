@@ -6,20 +6,17 @@
 
 ```markdown
 ---
-id: "107"
-title: Markdown写作指南
-date: 2026-06-09 10:00
-author: Admin
-category: ["技术"]
-tags: ["Markdown", "教程"]
-desc: 一篇使用Markdown格式编写的示例文章
-coverImage: /img/example.jpg
-# 或 image: https://images.unsplash.com/...
+title: 月下独酌：李白诗中的孤独与自由
+date: 2025-11-21 13:09
+last_modified: 2025-11-21 13:09
+author: Anonymous
+category: ["闲谈"]
+tags: ["书评"]
+desc: 品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。
+image: https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1000&auto=format&fit=crop
+type: note
 locked: false
-draft: false
-pin: false
-type: ""
-content_url: ""
+draft: true
 ---
 
 ## 正文内容
@@ -34,6 +31,6 @@ content_url: ""
 
 ## 访问方式
 
-博客主站通过 jsdelivr CDN fetch：
 - 单篇文章: `https://raw-posts.945426.xyz/posts/107.md`
-- 文章列表: `https://raw-posts.945426.xyz/posts.json`（需 GitHub Action 生成）
+- html: `https://raw-posts.945426.xyz/posts/107.html`
+- 文章列表: `https://raw-posts.945426.xyz/posts.json`
