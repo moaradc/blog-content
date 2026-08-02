@@ -34,7 +34,6 @@ if (!existsSync(POSTS_DIR)) {
 }
 
 const posts = [];
-const rawPosts = [];
 const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 console.log(`📄 扫描 markdown 文件`);
 
@@ -45,6 +44,7 @@ for (const file of files.sort()) {
   const { frontmatter, body } = parseMarkdown(raw);
 
   if (frontmatter.locked === true) continue;
+  if (frontmatter.draft === true) continue;
 
   const article = {
     id: slug,
@@ -62,28 +62,18 @@ for (const file of files.sort()) {
   if (frontmatter.coverImage) article.image = frontmatter.coverImage;
   if (frontmatter.content_url) article.content_url = frontmatter.content_url;
   if (frontmatter.pinned === true) article.pinned = true;
-  if (frontmatter.draft === true) article.draft = true;
 
   if (frontmatter.type === "note" && body && body.trim()) {
     article.content = body.trim();
   }
 
   posts.push(article);
-  rawPosts.push({ slug, body, frontmatter });
 }
 
 console.log(`   共 ${posts.length} 篇（${files.length} 个文件）`);
 
-// rawPosts 按 date 降序（供 RSS 用）
-rawPosts.sort((a, b) => {
-  const dateA = new Date(a.frontmatter.date).getTime() || 0;
-  const dateB = new Date(b.frontmatter.date).getTime() || 0;
-  return dateB - dateA;
-});
-
-// visible 集合：过滤 draft，pinned 优先 + date 降序
+// visible 集合：pinned 优先 + date 降序
 const visibleSorted = posts
-  .filter((p) => !p.draft)
   .sort((a, b) => {
     if (a.pinned && !b.pinned) return -1;
     if (!a.pinned && b.pinned) return 1;
