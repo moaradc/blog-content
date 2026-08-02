@@ -1,22 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?xml-stylesheet type="text/xsl" href="/xsl/sitemap.xsl"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://blog.945426.xyz/posts/2111</loc><lastmod>2026-07-31</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2112</loc><lastmod>2026-07-31</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2113</loc><lastmod>2026-07-25</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/mermaid-test</loc><lastmod>2026-07-20</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/107</loc><lastmod>2026-06-09</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2116</loc><lastmod>2026-06-09</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/106</loc><lastmod>2025-12-29</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2117</loc><lastmod>2025-12-29</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/104</loc><lastmod>2025-12-26</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2118</loc><lastmod>2025-12-26</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/103</loc><lastmod>2025-12-12</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2119</loc><lastmod>2025-12-12</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/102</loc><lastmod>2025-11-22</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/21110</loc><lastmod>2025-11-22</lastmod></url>
   <url><loc>https://blog.945426.xyz/posts/101</loc><lastmod>2025-11-21</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/21111</loc><lastmod>2025-11-21</lastmod></url>
-  <url><loc>https://blog.945426.xyz/posts/2114</loc></url>
-  <url><loc>https://blog.945426.xyz/posts/2115</loc></url>
 </urlset>
