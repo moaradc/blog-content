@@ -47,6 +47,11 @@ on:
 
 permissions:
   contents: write
+  actions: write
+
+concurrency:
+  group: generate-posts-json
+  cancel-in-progress: true
 
 jobs:
   generate:
@@ -61,7 +66,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
           cache: 'npm'
 
       - name: Install dependencies
@@ -168,10 +173,6 @@ jobs:
             echo "ℹ️  无变化，跳过提交"
           else
             git commit -m "chore: auto-clean frontmatter + generate posts.json + sitemap + article HTML [skip ci]"
-            for i in 1 2 3; do
-              git pull --rebase origin cms && git push && break
-              echo "⚠️  push 失败，重试 $i/3..."
-              sleep 5
-            done
+            git push
             echo "✅ 已提交到 cms 分支"
           fi
