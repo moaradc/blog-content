@@ -402,7 +402,7 @@
           <xsl:apply-templates/>
           <footer class="ik-footer">
             <p><span class="brand">沫然Blog</span> · RSS 2.0 Feed</p>
-            <p>此页面由 <a href="/xsl/rss.xsl">rss.xsl</a> 自动渲染 · <a href="/">返回首页</a></p>
+            <p>此页面由 <a href="/xsl/rss.xsl">rss.xsl</a> 自动渲染 · <a href="https://blog.945426.xyz/">返回首页</a></p>
           </footer>
         </div>
         <script>
