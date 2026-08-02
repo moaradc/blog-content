@@ -9,7 +9,7 @@
 
 ## 用途
 
-- 通过 [PagesCMS](https://pagescms.org/moaradc/blog-content) 在线编辑文章
+- 通过 [PagesCMS](https://app.pagescms.org/moaradc/blog-content/cms/collection/posts) 在线编辑文章
 - 博客主站 [blog.945426.xyz](https://blog.945426.xyz) 运行时 fetch 内容
 - `posts.json` / `posts-{n}.json` / `sitemap.xml` / `rss.xml` 由 GitHub Action 自动生成
 
@@ -25,9 +25,10 @@
 
 - 内容 CDN：`https://raw-posts.945426.xyz`
 - 文章索引：`/posts.json`
-- RSS：`/rss.xml`（用户访问 `https://blog.945426.xyz/rss.xml` 由 Vercel rewrite）
+- RSS：`/rss.xml`
 - 站点地图：`/sitemap.xml`
 - 单篇文章 Markdown：`/posts/<id>.md`
+- 单篇HTML文章：`/posts/<id>`
 
 ## 配置
 
