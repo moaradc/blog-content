@@ -70,8 +70,9 @@ for (const file of files.sort()) {
 
   posts.push(article);
   rawPosts.push({ slug, body, frontmatter });
-  console.log(`  ✅ ${file}: ${article.title}`);
 }
+
+console.log(`   共 ${posts.length} 篇（${files.length} 个文件）`);
 
 // rawPosts 按 date 降序（供 RSS 用）
 rawPosts.sort((a, b) => {
