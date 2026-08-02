@@ -166,11 +166,10 @@ function generateRssFeed(allPosts, allRawPosts) {
         lines.push("      <category>" + escapeXml(cat) + "</category>");
       }
     }
-    if (Array.isArray(post.tags)) {
-      for (const tag of post.tags) {
-        lines.push("      <category>" + escapeXml(tag) + "</category>");
-      }
-    }
+    // 注：tags 不输出到 RSS。
+    // RSS 2.0 规范只有 <category> 一个元素，没有"标签"概念，
+    // 把 tags 也用 <category> 输出会让阅读器把标签和分类混在一起显示。
+    // 标签留在 posts.json 和文章页里展示即可。
 
     if (post.author) {
       lines.push("      <dc:creator>" + escapeXml(post.author) + "</dc:creator>");

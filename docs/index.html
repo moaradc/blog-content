@@ -475,16 +475,15 @@
       <div class="subscribe">
         <code class="feed-url">
           <span class="rss-icon">📡</span>
-          <span id="feed-url-text">https://raw-posts.945426.xyz/rss.xml</span>
+          <span id="feed-url-text">https://blog.945426.xyz/rss.xml</span>
         </code>
-        <button class="copy-btn" type="button" id="copy-btn" data-url="https://raw-posts.945426.xyz/rss.xml">复制订阅地址</button>
+        <button class="copy-btn" type="button" id="copy-btn" data-url="https://blog.945426.xyz/rss.xml">复制订阅地址</button>
       </div>
     </section>
 
     <!-- 文章列表 -->
     <div class="section-head">
       <h2 class="section-title">文章列表</h2>
-      <span class="section-count"><strong id="list-count">-</strong> 篇</span>
     </div>
 
     <div id="items-container">
@@ -501,7 +500,7 @@
     'use strict';
 
     var BLOG_URL = 'https://blog.945426.xyz';
-    var FEED_URL = 'https://raw-posts.945426.xyz/rss.xml';
+    var FEED_URL = 'https://blog.945426.xyz/rss.xml';
     var allPosts = [];
 
     // === 工具 ===
@@ -621,7 +620,6 @@
 
           // 更新头部 meta
           document.getElementById('meta-total').textContent = data.total || posts.length;
-          document.getElementById('list-count').textContent = posts.length;
           document.getElementById('meta-updated').textContent = data.generatedAt ? data.generatedAt.slice(0, 10) : '-';
 
           // 清掉 loading
