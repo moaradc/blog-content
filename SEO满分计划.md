@@ -113,7 +113,7 @@ The page could not be found
   <meta property="og:site_name" content="沫然Blog" />
   <meta property="og:locale" content="zh_CN" />
   <meta property="article:published_time" content="..." />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="..." />
   <meta name="twitter:description" content="..." />
   <meta name="twitter:url" content="..." />
@@ -171,7 +171,7 @@ const OG_IMAGE = `${SITE_URL}/assets/img/icon/moara.webp`;
   <meta property="og:image" content={OG_IMAGE} />
 
   <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content={SITE_NAME} />
   <meta name="twitter:description" content={SITE_DESCRIPTION} />
   <meta name="twitter:url" content={SITE_URL} />
@@ -187,8 +187,9 @@ const OG_IMAGE = `${SITE_URL}/assets/img/icon/moara.webp`;
 
 - **`title`** 加长成描述性句子（"沫然Blog —— 技术、生活、闲谈、创作"），比单纯"沫然Blog"在 SERP 里更吸引点击
 - **`description`** 70-160 字符最佳，中文 30-80 字
-- **`og:image`** 建议 1200×630px，`moara.webp` 需确认尺寸（不够可单独做一张首页专属 OG 图）
-- **`twitter:card=summary_large_image`** 大图卡片比 summary 更醒目
+- **`og:image`** 不强制 1200×630px。现有方图素材（`moara.webp` 256×256 / 480×480 / 720×720）均可直接用，社交平台会自动缩放。推荐用 720×720 的版本（清晰度与体积平衡）
+- **`twitter:card=summary`** 用方图小卡片（图在左侧，标题描述在右侧），完美匹配方图素材。不要用 `summary_large_image`（横图大卡片，方图会被裁剪/留白）
+- **`og:image` 不是 Lighthouse SEO 审计项**，不加不扣分。但加了社交分享会有卡片预览图，点击率明显高，强烈建议加
 
 ---
 
@@ -256,7 +257,7 @@ Lighthouse 直接点名：`<a class="pc-tag-trigger" onclick="togglePCTags(event
 
 ### 5.2 "标签" 下拉触发器
 
-Lighthouse 直接点名的这个。标签功能是展开下拉，没有独立页面，href 可以指向归档页（标签云在归档页有完整版）。
+Lighthouse 直接点名的这个。标签功能是展开下拉，**用户点击行为保留不变（展开下拉，不跳转）**，只是给 `<a>` 加 href 让爬虫能发现归档页（那里有完整标签云）。
 
 #### Before
 
@@ -269,6 +270,12 @@ Lighthouse 直接点名的这个。标签功能是展开下拉，没有独立页
 ```html
 <a class="pc-tag-trigger" href="/details/archives" onclick="event.preventDefault(); togglePCTags(event)">标签</a>
 ```
+
+#### 行为说明
+
+- **爬虫**：看到 `href="/details/archives"`，能发现并抓取归档页（无需执行 JS）
+- **用户点击**：`event.preventDefault()` 阻止默认跳转，`togglePCTags(event)` 展开下拉 —— 跟之前行为完全一样
+- **中键/右键新窗口打开**：浏览器中键点击会打开 `/details/archives`（这是 href 的副作用，合理 —— 用户想新窗口看标签云的话有去处）
 
 ### 5.3 "关于" 弹窗触发器
 
@@ -371,174 +378,6 @@ WebSite + SearchAction 让 Google 识别为"带站内搜索的网站"，SERP 可
 
 ---
 
-## 7. P1 修复：sitemap.xml 清理
-
-**仓库**：`moaradc/blog-content` @ `generate-posts.js`
-
-### 现状
-
-`sitemap.xml` 包含 `posts/2114`，但 `2114.md` 是文档说明文件（开头是 `# 文章目录`，没有 frontmatter），不是真文章。
-
-### 根因
-
-`generate-posts.js` 的 `files.filter` 只过滤了 `README.md`，没过滤无 frontmatter 的 `.md` 文件。`2114.md` 没有 frontmatter，`parseMarkdown` 返回 `{ frontmatter: {}, body: raw }`，article 对象的 title/date 都是空字符串，但还是被 push 进 posts 数组，最终进 sitemap。
-
-### Before
-
-```js
-for (const file of files.sort()) {
-  const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
-  const slug = file.replace(/\.md$/, "");
-  const { frontmatter, body } = parseMarkdown(raw);
-
-  if ("locked" in frontmatter) continue;
-  if ("draft" in frontmatter) continue;
-
-  const article = {
-    id: slug,
-    title: frontmatter.title || "",
-    // ...
-  };
-  // ...
-  posts.push(article);
-}
-```
-
-### After
-
-```js
-for (const file of files.sort()) {
-  const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
-  const slug = file.replace(/\.md$/, "");
-  const { frontmatter, body } = parseMarkdown(raw);
-
-  if ("locked" in frontmatter) continue;
-  if ("draft" in frontmatter) continue;
-  if (!frontmatter.title) continue;  // 无 frontmatter 或无 title 的文件跳过
-
-  const article = {
-    id: slug,
-    title: frontmatter.title,
-    // ...
-  };
-  // ...
-  posts.push(article);
-}
-```
-
-### 双保险：generate-sitemap.js 也加同样判断
-
-`generate-sitemap.js` 消费 `posts.json`，理论上 posts.json 干净了 sitemap 就干净。但如果有人手动改了 posts.json，sitemap 还是会带脏数据。可以在 `generate-sitemap.js` 里也加：
-
-```js
-// 只对有 title 的文章生成 sitemap 条目
-for (const post of posts) {
-  if (!post.title) continue;
-  // ... 生成 <url> 条目
-}
-```
-
-### 为什么 2114.md 进 sitemap 有害
-
-- 爬虫抓到 `/posts/2114`，看到的是无 SEO 元素的页面（无 title、无 description、无 canonical）
-- 拉低整站质量分
-- Google Search Console 会报"已发现但未编入索引"
-
----
-
-## 8. P1 修复：文章页 og:image fallback
-
-**仓库**：`moaradc/blog-content` @ `generate-article-html.js`
-
-### 现状
-
-无封面文章（`frontmatter.coverImage` 和 `image` 都没有）的 `coverOgHtml` / `coverTwitterHtml` 为空字符串，`og:image` 和 `twitter:image` 不输出。
-
-JSON-LD 的 `image` 字段已经 fallback 到 `SITE_META.ogImage`（`/assets/img/icon/moara.webp`），但 OG/Twitter meta 没有同样 fallback。
-
-### Before
-
-```js
-const coverOgHtml = coverUrl
-  ? `<meta property="og:image" content="${escapeAttr(coverUrl)}" />`
-  : "";
-const coverTwitterHtml = coverUrl
-  ? `<meta name="twitter:image" content="${escapeAttr(coverUrl)}" />`
-  : "";
-```
-
-### After
-
-```js
-const ogImage = coverUrl || `${SITE_META.url}${SITE_META.ogImage}`;
-const coverOgHtml = `<meta property="og:image" content="${escapeAttr(ogImage)}" />`;
-const coverTwitterHtml = `<meta name="twitter:image" content="${escapeAttr(ogImage)}" />`;
-```
-
-### 效果
-
-- 无封面文章也输出 `og:image` 和 `twitter:image`，社交分享卡片始终有图
-- 跟 JSON-LD 的 image 字段保持一致（都用 moara.webp fallback）
-
-### 顺带：OG image 尺寸
-
-- 推荐 1200×630px
-- `moara.webp` 需确认尺寸，不够的话单独做一张 1200×630 的首页/默认 OG 图
-- 可以在 `og:image` 后面加 `<meta property="og:image:width" content="1200" />` 和 `<meta property="og:image:height" content="630" />` 让爬虫不下载就知道尺寸
-
----
-
-## 9. P2 修复：评论系统 img alt（无害，可选）
-
-**仓库**：无（Waline 第三方组件）
-
-### 现状
-
-`/posts/101` Lighthouse SEO 92 分，唯一扣分项：
-
-```
-❌ image-alt
-ul.wl-reaction-list > li.wl-reaction-item > div.wl-reaction-img > img
-```
-
-这是 Waline 评论系统的 emoji 反应图，**运行时 JS 渲染**，不在静态 HTML 里。
-
-### 三个选项
-
-#### A. Waline 配置加 alt
-
-看 Waline 文档是否支持 `reaction.alt` 配置。如果支持，在 article.astro 的 Waline init 里给每个 reaction 配 alt。
-
-#### B. MutationObserver 补 alt
-
-在 article.js 里加：
-
-```js
-const observer = new MutationObserver((mutations) => {
-  document.querySelectorAll('.wl-reaction-img img:not([alt])').forEach(img => {
-    img.alt = 'reaction';
-  });
-});
-observer.observe(document.getElementById('waline'), { childList: true, subtree: true });
-```
-
-#### C. 忽略（推荐）
-
-**推荐 C**，理由：
-
-- Google 爬虫**不执行 JS**，看不到这个 img，对实际 SEO 无影响
-- Lighthouse 检测的是动态 DOM（headless 浏览器跑完 JS 后的状态），所以报错
-- 这是第三方组件的内部实现，改了维护成本高
-- 92→100 的边际收益极低（已经 92 分，剩下 8 分全是这种无害项）
-
-### 判断依据
-
-- 文章页静态 HTML 已经有完整的 OG/Twitter/JSON-LD/canonical/description
-- Google 爬虫看到的是静态 HTML，不是 Lighthouse 跑的动态 DOM
-- 真实 SEO 效果由静态 HTML 决定，动态 img alt 不影响
-
----
-
 ## 10. 实施步骤与验收标准
 
 ### 10.1 MOARA@main 改动
@@ -551,15 +390,7 @@ observer.observe(document.getElementById('waline'), { childList: true, subtree: 
 | 4 | `src/pages/index.astro` nav | 5 处 `<a onclick>` → `<a href + onclick>`（见 §5） |
 | 5 | `public/robots.txt` | 新增文件（见 §4） |
 
-### 10.2 blog-content@cms 改动
-
-| 步骤 | 文件 | 改动 |
-| --- | --- | --- |
-| 1 | `generate-posts.js` | 加 `if (!frontmatter.title) continue;`（见 §7） |
-| 2 | `generate-sitemap.js` | 加 `if (!post.title) continue;` 双保险（见 §7） |
-| 3 | `generate-article-html.js` | og:image fallback 到默认图（见 §8） |
-
-### 10.3 验收标准
+### 10.2 验收标准
 
 | # | 验收命令 | 期望结果 |
 | --- | --- | --- |
@@ -570,70 +401,12 @@ observer.observe(document.getElementById('waline'), { childList: true, subtree: 
 | 5 | `curl -sI https://blog.945426.xyz/robots.txt` | HTTP 200 |
 | 6 | `curl -s https://blog.945426.xyz/robots.txt` | 包含 `Sitemap: https://blog.945426.xyz/sitemap.xml` |
 | 7 | `curl -s https://blog.945426.xyz/ \| grep 'pc-tag-trigger'` | 那行 `<a>` 有 `href=` |
-| 8 | `curl -s https://blog.945426.xyz/sitemap.xml \| grep '2114'` | 无输出 |
-| 9 | `curl -s https://blog.945426.xyz/posts/107 \| grep 'og:image'` | 有输出（即使 107 无封面也输出默认图） |
-| 10 | Lighthouse SEO（首页） | 83 → 100 |
-| 11 | Lighthouse SEO（/posts/101） | 92 → 100（或保持 92，因 Waline img alt） |
+| 8 | Lighthouse SEO（首页） | 83 → 100 |
 
-### 10.4 实施顺序
+### 10.3 实施顺序
 
 1. **先 P0**：§3（首页 meta）+ §4（robots.txt）+ §5（nav href）→ 首页 SEO 83 → ~95
-2. **再 P1**：§6（JSON-LD）+ §7（sitemap 清理）+ §8（og:image fallback）→ 首页 95 → 100，文章页 92 → 100
-3. **最后 P2**：§9（评论 img alt）→ 可选，不做了也无所谓
-
----
-
-## 11. 长期监控建议
-
-### 11.1 MOARA ci.yml 加 SEO 检查
-
-在 `.github/workflows/ci.yml` 的 Build 步骤后加：
-
-```yaml
-- name: SEO 元素检查
-  run: |
-    echo "=== 检查首页 meta description ==="
-    grep -q 'meta name="description"' dist/index.html || { echo "❌ 首页缺 meta description"; exit 1; }
-    echo "=== 检查首页 canonical ==="
-    grep -q 'rel="canonical"' dist/index.html || { echo "❌ 首页缺 canonical"; exit 1; }
-    echo "=== 检查首页 OG ==="
-    grep -q 'og:type' dist/index.html || { echo "❌ 首页缺 Open Graph"; exit 1; }
-    echo "=== 检查 robots.txt ==="
-    test -f public/robots.txt || { echo "❌ 缺 robots.txt"; exit 1; }
-    echo "✅ SEO 元素齐全"
-```
-
-### 11.2 blog-content generate-posts-json.yml 加 sitemap 校验
-
-在 `Generate sitemap.xml` 步骤后加：
-
-```yaml
-- name: 校验 sitemap 无脏数据
-  run: |
-    echo "=== 检查 sitemap 是否含无 title 文章 ==="
-    if grep -E '<loc>[^<]*</loc>' docs/sitemap.xml | grep -v 'lastmod'; then
-      echo "⚠️  sitemap 有无 lastmod 的条目（可能无 frontmatter）"
-    fi
-    echo "✅ sitemap 校验完成"
-```
-
-### 11.3 Lighthouse CI
-
-接入 [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) 到 GitHub Actions，每次 push 自动跑 Lighthouse，分数下降时报警。
-
-```yaml
-- name: Lighthouse CI
-  run: |
-    npm install -g @lhci/cli@0.13.x
-    lhci autorun --upload.target=temporary-public-storage
-```
-
-### 11.4 Google Search Console
-
-1. 提交 sitemap：`https://blog.945426.xyz/sitemap.xml`
-2. 查看"覆盖率"报告，监控"已发现但未编入索引"的页面
-3. 查看"性能"报告，监控点击/展示/CTR/排名
-4. 绑定 Bing Webmaster Tools（同样提交 sitemap）
+2. **再 P1**：§6（JSON-LD + h1 优化）→ 首页 95 → 100
 
 ---
 
@@ -643,7 +416,8 @@ observer.observe(document.getElementById('waline'), { childList: true, subtree: 
 | --- | --- | --- | --- |
 | 当前 | 83 | 92 | 基线 |
 | P0 完成 | ~95 | 92 | 首页补齐 meta/canonical/OG/Twitter/robots/nav href |
-| P1 完成 | 100 | 100 | 首页加 JSON-LD、sitemap 清理、og:image fallback |
-| P2 完成 | 100 | 100 | 评论 img alt（可选，无实际收益） |
+| P1 完成 | 100 | 92 | 首页加 JSON-LD + h1 优化 |
 
-**关键洞察**：首页从 83 到 100 的核心是 3 件事 —— 补 meta description、补 canonical、给 nav `<a>` 加 href。这三件事做完，分数直接到 95+。剩下的 JSON-LD 和 sitemap 清理是锦上添花。
+**关键洞察**：首页从 83 到 100 的核心是 3 件事 —— 补 meta description、补 canonical、给 nav `<a>` 加 href。这三件事做完，分数直接到 95+。JSON-LD 和 h1 优化是锦上添花到 100。
+
+**文章页 92 分**：唯一扣分项是 Waline 评论系统运行时 img 缺 alt（爬虫不执行 JS，对实际 SEO 无影响），保持 92 即可，无需处理。
