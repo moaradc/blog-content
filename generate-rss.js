@@ -65,8 +65,8 @@ for (const file of files.sort()) {
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
   const { frontmatter, body } = parseMarkdown(raw);
 
-  if (frontmatter.locked === true) continue;
-  if (frontmatter.draft === true) continue;
+  if ("locked" in frontmatter) continue;
+  if ("draft" in frontmatter) continue;
 
   const slug = file.replace(/\.md$/, "");
   const article = {

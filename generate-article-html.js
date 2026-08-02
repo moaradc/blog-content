@@ -324,12 +324,12 @@ for (const file of files.sort()) {
   const fm = parseFrontmatter(match[1]);
   const body = raw.slice(match[0].length);
 
-  if (fm.locked === true) {
+  if ("locked" in fm) {
     console.log(`🔒 ${file}: locked，跳过`);
     skipped++;
     continue;
   }
-  if (fm.draft === true) {
+  if ("draft" in fm) {
     console.log(`📝 ${file}: draft，跳过`);
     skipped++;
     continue;

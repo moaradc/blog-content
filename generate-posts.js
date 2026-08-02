@@ -4,8 +4,7 @@
 // 关键逻辑：
 //   - id 从文件名获取（如 102.md → id: "102"），不从 frontmatter 读
 //   - type=note 时 body 内联进 posts.content（列表页直接渲染说说）
-//   - locked: true 整篇跳过（不进任何输出）
-//   - draft: true 不进 visible 集合（不出现在 posts.json.posts 和分页中）
+//   - locked / draft 字段存在即跳过（不进任何输出，不论值是 true/false）
 //   - 排序：pinned 优先，再按 date 降序
 //   - 当 pageCount 缩小时，自动清理多余的 posts-{n}.json
 //
@@ -43,8 +42,8 @@ for (const file of files.sort()) {
   const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
 
-  if (frontmatter.locked === true) continue;
-  if (frontmatter.draft === true) continue;
+  if ("locked" in frontmatter) continue;
+  if ("draft" in frontmatter) continue;
 
   const article = {
     id: slug,
