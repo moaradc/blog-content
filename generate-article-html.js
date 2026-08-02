@@ -22,8 +22,6 @@ const POSTS_DIR = join(__dirname, "docs", "posts");
 const TEMPLATE_FILE = join(__dirname, "template", "article.html");
 const DOCS_DIR = join(__dirname, "docs");
 
-const MOARA_ASSETS_BASE = "https://blog.945426.xyz/assets/data-scripts";
-
 const SITE_META = {
   name: "沫然Blog",
   url: "https://blog.945426.xyz",
@@ -39,46 +37,6 @@ if (!existsSync(TEMPLATE_FILE)) {
 }
 const template = readFileSync(TEMPLATE_FILE, "utf-8");
 console.log(`📄 加载模板: ${TEMPLATE_FILE}`);
-
-function fetchSync(url) {
-  try {
-    const { execSync } = require("child_process");
-    return execSync(`curl -sSL --max-time 10 "${url}"`, { encoding: "utf-8" });
-  } catch (e) {
-    return null;
-  }
-}
-
-function evalDataScript(content, varName) {
-  try {
-    const vm = require("vm");
-    const stripped = content
-      .replace(new RegExp(`^(const|let)\\s+${varName}\\s*=`, "m"), `var ${varName} =`);
-    const ctx = {};
-    vm.runInNewContext(stripped, ctx);
-    return ctx[varName] || null;
-  } catch (e) {
-    console.warn(`⚠️  eval ${varName} 失败: ${e.message}`);
-    return null;
-  }
-}
-
-console.log(`🌐 从主仓拉取 data-scripts...`);
-const usersJsContent = fetchSync(`${MOARA_ASSETS_BASE}/users.js`);
-const configJsContent = fetchSync(`${MOARA_ASSETS_BASE}/config.js`);
-
-const usersConfig = (usersJsContent && evalDataScript(usersJsContent, "usersConfig")) || {
-  Anonymous: { name: "佚名", avatar: "/assets/img/users/anonymous.webp", social: [{}] },
-  Admin: { name: "沫然", avatar: "/assets/img/icon/moara.webp", social: [] },
-};
-console.log(`  ✅ usersConfig: ${Object.keys(usersConfig).join(", ")}`);
-
-let categoryConfig = {};
-if (configJsContent) {
-  const cfg = evalDataScript(configJsContent, "categoryConfig");
-  if (cfg && typeof cfg === "object") categoryConfig = cfg;
-}
-console.log(`  ✅ categoryConfig: ${Object.keys(categoryConfig).join(", ")}`);
 
 function protectCustomTags(text) {
   const placeholders = [];
@@ -158,11 +116,7 @@ function escapeAttr(s) {
 }
 
 function getAuthorName(authorKey) {
-  const key = authorKey || "Anonymous";
-  if (usersConfig && usersConfig[key] && usersConfig[key].name) {
-    return usersConfig[key].name;
-  }
-  return "佚名";
+  return authorKey || "Anonymous";
 }
 
 function formatDate(dateStr) {
@@ -209,10 +163,9 @@ function renderCategoryBadges(categories) {
   if (!categories || !Array.isArray(categories) || categories.length === 0) {
     return '<span class="category-badge" style="background: var(--text-color); color: var(--bg-color); padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">杂项</span>';
   }
-  return categories.map((cat) => {
-    const conf = categoryConfig[cat] || { bg: "var(--text-color)", text: "var(--bg-color)" };
-    return `<span class="category-badge" style="background: ${conf.bg}; color: ${conf.text}; padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">${escapeHtml(cat)}</span>`;
-  }).join("");
+  return categories.map((cat) =>
+    `<span class="category-badge" style="background: var(--text-color); color: var(--bg-color); padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">${escapeHtml(cat)}</span>`
+  ).join("");
 }
 
 function getCategoryText(categories) {
