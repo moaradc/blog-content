@@ -1,36 +1,8 @@
 name: Generate posts.json
 
-# 触发条件：push 到 cms 时（posts/ 目录或脚本有改动）
-# 自动生成 posts.json + 分页 + sitemap.xml，不需要手动触发
-#
-# ⚠️ 迁移说明：本 workflow 原本监听 main 分支，迁到 Cloudflare Workers 后
-#    源码和自动产物都搬到 cms 分支，触发分支相应改成 cms。
-#    产物 commit 回 cms（checkout 出来的就是 cms，git push 默认推回 cms）。
-#    release.yml 会从 cms 拷 docs/ 到 main 的 dist/。
-#
-# 性能优化：
-#   - clean-frontmatter.js 增量执行：只清理本次 push 涉及的 .md 文件
-#     （用 git diff 取上次 commit 列表，过滤 docs/posts/*.md）
-#   - generate-posts.js 保持全量：posts.json 是全量索引，跳过任何文件都会让首页缺卡片
-#
-# 流水线顺序（关键，不能乱）：
-#   1. clean-frontmatter.js        (增量清理 frontmatter + 替换 /img/ → 绝对 URL)
-#   2. generate-posts.js           (全量生成 posts.json + posts-{n}.json 分页)
-#   3. generate-sitemap.js         (基于 posts.json 生成 sitemap.xml)
-#   4. generate-article-html.js    (基于 docs/posts/*.md 生成每篇 SEO HTML)
-#
-# 注：generate-sitemap.yml 已合并到本工作流，已删除。
-#     sitemap 不再独立扫描 .md，而是消费 posts.json，避免重复解析 + 保证顺序一致。
-# 配置统一从 site.js 读取；如需覆盖，设置环境变量 BLOG_URL / SITE_URL（仓库 Variables）。
-#
-# generate-article-html.js（v1.1）：
-#   - 读取 template/article.html 模板
-#   - 从主仓 GitHub raw 拉取 users.js / config.js（不依赖 blog-content 本地副本）
-#   - 对每篇 .md 渲染 marked + 截摘要 + 填充 SEO meta
-#   - 输出 docs/posts/{id}.html
-#   - HTML 中所有 CSS/JS 通过 https://blog.945426.xyz/assets/... 绝对 URL 引用主仓
-#   - 主仓 vercel.json 把 /posts/{id} rewrite 到 raw-posts/posts/{id}.html
-#   - 见 IMPLEMENTATION.md
+# push 到 cms 时自动跑：clean-frontmatter → generate-posts → generate-sitemap → generate-article-html
+# 产物 commit 回 cms。release.yml 负责把 docs/ 打包成 dist/ 推到 main。
+
 on:
   push:
     branches: [cms]
@@ -61,7 +33,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: cms
-          fetch-depth: 0  # 增量 diff 需要完整历史
+          fetch-depth: 0
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -75,23 +47,16 @@ jobs:
       - name: Collect changed post files
         id: changed
         env:
-          # workflow_dispatch 没有 before，fallback 到 HEAD~1
           BEFORE: ${{ github.event.before || 'HEAD~1' }}
         run: |
-          # 取 BEFORE..HEAD 范围内所有变更的 docs/posts/*.md 文件
-          # 3-way fallback：
-          #   1. git diff --name-only BEFORE..HEAD
-          #   2. git diff --name-only HEAD~1..HEAD（BEFORE 不存在时，如新分支）
-          #   3. 全量（连 HEAD~1 都没有时，如初次提交）
+          # 3-way fallback: BEFORE..HEAD → HEAD~1..HEAD → 全量
           mapfile -t FILES < <(git diff --name-only "$BEFORE"..HEAD -- 'docs/posts/*.md' 2>/dev/null || true)
           if [ ${#FILES[@]} -eq 0 ]; then
             mapfile -t FILES < <(git diff --name-only HEAD~1..HEAD -- 'docs/posts/*.md' 2>/dev/null || true)
           fi
           if [ ${#FILES[@]} -eq 0 ]; then
-            echo "ℹ️  无法确定增量范围，回退到全量清理"
             echo "incremental=false" >> "$GITHUB_OUTPUT"
           else
-            # 过滤：只保留仍然存在的文件（删除的文件不需要 clean）
             EXISTING=()
             for f in "${FILES[@]}"; do
               if [ -f "$f" ]; then
@@ -99,23 +64,18 @@ jobs:
               fi
             done
             if [ ${#EXISTING[@]} -eq 0 ]; then
-              echo "ℹ️  本次 push 没有改动任何 .md 文件（可能只改了脚本），跳过 clean"
               echo "incremental=true" >> "$GITHUB_OUTPUT"
               echo "files=" >> "$GITHUB_OUTPUT"
-              # all_files 含删除的文件路径，给 generate-article-html.js 清理 .html 用
               echo "all_files=${FILES[*]}" >> "$GITHUB_OUTPUT"
             else
-              echo "📝 增量更新 ${#EXISTING[@]} 个文件:"
-              printf '  - %s\n' "${EXISTING[@]}"
-              # 用空格分隔传给 node（路径不含空格，安全）
+              echo "📝 增量更新 ${#EXISTING[@]} 个文件"
               echo "incremental=true" >> "$GITHUB_OUTPUT"
               echo "files=${EXISTING[*]}" >> "$GITHUB_OUTPUT"
-              # all_files 含删除的文件路径，给 generate-article-html.js 清理 .html 用
               echo "all_files=${FILES[*]}" >> "$GITHUB_OUTPUT"
             fi
           fi
 
-      - name: Clean frontmatter (incremental or full)
+      - name: Clean frontmatter
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           BLOG_URL: ${{ vars.BLOG_URL }}
@@ -123,17 +83,15 @@ jobs:
           INCREMENTAL: ${{ steps.changed.outputs.incremental }}
         run: |
           if [ "$INCREMENTAL" = "true" ] && [ -n "$CHANGED_FILES" ]; then
-            echo "🧹 增量更新: $CHANGED_FILES"
-            # shellcheck disable=SC2086  # 故意不引用，让空格分隔多个路径
+            # shellcheck disable=SC2086
             node clean-frontmatter.js $CHANGED_FILES
           elif [ "$INCREMENTAL" = "true" ]; then
-            echo "ℹ️  跳过 clean-frontmatter（没有 .md 文件变更）"
+            echo "ℹ️  跳过 clean-frontmatter"
           else
-            echo "🧹 全量更新（fallback）"
             node clean-frontmatter.js
           fi
 
-      - name: Generate posts.json + pagination
+      - name: Generate posts.json
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           BLOG_URL: ${{ vars.BLOG_URL }}
@@ -149,18 +107,15 @@ jobs:
         env:
           SITE_URL: ${{ vars.SITE_URL }}
           BLOG_URL: ${{ vars.BLOG_URL }}
-          # all_files 含删除的文件路径，generate-article-html.js 会清理对应 .html
           CHANGED_FILES: ${{ steps.changed.outputs.all_files }}
           INCREMENTAL: ${{ steps.changed.outputs.incremental }}
         run: |
           if [ "$INCREMENTAL" = "true" ] && [ -n "$CHANGED_FILES" ]; then
-            echo "📄 增量生成: $CHANGED_FILES"
-            # shellcheck disable=SC2086  # 故意不引用，让空格分隔多个路径
+            # shellcheck disable=SC2086
             node generate-article-html.js $CHANGED_FILES
           elif [ "$INCREMENTAL" = "true" ]; then
-            echo "ℹ️  跳过 generate-article-html（没有 .md 文件变更）"
+            echo "ℹ️  跳过 generate-article-html"
           else
-            echo "📄 全量生成（fallback）"
             node generate-article-html.js
           fi
 
@@ -174,5 +129,4 @@ jobs:
           else
             git commit -m "chore: auto-clean frontmatter + generate posts.json + sitemap + article HTML [skip ci]"
             git push
-            echo "✅ 已提交到 cms 分支"
           fi

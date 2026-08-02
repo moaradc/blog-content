@@ -1,30 +1,8 @@
 name: Release
 
-# 把 cms 分支上已构建好的 docs/ 打包成 dist/，强推孤儿分支到 main。
-#
-# 职责边界（重要）：
-#   本 workflow 不跑任何 generate-* 脚本。
-#   docs/ 里的产物（posts.json / sitemap.xml / posts/*.html / rss.xml）
-#   由 generate-posts-json.yml（push 到 cms 自动触发）和 generate-rss.yml（手动）
-#   负责生成并 commit 回 cms 分支。
-#   release.yml 只负责"打包 + 推送"这一件事。
-#
-# 分支职责：
-#   cms  —— 源码 + 文章 + 生成脚本 + 自动生成的产物。日常修改、Pages CMS 都进这里。
-#   main —— 只有 dist/ + wrangler.jsonc。Cloudflare Workers Builds 吃这个分支。
-#
-# 为什么 main 用孤儿分支强推：
-#   - 产物分支没必要保留历史，每次都是一份干净快照
-#   - 避开「GITHUB_TOKEN 推送不触发 workflow」这条限制（本仓库已经不需要再触发什么了，
-#     Cloudflare Workers 是靠 webhook 感知 push 的）
-#   - 历史不会膨胀（图片多，几次提交就能把 main 撑到几百 MB）
-
 on:
   workflow_dispatch:
     inputs:
-      # Pages CMS 侧边栏「发布到线上」按钮触发时会无条件带 payload，
-      # 文档要求 workflow 声明 payload 为 required: true。
-      # 在 GitHub Actions 页面手动跑时，随便填一段 JSON 即可（本 workflow 不消费它）。
       payload:
         description: Pages CMS payload as JSON
         required: true
@@ -39,22 +17,19 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Checkout cms 分支（已含自动生成的产物）
+      - name: Checkout cms
         uses: actions/checkout@v4
         with:
           ref: cms
-          fetch-depth: 1  # 只拿最新快照就够了，不需要历史
+          fetch-depth: 1
 
       - name: 校验 docs/ 产物完整
         run: |
-          test -f docs/index.html || { echo "❌ docs/index.html 缺失 —— 先确认 cms 分支的 generate-posts-json.yml 跑过"; exit 1; }
+          test -f docs/index.html || { echo "❌ docs/index.html 缺失"; exit 1; }
           test -f docs/posts.json || { echo "❌ docs/posts.json 缺失"; exit 1; }
           test -f docs/sitemap.xml || { echo "❌ docs/sitemap.xml 缺失"; exit 1; }
-          echo "✅ 产物完整"
-          echo "文件数: $(find docs -type f | wc -l)"
-          echo "体积:   $(du -sh docs | cut -f1)"
 
-      - name: 推送产物到 main（dist/ + wrangler.jsonc）
+      - name: 推送产物到 main（孤儿分支强推）
         env:
           TOKEN: ${{ github.token }}
         run: |
@@ -71,7 +46,6 @@ jobs:
             -m "build: ${GITHUB_SHA:0:7} 的构建产物" \
             -m "源码提交: ${GITHUB_SHA}" \
             -m "workflow: ${GITHUB_WORKFLOW} #${GITHUB_RUN_NUMBER}"
-          # 每次都是全新的单提交孤儿分支，强制覆盖；main 不保留历史产物
           git push --force \
             "https://x-access-token:${TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
             HEAD:main
