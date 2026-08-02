@@ -29,6 +29,7 @@ const SITE_META = {
   description: "沫然的个人博客 —— 技术、生活、闲谈、创作、归档",
   ogImage: "/assets/img/icon/moara.webp",
   rssUrl: "/rss.xml",
+  siteKeywords: ["沫然", "moara", "沫然Blog", "博客", "MOARA Blog"],
 };
 
 if (!existsSync(TEMPLATE_FILE)) {
@@ -335,7 +336,7 @@ for (const file of files.sort()) {
     .replace(/\{\{id\}\}/g, escapeAttr(slug))
     .replace(/\{\{title\}\}/g, escapeHtml(title))
     .replace(/\{\{description\}\}/g, escapeAttr(description))
-    .replace(/\{\{keywords\}\}/g, escapeAttr(tags.join(",")))
+    .replace(/\{\{keywords\}\}/g, escapeAttr([...tags, ...SITE_META.siteKeywords].filter(Boolean).join(",")))
     .replace(/\{\{authorName\}\}/g, escapeHtml(authorName))
     .replace(/\{\{datePublished\}\}/g, escapeAttr(datePublished))
     .replace(/\{\{dateDisplay\}\}/g, escapeHtml(dateDisplay))
