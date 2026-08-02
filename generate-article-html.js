@@ -25,7 +25,7 @@ const DOCS_DIR = join(__dirname, "docs");
 const SITE_META = {
   name: "沫然Blog",
   url: "https://blog.945426.xyz",
-  author: "沫然",
+  author: "moara",
   description: "沫然的个人博客 —— 技术、生活、闲谈、创作、归档",
   ogImage: "/assets/img/icon/moara.webp",
   rssUrl: "/rss.xml",
