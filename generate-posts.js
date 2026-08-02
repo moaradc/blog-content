@@ -1,14 +1,6 @@
 // generate-posts.js
-// 扫描 docs/posts/*.md，生成 posts.json（索引对象）+ posts-{n}.json（分页文件）。
-//
-// 关键逻辑：
-//   - id 从文件名获取（如 102.md → id: "102"），不从 frontmatter 读
-//   - type=note 时 body 内联进 posts.content（列表页直接渲染说说）
-//   - locked / draft 字段存在即跳过（不进任何输出，不论值是 true/false）
-//   - 排序：pinned 优先，再按 date 降序
-//   - 当 pageCount 缩小时，自动清理多余的 posts-{n}.json
-//
-// 用法: node generate-posts.js
+// 扫描 docs/posts/*.md，生成 posts.json + posts-{n}.json 分页。
+// locked / draft 字段存在即跳过。排序：pinned 优先 + date 降序。
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
 const { join } = require("path");
@@ -26,7 +18,6 @@ function parseMarkdown(raw) {
   return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
 }
 
-// === 扫描文章 ===
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
@@ -37,7 +28,6 @@ const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "R
 console.log(`📄 扫描 markdown 文件`);
 
 for (const file of files.sort()) {
-  // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
   const slug = file.replace(/\.md$/, "");
   const { frontmatter, body } = parseMarkdown(raw);
@@ -71,23 +61,18 @@ for (const file of files.sort()) {
 
 console.log(`   共 ${posts.length} 篇（${files.length} 个文件）`);
 
-// visible 集合：pinned 优先 + date 降序
-const visibleSorted = posts
-  .sort((a, b) => {
-    if (a.pinned && !b.pinned) return -1;
-    if (!a.pinned && b.pinned) return 1;
-    const dateA = new Date(a.date).getTime() || 0;
-    const dateB = new Date(b.date).getTime() || 0;
-    return dateB - dateA;
-  });
+const visibleSorted = posts.sort((a, b) => {
+  if (a.pinned && !b.pinned) return -1;
+  if (!a.pinned && b.pinned) return 1;
+  const dateA = new Date(a.date).getTime() || 0;
+  const dateB = new Date(b.date).getTime() || 0;
+  return dateB - dateA;
+});
 
 const total = visibleSorted.length;
 const pageCount = Math.max(1, Math.ceil(total / PER_PAGE));
 const generatedAt = new Date().toISOString();
 
-// 序列化：posts 数组多行展开（每篇文章一行字段），顶层基本类型 inline。
-// 这样 category/tags 等基本类型数组天然 inline，
-// 不会被 JSON.stringify(obj, null, 2) 强行展开成多行。
 function stringifyIndex(obj) {
   const lines = ["{"];
   const entries = Object.entries(obj);
@@ -110,7 +95,6 @@ function stringifyIndex(obj) {
   return lines.join("\n");
 }
 
-// === 生成 docs/posts.json + 分页文件 ===
 mkdirSync(DOCS_DIR, { recursive: true });
 const indexObj = { generatedAt, perPage: PER_PAGE, total, pageCount, posts: visibleSorted };
 writeFileSync(POSTS_OUTPUT, stringifyIndex(indexObj) + "\n", "utf-8");
@@ -124,7 +108,6 @@ for (let pg = 0; pg < pageCount; pg++) {
 }
 console.log(`   生成分页文件`);
 
-// === 清理多余的 posts-{n}.json（文章减少时） ===
 let cleaned = 0;
 for (const entry of readdirSync(DOCS_DIR)) {
   const m = entry.match(/^posts-(\d+)\.json$/);

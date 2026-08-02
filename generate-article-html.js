@@ -1,6 +1,6 @@
 // generate-article-html.js
 // 扫描 docs/posts/*.md，用 template/article.html 生成每篇 SEO HTML。
-// 用法: node generate-article-html.js [docs/posts/101.md docs/posts/102.md ...]
+// 用法: node generate-article-html.js [docs/posts/101.md ...]
 //   无参数 = 全量，有参数 = 增量（只处理传入文件）
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkSync } = require("fs");
@@ -16,7 +16,6 @@ try {
   marked = { parse: (s) => s };
 }
 
-// 与 article.js 客户端一致
 marked.setOptions({ breaks: true, gfm: true });
 
 const POSTS_DIR = join(__dirname, "docs", "posts");
@@ -51,8 +50,6 @@ function fetchSync(url) {
 }
 
 function evalDataScript(content, varName) {
-  // 用 vm.runInNewContext 跑，const 在 vm context 里不挂全局，
-  // 所以先用正则把 `const varName =` 改成 `var varName =` 让它挂到 context 对象
   try {
     const vm = require("vm");
     const stripped = content
@@ -83,12 +80,9 @@ if (configJsContent) {
 }
 console.log(`  ✅ categoryConfig: ${Object.keys(categoryConfig).join(", ")}`);
 
-// Markdown 渲染（与 article.js 字节级对齐）
-
 function protectCustomTags(text) {
   const placeholders = [];
 
-  // 1. 匹配成对的自定义标签: <music ...>...</music>, <gallery ...>...</gallery>
   const pairedTagRegex = /<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi;
   text = text.replace(pairedTagRegex, (match) => {
     const idx = placeholders.length;
@@ -96,7 +90,6 @@ function protectCustomTags(text) {
     return `\n%%CUSTOM_TAG_${idx}%%\n`;
   });
 
-  // 2. <div class="details-box">...</div></div></div>（三层嵌套）
   const divBlockRegex = /<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi;
   text = text.replace(divBlockRegex, (match) => {
     const idx = placeholders.length;
@@ -104,7 +97,6 @@ function protectCustomTags(text) {
     return `\n%%CUSTOM_TAG_${idx}%%\n`;
   });
 
-  // 3. <span class='spoiler'>...</span>
   const spoilerRegex = /<span\b[^>]*class=['"][^'"]*spoiler[^'"]*['"][^>]*>[\s\S]*?<\/span>/gi;
   text = text.replace(spoilerRegex, (match) => {
     const idx = placeholders.length;
@@ -112,7 +104,6 @@ function protectCustomTags(text) {
     return `%%CUSTOM_TAG_${idx}%%`;
   });
 
-  // 4. <ul class="todo-list">...</ul>
   const todoRegex = /<ul\b[^>]*class=['"][^'"]*todo-list[^'"]*['"][^>]*>[\s\S]*?<\/ul>/gi;
   text = text.replace(todoRegex, (match) => {
     const idx = placeholders.length;
@@ -120,7 +111,6 @@ function protectCustomTags(text) {
     return `\n%%CUSTOM_TAG_${idx}%%\n`;
   });
 
-  // 5. 通用兜底：<details-box|todo-item|music-card|gallery-item>...</...>
   const genericBlockRegex = /<(details-box|todo-item|music-card|gallery-item)[^>]*>[\s\S]*?<\/\1>/gi;
   text = text.replace(genericBlockRegex, (match) => {
     const idx = placeholders.length;
@@ -140,6 +130,12 @@ function restoreCustomTags(html, placeholders) {
   return out;
 }
 
+function parseMarkdown(raw) {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
+  if (!match) return { frontmatter: {}, body: raw };
+  return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
+}
+
 function renderMarkdown(mdText) {
   const parsed = parseMarkdown(mdText);
   const { text: protectedBody, placeholders } = protectCustomTags(parsed.body);
@@ -147,14 +143,6 @@ function renderMarkdown(mdText) {
   html = restoreCustomTags(html, placeholders);
   return { metadata: parsed.frontmatter, html };
 }
-
-function parseMarkdown(raw) {
-  const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
-  if (!match) return { frontmatter: {}, body: raw };
-  return { frontmatter: parseFrontmatter(match[1]), body: raw.slice(match[0].length) };
-}
-
-// 工具函数
 
 function escapeHtml(s) {
   return String(s == null ? "" : s)
@@ -277,18 +265,14 @@ function buildArticleJsonLd(opts) {
   return jsonLd;
 }
 
-// 扫描文章
 if (!existsSync(POSTS_DIR)) {
   console.error(`❌ posts 目录不存在: ${POSTS_DIR}`);
   process.exit(1);
 }
 
-// 增量模式：命令行传变更的 .md 文件路径（与 clean-frontmatter.js 一致）
 const argv = process.argv.slice(2);
 let files;
 if (argv.length > 0) {
-  // 保留所有 .md 路径（含已删除的），用于后续清理逻辑
-  // 只处理仍存在的 .md 生成 HTML；已删除的 .md 在清理阶段处理对应 .html
   files = argv
     .map((p) => p.replace(/^.*\//, ""))
     .filter((f) => f.endsWith(".md") && f !== "README.md");
@@ -305,7 +289,6 @@ let generated = 0;
 let skipped = 0;
 let cleaned = 0;
 
-// 收集已存在的 .html
 const existingHtmls = new Set();
 for (const f of readdirSync(POSTS_DIR)) {
   if (f.endsWith(".html")) existingHtmls.add(f);
@@ -345,18 +328,14 @@ for (const file of files.sort()) {
   const coverUrl = fm.image || fm.coverImage || "";
   const contentType = fm.content_type || (fm.type === "note" ? "note" : "md");
 
-  // === v1.2 关键改动：完整正文（marked 渲染全文） ===
-  // protectCustomTags + marked.parse + restoreCustomTags，与 article.js 客户端字节级对齐
   const { html: fullContentHtml } = renderMarkdown(raw);
 
-  // description：frontmatter.desc 优先，否则从渲染后 HTML 提取摘要
   const description = (fm.desc || makeExcerpt(fullContentHtml, 160)).slice(0, 200);
 
   const canonicalUrl = `https://${site.blogDomain}/posts/${slug}`;
   const categoryBadgesHtml = renderCategoryBadges(categories);
   const categoryText = getCategoryText(categories);
 
-  // JSON-LD：BlogPosting + BreadcrumbList
   const articleJsonLd = buildArticleJsonLd({
     title,
     description,
@@ -374,11 +353,8 @@ for (const file of files.sort()) {
     { name: title, url: `/posts/${slug}` },
   ]);
 
-  // 两个 JSON-LD 用数组形式注入
   const jsonld = JSON.stringify([articleJsonLd, breadcrumbJsonLd]);
 
-  // article.js v1.2 跳过 fetch .md 时读取的 frontmatter（序列化为 data-article-meta 属性）
-  // 注意：HTML 属性值用双引号，JSON 内部双引号需转义为 &quot;
   const articleMetaObj = {
     title,
     date: dateStr,
@@ -414,7 +390,7 @@ for (const file of files.sort()) {
     .replace(/\{\{categoryBadgesHtml\}\}/g, categoryBadgesHtml)
     .replace(/\{\{contentType\}\}/g, escapeAttr(contentType))
     .replace(/\{\{articleMetaJson\}\}/g, articleMetaJson)
-    .replace(/\{\{excerptHtml\}\}/g, fullContentHtml)  // v1.2：完整正文（变量名保留 excerptHtml 不改模板）
+    .replace(/\{\{excerptHtml\}\}/g, fullContentHtml)
     .replace(/\{\{coverOgHtml\}\}/g, coverOgHtml)
     .replace(/\{\{coverTwitterHtml\}\}/g, coverTwitterHtml)
     .replace(/\{\{twitterCardType\}\}/g, twitterCardType)
@@ -426,11 +402,8 @@ for (const file of files.sort()) {
   generated++;
 }
 
-// 清理孤儿 HTML
 const isIncremental = argv.length > 0;
 if (isIncremental) {
-  // 增量模式：只清理被传入且已删除的 .md 对应的 .html
-  // （argv 里的 .md 如果不存在了，对应 .html 需清理）
   for (const argFile of argv) {
     const slug = argFile.replace(/^.*\//, "").replace(/\.md$/, "");
     const mdPath = join(POSTS_DIR, `${slug}.md`);
@@ -446,7 +419,6 @@ if (isIncremental) {
     }
   }
 } else {
-  // 全量模式：扫描所有 .html，无对应 .md 的清理掉
   for (const orphan of existingHtmls) {
     try {
       unlinkSync(join(POSTS_DIR, orphan));

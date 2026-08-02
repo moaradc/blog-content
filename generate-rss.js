@@ -1,6 +1,6 @@
 // generate-rss.js
 // 扫描 docs/posts/*.md，生成 RSS 2.0 订阅（docs/rss.xml）。
-// 用法: node generate-rss.js
+// locked / draft 字段存在即跳过。tags 不输出（RSS 2.0 只有 <category>，避免与分类混淆）。
 
 const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } = require("fs");
 const { join } = require("path");
@@ -18,10 +18,9 @@ try {
 const POSTS_DIR = join(__dirname, "docs", "posts");
 const RSS_OUTPUT = join(__dirname, "docs", "rss.xml");
 
-// <?xml-stylesheet?> 引用 /xsl/rss.xsl（浏览器可读，阅读器忽略）
 const XSL_PI = '<?xml-stylesheet type="text/xsl" href="/xsl/rss.xsl"?>';
 
-const SITE_URL = site.blogUrl;            // RSS channel link 指向主站
+const SITE_URL = site.blogUrl;
 const RSS_SELF_URL = site.rssSelfUrl;
 const SITE_TITLE = site.title;
 const SITE_DESC = site.description;
@@ -61,7 +60,6 @@ const rawPosts = [];
 const files = readdirSync(POSTS_DIR).filter((f) => f.endsWith(".md") && f !== "README.md");
 
 for (const file of files.sort()) {
-  // CRLF → LF：让 Windows 本地编辑的 .md 在 CI（Linux）上行为一致
   const raw = readFileSync(join(POSTS_DIR, file), "utf-8").replace(/\r\n/g, "\n");
   const { frontmatter, body } = parseMarkdown(raw);
 
@@ -127,7 +125,6 @@ function generateRssFeed(allPosts, allRawPosts) {
   lines.push("    <webMaster>" + escapeXml(AUTHOR_EMAIL) + " (" + escapeXml(AUTHOR_NAME) + ")</webMaster>");
 
   for (const post of allPosts) {
-    // 文章详情页 URL：主站 /details/article?id=<id>
     const postUrl = site.postUrl(post.id);
 
     const rawBody = (bodyMap[post.id] || "").trim();
@@ -135,7 +132,6 @@ function generateRssFeed(allPosts, allRawPosts) {
 
     let fullContent = "";
     if (post.image) {
-      // 封面图 URL：若是 /img/ 相对路径，转绝对指向 raw-posts CDN
       const imageUrl = site.absUrl(post.image);
       fullContent += '<p><img src="' + escapeXml(imageUrl) + '" alt="' + escapeXml(post.title) + '" /></p>';
     }
@@ -166,10 +162,6 @@ function generateRssFeed(allPosts, allRawPosts) {
         lines.push("      <category>" + escapeXml(cat) + "</category>");
       }
     }
-    // 注：tags 不输出到 RSS。
-    // RSS 2.0 规范只有 <category> 一个元素，没有"标签"概念，
-    // 把 tags 也用 <category> 输出会让阅读器把标签和分类混在一起显示。
-    // 标签留在 posts.json 和文章页里展示即可。
 
     if (post.author) {
       lines.push("      <dc:creator>" + escapeXml(post.author) + "</dc:creator>");
