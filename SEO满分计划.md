@@ -202,6 +202,9 @@ const OG_IMAGE = `${SITE_URL}/assets/img/icon/moara.webp`;
 ```
 User-agent: *
 Allow: /
+Disallow: /assets/data-scripts/feature-switch.js
+Disallow: /assets/data-scripts/about.js
+Disallow: /assets/data-scripts/anime.json
 
 Sitemap: https://blog.945426.xyz/sitemap.xml
 ```
