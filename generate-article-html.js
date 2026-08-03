@@ -262,11 +262,33 @@ for (const file of files.sort()) {
 
   if ("locked" in fm) {
     console.log(`🔒 ${file}: locked，跳过`);
+    const htmlPath = join(POSTS_DIR, `${slug}.html`);
+    if (existsSync(htmlPath)) {
+      try {
+        unlinkSync(htmlPath);
+        cleaned++;
+        console.log(`  🗑️  清理已锁定文章的 HTML: ${slug}.html`);
+      } catch (e) {
+        console.warn(`  ⚠️  清理 ${slug}.html 失败: ${e.message}`);
+      }
+    }
+    existingHtmls.delete(`${slug}.html`);
     skipped++;
     continue;
   }
   if ("draft" in fm) {
     console.log(`📝 ${file}: draft，跳过`);
+    const htmlPath = join(POSTS_DIR, `${slug}.html`);
+    if (existsSync(htmlPath)) {
+      try {
+        unlinkSync(htmlPath);
+        cleaned++;
+        console.log(`  🗑️  清理草稿文章的 HTML: ${slug}.html`);
+      } catch (e) {
+        console.warn(`  ⚠️  清理 ${slug}.html 失败: ${e.message}`);
+      }
+    }
+    existingHtmls.delete(`${slug}.html`);
     skipped++;
     continue;
   }
