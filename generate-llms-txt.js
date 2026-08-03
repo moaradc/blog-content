@@ -43,6 +43,3 @@ for (const post of posts) {
 }
 
 writeFileSync(OUTPUT, text, "utf-8");
-console.log(`✅ 生成 llms.txt`);
-console.log(`   输出: ${OUTPUT}`);
-console.log(`   文章数: ${posts.length}`);

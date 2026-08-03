@@ -29,21 +29,12 @@ actions:
       button: 发布
 
   - name: generate-rss
-    label: 生成 RSS
+    label: 生成 RSS & llms.txt
     workflow: generate-rss.yml
     ref: current
     confirm:
-      title: 生成 RSS？
-      message: 将扫描所有文章并重新生成 rss.xml。
-      button: 生成
-
-  - name: generate-llms-txt
-    label: 生成 llms.txt
-    workflow: generate-llms-txt.yml
-    ref: current
-    confirm:
-      title: 生成 llms.txt？
-      message: 将根据 posts.json 重新生成 llms.txt（LLM 站点导航）。
+      title: 生成 RSS & llms.txt？
+      message: 将扫描所有文章并重新生成 rss.xml 和 llms.txt。
       button: 生成
 
 content:

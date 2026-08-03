@@ -1,4 +1,4 @@
-name: Generate RSS
+name: Generate RSS & llms.txt
 
 on:
   workflow_dispatch:
@@ -40,14 +40,20 @@ jobs:
           BLOG_URL: ${{ vars.BLOG_URL }}
         run: node generate-rss.js
 
+      - name: Generate llms.txt
+        env:
+          BLOG_URL: ${{ vars.BLOG_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node generate-llms-txt.js
+
       - name: Commit and push if changed
         run: |
           git config user.name "moaradc"
           git config user.email "143486936+moaradc@users.noreply.github.com"
-          git add docs/rss.xml
+          git add docs/rss.xml docs/llms.txt
           if git diff --cached --quiet; then
-            echo "ℹ️  rss.xml 无变化，跳过提交"
+            echo "ℹ️  无变化，跳过提交"
           else
-            git commit -m "chore: regenerate rss.xml [skip ci]"
+            git commit -m "chore: regenerate rss.xml + llms.txt [skip ci]"
             git push
           fi
