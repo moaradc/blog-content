@@ -696,7 +696,17 @@
 
     // === 初始化 ===
     initCopyBtn();
-    loadPosts();
+
+    // 如果 Worker SSR 已注入文章卡片，跳过 fetch
+    var container = document.getElementById('items-container');
+    if (container && container.querySelector('.item')) {
+      // SSR 已渲染，只更新 loading 状态
+      var loading = document.getElementById('loading');
+      if (loading) loading.style.display = 'none';
+      container.style.display = '';
+    } else {
+      loadPosts();
+    }
   </script>
 </body>
 </html>

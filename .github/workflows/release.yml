@@ -28,6 +28,7 @@ jobs:
           test -f docs/index.html || { echo "❌ docs/index.html 缺失"; exit 1; }
           test -f docs/posts.json || { echo "❌ docs/posts.json 缺失"; exit 1; }
           test -f docs/sitemap.xml || { echo "❌ docs/sitemap.xml 缺失"; exit 1; }
+          test -f src/worker.js || { echo "❌ src/worker.js 缺失"; exit 1; }
 
       - name: 推送产物到 main（孤儿分支强推）
         env:
@@ -35,6 +36,7 @@ jobs:
         run: |
           WORKDIR="$(mktemp -d)"
           cp -r docs "$WORKDIR/dist"
+          cp -r src "$WORKDIR/"
           cp wrangler.jsonc "$WORKDIR/"
 
           cd "$WORKDIR"
