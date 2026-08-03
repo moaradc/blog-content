@@ -19,7 +19,7 @@ const posts = data.posts || [];
 const blogUrl = site.blogUrl.replace(/\/$/, "");
 const rawPostsUrl = site.siteUrl.replace(/\/$/, "");
 
-const SITE_DESCRIPTION = "MOARA 的个人博客 —— 技术、生活、闲谈、创作、归档";
+const SITE_DESCRIPTION = "沫然（moara）的个人博客 —— 技术、生活、闲谈、创作、归档";
 
 let text = "";
 

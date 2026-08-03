@@ -1,6 +1,6 @@
 # 沫然Blog
 
-> MOARA 的个人博客 —— 技术、生活、闲谈、创作、归档
+> 沫然（moara）的个人博客 —— 技术、生活、闲谈、创作、归档
 
 内容存储在 https://raw-posts.945426.xyz（Cloudflare Workers），主站 https://blog.945426.xyz（Vercel）通过 rewrite 代理。前者是纯静态文件，后者带前端交互。
 文章正文 Markdown 原文在 https://raw-posts.945426.xyz/posts/<id>.md，站内链接与图片均已绝对化。
