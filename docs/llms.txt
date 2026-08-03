@@ -2,12 +2,12 @@
 
 > 沫然（moara）的个人博客 —— 技术、生活、闲谈、创作、归档
 
-想批量获取博客正文，最省事的是 RSS 全文源 https://blog.945426.xyz/rss.xml，它包含全部文章完整正文。单篇 Markdown 原文在 http://raw-posts.945426.xyz/posts/<id>.md。
-单篇文章 SEO HTML 在 http://raw-posts.945426.xyz/posts/<id>，含完整正文，可直接读。
+想批量获取博客正文，最省事的是 RSS 全文源 https://blog.945426.xyz/rss.xml，它包含全部文章完整正文。单篇 Markdown 原文在 https://raw-posts.945426.xyz/posts/<id>.md。
+单篇文章 SEO HTML 在 https://raw-posts.945426.xyz/posts/<id>，含完整正文，可直接读。
 
 ## 博客
 
-- [文章列表](http://raw-posts.945426.xyz/): 全部文章
+- [文章列表](https://raw-posts.945426.xyz/): 全部文章
 - [RSS 订阅源](https://blog.945426.xyz/rss.xml): 全部文章，适合批量抓取
 - [文章 sitemap](https://blog.945426.xyz/sitemap.xml): 全部文章 URL
 ## 博客文章
