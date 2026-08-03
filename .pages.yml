@@ -100,7 +100,7 @@ content:
         type: select
         default: Admin
         options:
-          values: [Admin, Lamb, Anonymous]
+          values: [moara, Lamb, Anonymous]
 
       - name: coverImage
         label: 封面图（上传）
