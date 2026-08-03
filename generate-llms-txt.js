@@ -25,8 +25,9 @@ let text = "";
 
 text += `# ${site.title}\n\n`;
 text += `> ${SITE_DESCRIPTION}\n\n`;
+text += `内容存储在 ${rawPostsUrl}（Cloudflare Workers），主站 ${blogUrl}（Vercel）通过 rewrite 代理。前者是纯静态文件，后者带前端交互。\n`;
 text += `文章正文 Markdown 原文在 ${rawPostsUrl}/posts/<id>.md，站内链接与图片均已绝对化。\n`;
-text += `文章 SEO HTML 在 ${blogUrl}/posts/<id>（含完整正文，可直接读）。\n\n`;
+text += `文章 SEO HTML 在 ${rawPostsUrl}/posts/<id>（含完整正文，可直接读）。\n\n`;
 
 text += `## 博客\n\n`;
 text += `- [文章列表](${blogUrl}/): 全部文章\n`;
@@ -36,7 +37,7 @@ text += `- [文章 JSON 索引](${rawPostsUrl}/posts.json): 全量文章元数�
 
 text += `## 博客文章\n\n`;
 for (const post of posts) {
-  const url = `${blogUrl}/posts/${encodeURIComponent(post.id)}`;
+  const url = `${rawPostsUrl}/posts/${encodeURIComponent(post.id)}`;
   const date = (post.date || "").slice(0, 10);
   const desc = post.desc ? ` — ${post.desc}` : "";
   text += `- [${post.title || post.id}](${url}): ${date}${desc}\n`;
