@@ -41,8 +41,8 @@ jobs:
 
           cd "$WORKDIR"
           git init -q -b main
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config user.name "moaradc"
+          git config user.email "143486936+moaradc@users.noreply.github.com"
           git add -A
           git commit -q \
             -m "build: ${GITHUB_SHA:0:7} 的构建产物" \
