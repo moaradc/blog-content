@@ -35,7 +35,7 @@ text += `- [文章 sitemap](${blogUrl}/sitemap.xml): 全部文章 URL\n`;
 
 text += `## 博客文章\n\n`;
 for (const post of posts) {
-  const url = `${rawPostsUrl}/posts/${encodeURIComponent(post.id)}`;
+  const url = `${blogUrl}/posts/${encodeURIComponent(post.id)}`;
   const date = (post.date || "").slice(0, 10);
   const desc = post.desc ? ` — ${post.desc}` : "";
   text += `- [${post.title || post.id}](${url}): ${date}${desc}\n`;
