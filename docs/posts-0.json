@@ -9,7 +9,7 @@
       "title": "Mermaid 渲染测试",
       "date": "2026-07-20 20:09",
       "last_modified": "2026-07-20 20:09",
-      "author": "Admin",
+      "author": "moara",
       "category": ["Demo"],
       "tags": ["Demo"],
       "desc": "测试 Mermaid 图表渲染"
@@ -19,7 +19,7 @@
       "title": "Markdown写作指南",
       "date": "2026-06-09 10:00",
       "last_modified": "2026-06-09 10:00",
-      "author": "Admin",
+      "author": "moara",
       "category": ["技术"],
       "tags": ["Markdown","教程"],
       "desc": "一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。"
@@ -29,7 +29,7 @@
       "title": "Hello world!",
       "date": "2025-12-29 17:55",
       "last_modified": "2025-12-29 17:55",
-      "author": "Admin",
+      "author": "moara",
       "category": ["Demo"],
       "tags": ["Demo"],
       "desc": "Hello world!"
@@ -49,7 +49,7 @@
       "title": "代码高亮与排版组件演示",
       "date": "2025-12-12 13:09",
       "last_modified": "2025-12-12 17:36",
-      "author": "Admin",
+      "author": "moara",
       "category": ["Demo"],
       "tags": ["Demo"],
       "desc": "代码高亮与排版组件演示"
