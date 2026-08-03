@@ -1,19 +1,9 @@
 {
-  "generatedAt": "2026-08-03T01:58:40.820Z",
+  "generatedAt": "2026-08-03T08:16:08.651Z",
   "perPage": 16,
-  "total": 7,
+  "total": 6,
   "pageCount": 1,
   "posts": [
-    {
-      "id": "mermaid-test",
-      "title": "Mermaid 渲染测试",
-      "date": "2026-07-20 20:09",
-      "last_modified": "2026-07-20 20:09",
-      "author": "moara",
-      "category": ["Demo"],
-      "tags": ["Demo"],
-      "desc": "测试 Mermaid 图表渲染"
-    },
     {
       "id": "107",
       "title": "Markdown写作指南",
