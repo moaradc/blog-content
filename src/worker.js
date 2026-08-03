@@ -122,13 +122,6 @@ function renderCard(post, index, origin) {
   html += '<a class="item__cta secondary" href="' + escapeAttr(mdUrl) + '">查看 Markdown</a>';
   html += '</div>';
 
-  if (post.content && post.content.trim()) {
-    html += '<details class="item__preview">';
-    html += '<summary>展开正文预览</summary>';
-    html += '<div class="preview-body" style="white-space: pre-wrap;">' + escapeHtml(post.content) + '</div>';
-    html += '</details>';
-  }
-
   html += '</div></article>';
 
   return html;
