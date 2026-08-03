@@ -12,17 +12,19 @@ export default {
     const [shellRes, postsRes] = await Promise.all([shellPromise, postsPromise]);
 
     let posts = [];
+    let generatedAt = "";
     if (postsRes.ok) {
       try {
         const data = await postsRes.json();
         posts = data.posts || [];
+        generatedAt = data.generatedAt || "";
       } catch (e) {}
     }
 
     const cardsHtml = posts.map((post, index) => renderCard(post, index, url.origin)).join("");
 
     const metaTotal = posts.length;
-    const metaUpdated = extractDate(posts);
+    const metaUpdated = generatedAt ? generatedAt.slice(0, 10) : "-";
 
     return new HTMLRewriter()
       .on("#items-container", {
@@ -43,16 +45,6 @@ export default {
       .transform(shellRes);
   },
 };
-
-function extractDate(posts) {
-  for (const p of posts) {
-    if (p.last_modified) return p.last_modified.slice(0, 10);
-  }
-  for (const p of posts) {
-    if (p.date) return p.date.slice(0, 10);
-  }
-  return "-";
-}
 
 function escapeHtml(s) {
   if (s == null) return "";
