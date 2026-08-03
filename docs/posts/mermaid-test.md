@@ -2,10 +2,15 @@
 title: Mermaid 渲染测试
 date: 2026-07-20 20:09
 last_modified: 2026-07-20 20:09
-author: moara
-category: ["Demo"]
-tags: ["Demo"]
 desc: 测试 Mermaid 图表渲染
+category:
+  - Demo
+tags:
+  - Demo
+author: moara
+pinned: false
+locked: true
+draft: false
 ---
 本文仅用于测试 Mermaid 各类图表的渲染。
 
@@ -296,3 +301,4 @@ gitGraph
     commit id: "release v1.1"
 
 ```
+
