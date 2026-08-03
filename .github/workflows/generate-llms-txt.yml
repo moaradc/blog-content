@@ -1,0 +1,54 @@
+name: Generate llms.txt
+
+on:
+  workflow_dispatch:
+    inputs:
+      payload:
+        description: Pages CMS payload as JSON
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: generate-llms-txt
+  cancel-in-progress: true
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: cms
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate llms.txt
+        env:
+          BLOG_URL: ${{ vars.BLOG_URL }}
+          SITE_URL: ${{ vars.SITE_URL }}
+        run: node generate-llms-txt.js
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "moaradc"
+          git config user.email "143486936+moaradc@users.noreply.github.com"
+          git add docs/llms.txt
+          if git diff --cached --quiet; then
+            echo "ℹ️  llms.txt 无变化，跳过提交"
+          else
+            git commit -m "chore: regenerate llms.txt [skip ci]"
+            git push
+          fi
