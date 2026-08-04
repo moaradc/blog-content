@@ -49,6 +49,7 @@ jobs:
         env:
           BEFORE: ${{ github.event.before || 'HEAD~1' }}
         run: |
+          git config core.quotePath false
           # 3-way fallback: BEFORE..HEAD → HEAD~1..HEAD → 全量
           mapfile -t FILES < <(git diff --name-only "$BEFORE"..HEAD -- 'docs/posts/*.md' 2>/dev/null || true)
           if [ ${#FILES[@]} -eq 0 ]; then
