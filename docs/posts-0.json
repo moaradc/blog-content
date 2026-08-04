@@ -1,16 +1,26 @@
 {
   "page": 0,
   "perPage": 16,
-  "total": 7,
+  "total": 8,
   "pageCount": 1,
   "posts": [
     {
-      "id": "删除",
-      "title": "删除",
-      "date": "2026-08-04 22:56",
-      "last_modified": "2026-08-04 22:56",
+      "id": "test-normal",
+      "title": "测试正常文章",
+      "date": "2026-08-04 15:02",
+      "last_modified": "2026-08-04 15:02",
       "author": "moara",
-      "desc": "zjxm"
+      "category": ["技术","Demo"],
+      "tags": ["测试","GitHub Actions"],
+      "desc": "正常文章，有分类和标签"
+    },
+    {
+      "id": "test-no-cat",
+      "title": "测试无分类",
+      "date": "2026-08-04 15:01",
+      "last_modified": "2026-08-04 15:01",
+      "author": "moara",
+      "desc": "这篇没有分类和标签，应该显示杂项"
     },
     {
       "id": "107",
