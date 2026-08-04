@@ -1,27 +1,9 @@
 {
-  "generatedAt": "2026-08-04T15:16:52.147Z",
+  "generatedAt": "2026-08-04T15:18:34.492Z",
   "perPage": 16,
-  "total": 8,
+  "total": 6,
   "pageCount": 1,
   "posts": [
-    {
-      "id": "test-normal",
-      "title": "测试正常文章",
-      "date": "2026-08-04 15:02",
-      "last_modified": "2026-08-04 15:02",
-      "author": "moara",
-      "category": ["技术","Demo"],
-      "tags": ["测试","GitHub Actions"],
-      "desc": "正常文章，有分类和标签"
-    },
-    {
-      "id": "test-no-cat",
-      "title": "测试无分类",
-      "date": "2026-08-04 15:01",
-      "last_modified": "2026-08-04 15:01",
-      "author": "moara",
-      "desc": "这篇没有分类和标签，应该显示杂项"
-    },
     {
       "id": "107",
       "title": "Markdown写作指南",
