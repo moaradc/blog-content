@@ -1,0 +1,20 @@
+# 沫然Blog
+
+> 沫然（moara）的个人博客 —— 技术、生活、闲谈、创作、归档
+
+想批量获取博客正文，最省事的是 RSS 全文源 https://blog.945426.xyz/rss.xml，它包含全部文章完整正文。单篇 Markdown 原文在 https://raw-posts.945426.xyz/posts/<id>.md。
+单篇文章 SEO HTML 在 https://raw-posts.945426.xyz/posts/<id>，含完整正文，可直接读。
+
+## 博客
+
+- [文章列表](https://raw-posts.945426.xyz/): 全部文章
+- [RSS 订阅源](https://blog.945426.xyz/rss.xml): 全部文章，适合批量抓取
+- [文章 sitemap](https://blog.945426.xyz/sitemap.xml): 全部文章 URL
+## 博客文章
+
+- [Markdown写作指南](https://blog.945426.xyz/posts/107): 2026-06-09 — 一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。
+- [Hello world!](https://blog.945426.xyz/posts/106): 2025-12-29 — Hello world!
+- [pixiv](https://blog.945426.xyz/posts/104): 2025-12-26
+- [代码高亮与排版组件演示](https://blog.945426.xyz/posts/103): 2025-12-12 — 代码高亮与排版组件演示
+- [周五的公园与猫](https://blog.945426.xyz/posts/102): 2025-11-22
+- [月下独酌：李白诗中的孤独与自由](https://blog.945426.xyz/posts/101): 2025-11-21 — 品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。
