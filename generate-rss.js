@@ -41,7 +41,12 @@ function escapeXml(s) {
 
 function toRfc822Date(dateStr) {
   if (!dateStr) return new Date().toUTCString();
-  const d = new Date(dateStr);
+  // 文章日期是北京时间（UTC+8），显式加时区后再转换
+  // 避免 GitHub Actions runner（UTC 时区）把 "10:00" 当成 GMT 解析
+  const normalized = dateStr.includes('+') || dateStr.includes('T')
+    ? dateStr  // 已有时区信息或 ISO 格式，直接解析
+    : dateStr + ' +08:00';  // 补北京时间时区
+  const d = new Date(normalized);
   return isNaN(d.getTime()) ? new Date().toUTCString() : d.toUTCString();
 }
 
