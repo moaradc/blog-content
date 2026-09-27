@@ -2,12 +2,9 @@
 title: 测试
 date: 2026-09-27 18:17
 last_modified: 2026-09-27 18:17
-category:
-  - Demo
 author: moara
+category: ["Demo"]
 pinned: true
-locked: false
-draft: false
 ---
 # 国内主流云平台对象存储空间与价格调研报告
 
