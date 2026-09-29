@@ -66,7 +66,9 @@
       #detail-content pre { max-width: 100%; overflow-x: auto; }
       #detail-content video, #detail-content iframe, #detail-content img { max-width: 100%; height: auto; }
       #detail-content table { max-width: 100%; display: block; overflow-x: auto; }
-      html, body { overflow-x: hidden; max-width: 100%; }
+      /* overflow-x 只能设在 body 上：若设在 html 上，body 会成为滚动容器，
+         导致侧栏目录 .toc-card-pc 的 position:sticky 吸附失效（随页面滑出屏幕） */
+      body { overflow-x: hidden; max-width: 100%; }
     </style>
 
     <noscript>
@@ -93,7 +95,7 @@
         #detail-content :not(pre) > code { word-break: break-word !important; }
         #detail-content video, #detail-content iframe, #detail-content img { max-width: 100% !important; height: auto !important; }
         #detail-content table { max-width: 100% !important; display: block !important; overflow-x: auto !important; }
-        html, body { overflow-x: hidden !important; max-width: 100% !important; }
+        body { overflow-x: hidden !important; max-width: 100% !important; }
       </style>
     </noscript>
 </head>
