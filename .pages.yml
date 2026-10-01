@@ -98,7 +98,7 @@ content:
       - name: author
         label: 作者
         type: select
-        default: Admin
+        default: moara
         options:
           values: [moara, Lamb, Anonymous]
 
