@@ -7,6 +7,8 @@ const { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync, unlinkS
 const { join } = require("path");
 const site = require("./site");
 const { parseFrontmatter } = require("./parse-frontmatter");
+// moara-md：与浏览器端 /assets/js/moara-md.js 同源同版（双端共享，产物一致）
+const moaraMd = require("./moara-md.js");
 
 let marked;
 try {
@@ -38,56 +40,6 @@ if (!existsSync(TEMPLATE_FILE)) {
 const template = readFileSync(TEMPLATE_FILE, "utf-8");
 console.log(`📄 加载模板: ${TEMPLATE_FILE}`);
 
-function protectCustomTags(text) {
-  const placeholders = [];
-
-  const pairedTagRegex = /<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi;
-  text = text.replace(pairedTagRegex, (match) => {
-    const idx = placeholders.length;
-    placeholders.push(match);
-    return `\n%%CUSTOM_TAG_${idx}%%\n`;
-  });
-
-  const divBlockRegex = /<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi;
-  text = text.replace(divBlockRegex, (match) => {
-    const idx = placeholders.length;
-    placeholders.push(match);
-    return `\n%%CUSTOM_TAG_${idx}%%\n`;
-  });
-
-  const spoilerRegex = /<span\b[^>]*class=['"][^'"]*spoiler[^'"]*['"][^>]*>[\s\S]*?<\/span>/gi;
-  text = text.replace(spoilerRegex, (match) => {
-    const idx = placeholders.length;
-    placeholders.push(match);
-    return `%%CUSTOM_TAG_${idx}%%`;
-  });
-
-  const todoRegex = /<ul\b[^>]*class=['"][^'"]*todo-list[^'"]*['"][^>]*>[\s\S]*?<\/ul>/gi;
-  text = text.replace(todoRegex, (match) => {
-    const idx = placeholders.length;
-    placeholders.push(match);
-    return `\n%%CUSTOM_TAG_${idx}%%\n`;
-  });
-
-  const genericBlockRegex = /<(details-box|todo-item|music-card|gallery-item)[^>]*>[\s\S]*?<\/\1>/gi;
-  text = text.replace(genericBlockRegex, (match) => {
-    const idx = placeholders.length;
-    placeholders.push(match);
-    return `\n%%CUSTOM_TAG_${idx}%%\n`;
-  });
-
-  return { text, placeholders };
-}
-
-function restoreCustomTags(html, placeholders) {
-  let out = html;
-  placeholders.forEach((original, idx) => {
-    out = out.replace(`<p>%%CUSTOM_TAG_${idx}%%</p>`, original);
-    out = out.replace(`%%CUSTOM_TAG_${idx}%%`, original);
-  });
-  return out;
-}
-
 function parseMarkdown(raw) {
   const match = raw.match(/^---\n([\s\S]*?)\n---\n?/);
   if (!match) return { frontmatter: {}, body: raw };
@@ -96,9 +48,11 @@ function parseMarkdown(raw) {
 
 function renderMarkdown(mdText) {
   const parsed = parseMarkdown(mdText);
-  const { text: protectedBody, placeholders } = protectCustomTags(parsed.body);
-  let html = marked.parse(protectedBody, { breaks: true, gfm: true });
-  html = restoreCustomTags(html, placeholders);
+  const pre = moaraMd.preprocess(parsed.body, { onWarn: (m) => console.warn(m) });
+  let html = marked.parse(pre.text, { breaks: true, gfm: true });
+  html = moaraMd.postprocess(html, pre.ctx, {
+    parseInline: (src) => marked.parseInline(src),
+  });
   return { metadata: parsed.frontmatter, html };
 }
 
@@ -340,6 +294,7 @@ for (const file of files.sort()) {
     image: coverUrl,
     type: fm.type || "article",
     locked: !!fm.locked,
+    math: fm.math === true || fm.math === "true",
   };
   const articleMetaJson = escapeAttr(JSON.stringify(articleMetaObj));
 
@@ -365,6 +320,7 @@ for (const file of files.sort()) {
     .replace(/\{\{categoryBadgesHtml\}\}/g, categoryBadgesHtml)
     .replace(/\{\{contentType\}\}/g, escapeAttr(contentType))
     .replace(/\{\{articleMetaJson\}\}/g, articleMetaJson)
+    .replace(/\{\{mathFlag\}\}/g, articleMetaObj.math ? "true" : "false")
     .replace(/\{\{excerptHtml\}\}/g, fullContentHtml)
     .replace(/\{\{coverOgHtml\}\}/g, coverOgHtml)
     .replace(/\{\{coverTwitterHtml\}\}/g, coverTwitterHtml)

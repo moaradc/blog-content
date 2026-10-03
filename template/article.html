@@ -44,8 +44,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
     <!-- 本站 CSS -->
-    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
-    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css?v=20261003" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css?v=20261003" />
 
     <!-- 第三方库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -53,7 +53,7 @@
     <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
     <!-- 本站 JS -->
-    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js?v=20261003"></script>
     <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
@@ -243,7 +243,7 @@
             </div>
 
             <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
-            <article class="article-body" id="detail-content">
+            <article class="article-body" id="detail-content" data-math="{{mathFlag}}">
                 {{excerptHtml}}
             </article>
 
@@ -369,7 +369,8 @@
 </div>
 
 <!-- 文章渲染 -->
-<script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
+<script src="https://blog.945426.xyz/assets/js/moara-md.js?v=20261003" defer></script>
+<script src="https://blog.945426.xyz/assets/js/article.js?v=20261003" defer></script>
 
 </body>
 </html>
