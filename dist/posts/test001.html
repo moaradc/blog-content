@@ -1,0 +1,675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Markdown 组件语法全览 | 沫然Blog</title>
+    <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
+
+    <meta name="description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta name="keywords" content="Demo,Markdown,沫然,moara,沫然Blog,博客,MOARA Blog" />
+    <meta name="author" content="moara" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
+    <meta name="googlebot" content="index, follow, max-video-preview:-1, max-image-preview:large, max-snippet:-1" />
+    <link rel="canonical" href="https://blog.945426.xyz/posts/test001" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="Markdown 组件语法全览" />
+    <meta property="og:description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta property="og:url" content="https://blog.945426.xyz/posts/test001" />
+    <meta property="og:site_name" content="沫然Blog" />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="article:published_time" content="2026-10-03T00:20:00.000Z" />
+    <meta property="article:author" content="moara" />
+    <meta property="article:tag" content="Demo" />
+    
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Markdown 组件语法全览" />
+    <meta name="twitter:description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta name="twitter:url" content="https://blog.945426.xyz/posts/test001" />
+    
+
+    <!-- JSON-LD 结构化数据 -->
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown 组件语法全览","description":"沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/test001"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-10-03T00:20:00.000Z","dateModified":"2026-10-03T00:20:00.000Z","url":"https://blog.945426.xyz/posts/test001","articleBody":"本文是博客 Markdown 扩展语法的 完整演示 ，全部组件均由 moara-md 扩展层渲染（浏览器端与 /posts/ id 直出共用同一实现，产物一致）。 备注 提示框（Admonition）支持 12 种类型： NOTE TIP INFO IMPORTANT WARNING CAUTION DANGER ABSTRACT EXAMPLE QUOTE SUCCESS QUESTION ，同义写法（如 TIP / IMPORTANT ）自动归并。 可折叠提示框 尾缀 + 默认展开， - 默认收起。折叠态的提示框与折叠面板共享同一套动画协议。 收起状态的警告 这一栏默认收起，点击标题即可展开。支持嵌套任意块级语法。 1. 折叠面板 :::folding 折叠面板取代了旧版手写 HTML（旧语法不再推荐）。 内部支持所有块级语法 ：列表、表格、代码块、甚至嵌套折叠。 点击展开 — 查看代码块与列表 列表项一 列表项二 列表项三 export interface AdvancedConfig { /** 是否启用实验特性 */ experimental?: boolean; } export const advancedConfig: AdvancedConfig = { experimental: true }; 参数 类型 默认值 left string - center number 0 right boolean true 内层折叠 — 双层嵌套 内层内容：代码、列表、表格在折叠区内 正常渲染 （旧版语法做不到这一点）。 print(&#39;Nested folding works!&#39;) 嵌套折叠：外层面板 外层默认展开（ open 属性）。内部可以继续嵌套折叠： 2. 选项卡 ::::tabs NPM PNPM 源码构建 使用 npm 安装（默认选项卡）： npm install moara 使用 pnpm 安装： pnpm add moara 从源码构建（本面板标题带 notoc 属性，面板内标题不进入文章目录）： 面板内小节（不进目录） git clone https://github.com/moaradc/MOARA cd MOARA npm ci npm run build 3. 视频嵌入 :::video 折叠块内推荐使用 叶子形式 ::video （无需闭合围栏）： 演示：直链原生播放器 折叠面板内的视频 4. 链接卡片 :::linkcard MOARA 主仓库 github.com 文件链接：按后缀显示文件图标 example.com 站内文章卡片（运行时解析标题） 本站文章 #103 5. 仓库卡片 :::github markedjs/marked View repository on GitHub — — 6. 数学公式（frontmatter math: true ） 质能方程 $E = mc^2$ 与质能方程行内形式 $E = mc^2$ 可以混排。块级公式使用 $ ： $ \\mathcal{F}(\\omega) = \\int_{-\\infty}^{\\infty} f(t), e^{-i\\omega t}, dt $ 矩阵与对齐： $ \\begin{pmatrix} a b \\ c d \\end{pmatrix} \\begin{pmatrix} x \\ y \\end{pmatrix} \\begin{pmatrix} ax + by \\ cx + dy \\end{pmatrix} $ 7. 行内元素 高亮 荧光笔标记 （酸绿色，双模式高对比） 键盘按键 Ctrl + Alt + Del 上下标：H 2 O 与 x 2 + y 2 = r 2 行内黑幕（防剧透）：凶手是 黑衣人 ，点击显示。 行内代码 const x = 42; 8. 链接包裹图片（常驻跳转角标） 点击下图会 跳转到目标链接 而不是打开灯箱，图片右上角有常驻角标标识： 裸图（无链接）点击仍打开灯箱预览： 9. 脚注 摩尔 Blog 的脚注语法与 GFM 一致 1 ，定义可以写在任意位置 2 ，渲染时统一汇总到文末。 10. 表格对齐（修复演示） 三列分别 左、中、右 对齐（此前全被居中，现在按分隔行生效）： :左对齐 居中对齐: 右对齐: b 站 1 1000 云盘 2 2000 邮箱 3 3000 11. Mermaid 图表 flowchart LR A[Markdown 源文] -- B{moara-md 预处理} B -- C[marked v15 解析] C -- D[浏览器端渲染] C -- E[Node 端直出 SEO HTML] D -- F((产物一致)) E -- F 12. 原生 details 折叠 标准 HTML 折叠（与 :::folding 视觉风格统一）： 原生 details 折叠示例 内部同样支持 Markdown 语法（约定 summary 与内容间 保留空行 ）。 项目 A 项目 B 13. 图集标签（可选 links） links 属性与 src 逐项对应： 有链接的项 显示跳转角标并跳转， 空项 维持灯箱预览。 参见 GitHub Flavored Markdown Spec 的脚注扩展。 引用处按首次出现顺序编号，支持 行内 Markdown 与多行定义。"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown 组件语法全览","item":"https://blog.945426.xyz/posts/test001"}]}]</script>
+
+    <!-- 第三方资源 -->
+    <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
+
+    <!-- Waline 评论样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
+    <!-- highlight.js 主题 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+
+    <!-- 本站 CSS -->
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css?v=20261003" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css?v=20261003" />
+
+    <!-- 第三方库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+
+    <!-- 本站 JS -->
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js?v=20261003"></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
+
+    <style>
+      #detail-content { overflow-x: auto; }
+      #detail-content pre { max-width: 100%; overflow-x: auto; }
+      #detail-content video, #detail-content iframe, #detail-content img { max-width: 100%; height: auto; }
+      #detail-content table { max-width: 100%; display: block; overflow-x: auto; }
+      body { overflow-x: hidden; max-width: 100%; }
+    </style>
+
+    <noscript>
+      <style>
+        #global-loader { display: none !important; }
+        #detail-content { opacity: 1 !important; }
+        #article-view { opacity: 1 !important; }
+        .stagger-item { opacity: 1 !important; visibility: visible !important; }
+        .marquee { display: none !important; }
+        .sidebar-column { display: none !important; }
+        .mobile-bottom-cards { display: none !important; }
+        .layout-grid { display: block !important; }
+        .article-column { width: 100% !important; max-width: none !important; }
+        .lightbox-overlay { display: none !important; }
+        .scroll-controls { display: none !important; }
+        #waline { display: none !important; }
+        .article-navigation { display: none !important; }
+        .toc-box { display: none !important; }
+        #detail-pageview { display: none !important; }
+        #detail-words, #detail-read-time { display: none !important; }
+        #detail-content { overflow-x: auto !important; }
+        #detail-content pre { max-width: 100% !important; overflow-x: auto !important; display: block !important; }
+        #detail-content pre code { max-width: none !important; overflow: visible !important; word-wrap: normal !important; white-space: pre !important; }
+        #detail-content :not(pre) > code { word-break: break-word !important; }
+        #detail-content video, #detail-content iframe, #detail-content img { max-width: 100% !important; height: auto !important; }
+        #detail-content table { max-width: 100% !important; display: block !important; overflow-x: auto !important; }
+        body { overflow-x: hidden !important; max-width: 100% !important; }
+      </style>
+    </noscript>
+</head>
+<body>
+
+<div class="marquee" aria-hidden="true">
+    <div class="marquee__band">
+        <div class="marquee__row marquee__row--ltr"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--rtl"><div class="marquee__track"></div></div>
+        <div class="marquee__row marquee__row--ltr marquee__row--offset"><div class="marquee__track"></div></div>
+    </div>
+</div>
+
+<div id="global-loader">
+    <div class="loader-spinner"></div>
+</div>
+
+<nav>
+    <div class="nav-left">
+        <div class="logo" onclick="transitionTo('/')" style="cursor: pointer; font-weight:900; font-size:1.1rem;">MOARA.</div>
+        <div class="search-container">
+            <input type="text" class="search-input" placeholder="搜索文章..." oninput="handleSearch(this)" onkeydown="if(event.key==='Enter') triggerSearch()" id="detailSearchInput" />
+            <div class="search-suggestions"></div>
+        </div>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn mobile-search-btn" onclick="toggleMobileSearch()" title="搜索">
+            <i class="ri-search-line"></i>
+        </button>
+        <button class="icon-btn" onclick="toggleTheme()" title="切换主题">
+            <i class="ri-sun-line" id="theme-icon"></i>
+        </button>
+        <button class="icon-btn" onclick="transitionTo('/')" title="回到首页">
+            <i class="ri-home-4-line"></i>
+        </button>
+    </div>
+</nav>
+
+<!-- 文章容器 -->
+<div id="article-view" data-article-id="test001" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown 组件语法全览&quot;,&quot;date&quot;:&quot;2026-10-03 08:20&quot;,&quot;last_modified&quot;:&quot;2026-10-03 08:20&quot;,&quot;author&quot;:&quot;moara&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;,&quot;Markdown&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false,&quot;math&quot;:true}">
+
+    <div class="article-hero-wrapper">
+        <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
+        <div class="article-hero-overlay-gradient"></div>
+        <div class="article-hero-content">
+            <h1 class="article-big-title" id="detail-title">Markdown 组件语法全览</h1>
+            <div id="detail-category-container" style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom: 0.5rem;"><span class="category-badge" style="background: var(--text-color); color: var(--bg-color); padding: 2px 10px; border-radius: 2px; font-size: 0.8rem; font-weight: 700;">Demo</span></div>
+            <div class="article-meta">
+                <span style="display: flex; align-items: center;">
+                    <div class="info-wrapper" id="mod-info-wrapper" style="display:none;">
+                        <div class="info-icon" onclick="toggleModInfo(event)">i</div>
+                        <div class="modified-tooltip" id="mod-tooltip"></div>
+                    </div>
+                    <i class="ri-calendar-line"></i> <span id="detail-date">2026年10月3日</span>
+                </span>
+                <span id="detail-words" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-read-time" style="display: flex; align-items: center; gap: 5px;"></span>
+                <span id="detail-pageview" style="display: flex; align-items: center; gap: 5px;"><i class="ri-eye-line"></i><span class="waline-pageview-count" data-path="/posts/test001">...</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="layout-grid">
+
+        <aside class="sidebar-column">
+            <div class="sidebar-sticky-wrapper">
+
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="moara" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">moara</h3>
+                            <p class="profile-bio" id="bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                    <div class="profile-stats-divider"></div>
+                    <div class="profile-stats-container">
+                        <div class="p-stat-item" title="发布日期">
+                            <i class="ri-calendar-line"></i>
+                            <span id="sidebar-date">2026年10月3日</span>
+                        </div>
+                        <div class="p-stat-item" id="sidebar-mod-wrapper" style="display:none;" title="最后修改">
+                            <i class="ri-edit-box-line"></i>
+                            <span id="sidebar-mod-date"></span>
+                        </div>
+                        <div class="p-stat-item" title="文章字数">
+                            <i class="ri-file-word-line"></i>
+                            <span id="sidebar-words">...</span>
+                        </div>
+                        <div class="p-stat-item" title="预计阅读时长">
+                            <i class="ri-time-line"></i>
+                            <span id="sidebar-time">...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="sidebar-card latency-card" id="pc-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="pc-latency-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="sidebar-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="sidebar-cat-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="sidebar-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn" title="查看全部">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="sidebar-tag-cloud"></div>
+                </div>
+
+                <div class="sidebar-card toc-card-pc" id="pc-toc-wrapper" style="display:none;">
+                    <div class="toc-title"><i class="ri-list-check"></i> 目录导航</div>
+                    <ul class="toc-list-pc" id="pc-toc-list"></ul>
+                </div>
+
+            </div>
+        </aside>
+
+        <main class="article-column">
+
+            <div class="toc-box mobile-only-toc" id="toc-box" style="display: none;">
+                <div class="toc-header" onclick="toggleTOC()">
+                    <span><i class="ri-list-check"></i> 文章目录</span>
+                    <i class="ri-arrow-down-s-line" id="toc-icon"></i>
+                </div>
+                <div class="toc-content" id="toc-content">
+                    <ul class="toc-list" id="toc-list"></ul>
+                </div>
+            </div>
+
+            <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
+            <article class="article-body" id="detail-content" data-math="true">
+                <p>本文是博客 Markdown 扩展语法的<strong>完整演示</strong>，全部组件均由 <code>moara-md</code> 扩展层渲染（浏览器端与 <code>/posts/&lt;id&gt;</code> 直出共用同一实现，产物一致）。</p>
+<div class="admonition admonition-note">
+<div class="admonition-title">
+<i class="ri-sticky-note-line" aria-hidden="true"></i>
+<span class="admonition-title-text">备注</span>
+</div>
+<div class="admonition-body">
+
+<p>提示框（Admonition）支持 12 种类型：<code>NOTE</code> <code>TIP</code> <code>INFO</code> <code>IMPORTANT</code> <code>WARNING</code> <code>CAUTION</code> <code>DANGER</code> <code>ABSTRACT</code> <code>EXAMPLE</code> <code>QUOTE</code> <code>SUCCESS</code> <code>QUESTION</code>，同义写法（如 <code>TIP</code>/<code>IMPORTANT</code>）自动归并。</p>
+</div>
+</div>
+
+<div class="admonition admonition-tip" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-lightbulb-line" aria-hidden="true"></i>
+<span class="admonition-title-text">可折叠提示框</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>尾缀 <code>+</code> 默认展开，<code>-</code> 默认收起。折叠态的提示框与折叠面板共享同一套动画协议。</p>
+</div>
+</div>
+
+<div class="admonition admonition-warning" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-alert-line" aria-hidden="true"></i>
+<span class="admonition-title-text">收起状态的警告</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>这一栏默认收起，点击标题即可展开。支持嵌套任意块级语法。</p>
+</div>
+</div>
+
+<h2>1. 折叠面板 :::folding</h2>
+<p>折叠面板取代了旧版手写 HTML（旧语法不再推荐）。<strong>内部支持所有块级语法</strong>：列表、表格、代码块、甚至嵌套折叠。</p>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">点击展开 — 查看代码块与列表</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<ul>
+<li>列表项一</li>
+<li>列表项二</li>
+<li>列表项三</li>
+</ul>
+<pre><code class="language-ts">export interface AdvancedConfig {
+  /** 是否启用实验特性 */
+  experimental?: boolean;
+}
+export const advancedConfig: AdvancedConfig = { experimental: true };
+</code></pre>
+<table>
+<thead>
+<tr>
+<th align="left">参数</th>
+<th align="center">类型</th>
+<th align="right">默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">left</td>
+<td align="center">string</td>
+<td align="right">-</td>
+</tr>
+<tr>
+<td align="left">center</td>
+<td align="center">number</td>
+<td align="right">0</td>
+</tr>
+<tr>
+<td align="left">right</td>
+<td align="center">boolean</td>
+<td align="right">true</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+
+
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">内层折叠 — 双层嵌套</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>内层内容：代码、列表、表格在折叠区内<strong>正常渲染</strong>（旧版语法做不到这一点）。</p>
+<pre><code class="language-python">print(&#39;Nested folding works!&#39;)
+</code></pre>
+</div>
+</div>
+</div>
+
+
+<div class="details-box open" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="true">
+<span class="details-title">嵌套折叠：外层面板</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>外层默认展开（<code>open</code> 属性）。内部可以继续嵌套折叠：</p>
+</div>
+</div>
+</div>
+
+
+<h2>2. 选项卡 ::::tabs</h2>
+<div class="md-tabs" data-md-tabs>
+<div class="md-tabs-bar" role="tablist">
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-0" aria-controls="md-tabpanel-1-0" aria-selected="true">NPM</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-1" aria-controls="md-tabpanel-1-1" aria-selected="false" tabindex="-1">PNPM</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-2" aria-controls="md-tabpanel-1-2" aria-selected="false" tabindex="-1">源码构建</button>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-0" aria-labelledby="md-tab-1-0" tabindex="0">
+
+
+<p>使用 npm 安装（默认选项卡）：</p>
+<pre><code class="language-bash">npm install moara
+</code></pre>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-1" aria-labelledby="md-tab-1-1" tabindex="0" hidden>
+
+
+<p>使用 pnpm 安装：</p>
+<pre><code class="language-bash">pnpm add moara
+</code></pre>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-2" aria-labelledby="md-tab-1-2" tabindex="0" data-notoc hidden>
+
+
+<p>从源码构建（本面板标题带 <code>notoc</code> 属性，面板内标题不进入文章目录）：</p>
+<h3>面板内小节（不进目录）</h3>
+<pre><code class="language-bash">git clone https://github.com/moaradc/MOARA
+cd MOARA &amp;&amp; npm ci &amp;&amp; npm run build
+</code></pre>
+</div>
+</div>
+
+
+<h2>3. 视频嵌入 :::video</h2>
+<div class="video-embed" data-aspect="16:9"><iframe src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7h7&amp;autoplay=0&amp;danmaku=0&amp;page=1&amp;high_quality=1" title="演示：Bilibili 嵌入" loading="lazy" scrolling="no" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+
+
+<div class="video-embed" data-aspect="16:9"><iframe src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0" title="演示：YouTube 嵌入" loading="lazy" scrolling="no" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe></div>
+
+
+<p>折叠块内推荐使用<strong>叶子形式</strong> <code>::video</code>（无需闭合围栏）：</p>
+<div class="video-embed" data-aspect="16:9"><video controls preload="metadata" playsinline src="https://www.w3schools.com/html/mov_bbb.mp4"></video>
+<span class="video-embed-caption">演示：直链原生播放器</span></div>
+
+
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">折叠面板内的视频</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+
+</div>
+</div>
+</div>
+
+
+<h2>4. 链接卡片 :::linkcard</h2>
+<a class="md-linkcard" data-linkcard data-url="https://github.com/moaradc/MOARA" href="https://github.com/moaradc/MOARA" target="_blank" rel="noopener noreferrer">
+<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"></span>
+<span class="md-linkcard-main">
+<span class="md-linkcard-title">MOARA 主仓库</span>
+<span class="md-linkcard-host">github.com</span>
+</span>
+<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>
+</a>
+
+
+<a class="md-linkcard" data-linkcard data-url="https://example.com/docs/guide.pdf" href="https://example.com/docs/guide.pdf" target="_blank" rel="noopener noreferrer">
+<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"></span>
+<span class="md-linkcard-main">
+<span class="md-linkcard-title">文件链接：按后缀显示文件图标</span>
+<span class="md-linkcard-host">example.com</span>
+</span>
+<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>
+</a>
+
+
+<a class="md-linkcard" data-linkcard data-post="103" href="/posts/103">
+<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><i class="ri-article-line"></i></span>
+<span class="md-linkcard-main">
+<span class="md-linkcard-title">站内文章卡片（运行时解析标题）</span>
+<span class="md-linkcard-host">本站文章 #103</span>
+</span>
+<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>
+</a>
+
+
+<h2>5. 仓库卡片 :::github</h2>
+<a class="md-github-card" data-github-card data-repo="markedjs/marked" href="https://github.com/markedjs/marked" target="_blank" rel="noopener noreferrer">
+<span class="md-github-card-head">
+<i class="ri-github-fill" aria-hidden="true"></i>
+<span class="md-github-card-repo">markedjs/marked</span>
+<i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i>
+</span>
+<span class="md-github-card-desc" data-github-desc>View repository on GitHub</span>
+<span class="md-github-card-meta">
+<span class="md-github-stat" data-github-stars><i class="ri-star-line" aria-hidden="true"></i><span>—</span></span>
+<span class="md-github-stat" data-github-forks><i class="ri-git-fork-line" aria-hidden="true"></i><span>—</span></span>
+</span>
+</a>
+
+
+<h2>6. 数学公式（frontmatter <code>math: true</code>）</h2>
+<p>质能方程 $E = mc^2$ 与质能方程行内形式 $E = mc^2$ 可以混排。块级公式使用 <code>$</code>：</p>
+<p>$<br>\mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t), e^{-i\omega t}, dt<br>$</p>
+<p>矩阵与对齐：</p>
+<h1>$<br>\begin{pmatrix} a &amp; b \ c &amp; d \end{pmatrix}<br>\begin{pmatrix} x \ y \end{pmatrix}</h1>
+<p>\begin{pmatrix} ax + by \ cx + dy \end{pmatrix}<br>$</p>
+<h2>7. 行内元素</h2>
+<ul>
+<li>高亮 <mark>荧光笔标记</mark>（酸绿色，双模式高对比）</li>
+<li>键盘按键 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd></li>
+<li>上下标：H<sub>2</sub>O 与 x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup></li>
+<li>行内黑幕（防剧透）：凶手是 <span class="spoiler" role="button" tabindex="0" title="防剧透内容，点击显示">黑衣人</span>，点击显示。</li>
+<li>行内代码 <code>const x = 42;</code></li>
+</ul>
+<h2>8. 链接包裹图片（常驻跳转角标）</h2>
+<p>点击下图会<strong>跳转到目标链接</strong>而不是打开灯箱，图片右上角有常驻角标标识：</p>
+<p><a href="https://unsplash.com"><img src="https://picsum.photos/800/450" alt="示例图片：点击跳转 Unsplash"></a></p>
+<p>裸图（无链接）点击仍打开灯箱预览：</p>
+<p><img src="https://picsum.photos/800/450" alt="裸图：点击打开灯箱"></p>
+<h2>9. 脚注</h2>
+<p>摩尔 Blog 的脚注语法与 GFM 一致<sup class="fn-ref" id="fnref-gfm"><a href="#fn-gfm" aria-label="脚注 gfm">1</a></sup>，定义可以写在任意位置<sup class="fn-ref" id="fnref-anywhere"><a href="#fn-anywhere" aria-label="脚注 anywhere">2</a></sup>，渲染时统一汇总到文末。</p>
+<h2>10. 表格对齐（修复演示）</h2>
+<p>三列分别<strong>左、中、右</strong>对齐（此前全被居中，现在按分隔行生效）：</p>
+<table>
+<thead>
+<tr>
+<th align="left">:左对齐</th>
+<th align="center">居中对齐:</th>
+<th align="right">右对齐:</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">b 站</td>
+<td align="center">1</td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td align="left">云盘</td>
+<td align="center">2</td>
+<td align="right">2000</td>
+</tr>
+<tr>
+<td align="left">邮箱</td>
+<td align="center">3</td>
+<td align="right">3000</td>
+</tr>
+</tbody></table>
+<h2>11. Mermaid 图表</h2>
+<pre><code class="language-mermaid">flowchart LR
+    A[Markdown 源文] --&gt; B{moara-md 预处理}
+    B --&gt; C[marked v15 解析]
+    C --&gt; D[浏览器端渲染]
+    C --&gt; E[Node 端直出 SEO HTML]
+    D --&gt; F((产物一致))
+    E --&gt; F
+</code></pre>
+<h2>12. 原生 details 折叠</h2>
+<p>标准 HTML 折叠（与 <code>:::folding</code> 视觉风格统一）：</p>
+<details>
+<summary>原生 details 折叠示例</summary>
+
+<p>内部同样支持 Markdown 语法（约定 summary 与内容间<strong>保留空行</strong>）。</p>
+<ul>
+<li>项目 A</li>
+<li>项目 B</li>
+</ul>
+</details>
+
+<h2>13. 图集标签（可选 links）</h2>
+<gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , ">
+
+<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>显示跳转角标并跳转，<strong>空项</strong>维持灯箱预览。</p>
+<hr class="footnotes-sep" />
+<section class="footnotes" data-footnotes>
+<ol class="footnotes-list">
+<li id="fn-gfm" class="footnote-item">参见 GitHub Flavored Markdown Spec 的脚注扩展。<a class="footnote-backref" href="#fnref-gfm" aria-label="返回引用处"><i class="ri-arrow-left-line" aria-hidden="true"></i></a></li>
+<li id="fn-anywhere" class="footnote-item">引用处按首次出现顺序编号，支持<a href="https://github.github.com/gfm/"><strong>行内 Markdown</strong></a> 与多行定义。<a class="footnote-backref" href="#fnref-anywhere" aria-label="返回引用处"><i class="ri-arrow-left-line" aria-hidden="true"></i></a></li>
+</ol>
+</section>
+            </article>
+
+            <div class="article-navigation" id="article-navigation"></div>
+
+            <div class="article-copyright">本博客所有文章除特别声明外，均采用<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh-hans" target="_blank" rel="noopener noreferrer">CC BY-NC-SA 4.0</a>协议，转载请注明出处。</div>
+
+            <div class="mobile-bottom-cards">
+                <div class="sidebar-card profile-card">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <img src="https://blog.945426.xyz/assets/img/icon/moara.webp" alt="moara" />
+                        </div>
+                        <div class="profile-text">
+                            <h3 class="profile-name">moara</h3>
+                            <p class="profile-bio" id="mobile-bio-text" onclick="toggleHitokoto(this)" title="一言出处">一言加载中...</p>
+                        </div>
+                    </div>
+                    <div class="profile-social">
+                        <a href="https://m.bilibili.com/space/599051365" title="Bilibili" target="_blank"><i class="ri-bilibili-line"></i></a>
+                        <a href="mailto:moara@foxmail.com" title="Email"><i class="ri-mail-send-line"></i></a>
+                    </div>
+                </div>
+
+                <div class="sidebar-card latency-card" id="mobile-latency-card">
+                    <div class="latency-card-header">
+                        <span><i class="ri-signal-tower-line"></i> 线路检测</span>
+                        <button class="refresh-btn" onclick="refreshLatency()" title="刷新延迟">
+                            <i class="ri-refresh-line"></i>
+                        </button>
+                    </div>
+                    <div class="latency-list" id="mobile-latency-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-categories-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-folder-2-line"></i> 分类</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-list-content" id="mobile-bottom-cat-list"></div>
+                </div>
+
+                <div class="sidebar-card extra-card" id="mobile-bottom-tags-card" style="display:none;">
+                    <div class="extra-card-title">
+                        <span><i class="ri-price-tag-3-line"></i> 标签</span>
+                        <a href="https://blog.945426.xyz/details/archives" class="extra-more-btn">更多 <i class="ri-arrow-right-s-line"></i></a>
+                    </div>
+                    <div class="sidebar-tags-content" id="mobile-bottom-tag-cloud"></div>
+                </div>
+            </div>
+
+            <div id="waline"></div>
+
+            <div style="margin-top: 3rem; padding-top: 1rem; border-top: 1px dashed var(--text-color); text-align: center; font-size: 0.8rem; opacity: 0.6;">
+                &copy; MOARA. All rights reserved.
+            </div>
+
+    <!-- 禁用 JS 兜底 -->
+            <noscript>
+                <div style="margin: 2rem 0; padding: 1.5rem; border: 2px solid var(--text-color); border-radius: 4px; background: var(--card-bg);">
+                    <p style="margin: 0;">您当前禁用了 JavaScript。文章正文已完整显示，但评论、搜索、主题切换等交互功能不可用。</p>
+                    <p style="margin: 1rem 0 0;">
+                        <a href="https://raw-posts.945426.xyz/posts/test001.md" style="display:inline-block; padding: 0.5rem 1rem; background: var(--text-color); color: var(--bg-color); text-decoration: none; border-radius: 4px;">查看原始 Markdown</a>
+                        &nbsp;
+                        <a href="https://blog.945426.xyz/" style="display:inline-block; padding: 0.5rem 1rem; border: 2px solid var(--text-color); text-decoration: none; border-radius: 4px;">返回首页</a>
+                    </p>
+                </div>
+            </noscript>
+        </main>
+    </div>
+</div>
+
+<div class="lightbox-overlay" id="lightbox">
+    <div class="lightbox-img-wrapper">
+        <img src="" alt="Preview" class="lightbox-img" id="lightbox-img" />
+    </div>
+    <div class="lightbox-controls" onclick="event.stopPropagation()">
+        <div class="lb-btn" id="lb-prev"><i class="ri-arrow-left-s-line"></i></div>
+        <div class="lb-btn" id="lb-next"><i class="ri-arrow-right-s-line"></i></div>
+        <div class="lb-btn" id="lb-rot-l"><i class="ri-anticlockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-rot-r"><i class="ri-clockwise-2-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-out"><i class="ri-zoom-out-line"></i></div>
+        <div class="lb-btn" id="lb-zoom-in"><i class="ri-zoom-in-line"></i></div>
+        <div class="lb-btn" id="lb-info"><i class="ri-information-line"></i></div>
+        <div class="lb-btn" id="lb-close"><i class="ri-close-circle-line"></i></div>
+    </div>
+    <div class="lightbox-thumbnails" id="lb-thumbnails"></div>
+    <div class="lb-info-panel" id="lb-info-panel" onclick="event.stopPropagation()">
+        <div class="lb-info-row"><span class="lb-info-label">文件名</span><span id="lb-info-name" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">尺寸</span><span id="lb-info-size" class="lb-info-value">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">描述</span><span id="lb-info-alt" class="lb-info-value-full">-</span></div>
+        <div class="lb-info-row"><span class="lb-info-label">地址</span><a id="lb-info-src" href="#" target="_blank" rel="noopener">-</a></div>
+    </div>
+</div>
+
+<div class="scroll-controls" id="scrollControls">
+    <div class="scroll-actions-wrapper">
+        <div class="scroll-btn" onclick="window.scrollTo({top:0, behavior:'smooth'})" title="回到顶部">
+            <i class="ri-arrow-up-line"></i>
+        </div>
+        <div class="scroll-btn" onclick="window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'})" title="去到底部">
+            <i class="ri-arrow-down-line"></i>
+        </div>
+    </div>
+    <div class="mobile-scroll-row">
+        <div class="scroll-btn toc-btn" onclick="toggleTocPopup()" title="文章目录">
+            <i class="ri-list-check"></i>
+        </div>
+        <div class="scroll-btn direction-btn" onclick="handleDirectionScroll()" title="滚动">
+            <i class="ri-arrow-down-line" id="direction-icon"></i>
+        </div>
+    </div>
+    <div class="scroll-btn toggle-handler" onclick="toggleScrollWidget()" title="收起/展开">
+        <div class="progress-track"></div>
+        <div class="progress-fill" id="scroll-progress-fill"></div>
+        <span class="progress-num" id="scroll-progress-num">0</span>
+        <i class="ri-arrow-right-s-line toggle-icon" id="scroll-toggle-icon"></i>
+    </div>
+    <div class="toc-popup" id="toc-popup">
+        <div class="toc-popup-title"><i class="ri-list-check"></i> 目录导航</div>
+        <ul class="toc-popup-list" id="toc-popup-list"></ul>
+    </div>
+</div>
+
+<!-- 文章渲染 -->
+<script src="https://blog.945426.xyz/assets/js/moara-md.js?v=20261003" defer></script>
+<script src="https://blog.945426.xyz/assets/js/article.js?v=20261003" defer></script>
+
+</body>
+</html>
