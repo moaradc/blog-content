@@ -8,7 +8,6 @@ tags: ["Demo", "Markdown"]
 desc: 沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。
 math: true
 ---
-
 本文是博客 Markdown 扩展语法的**完整演示**，全部组件均由 `moara-md` 扩展层渲染（浏览器端与 `/posts/<id>` 直出共用同一实现，产物一致）。
 
 > [!NOTE]

@@ -1,7 +1,7 @@
 {
   "page": 0,
   "perPage": 16,
-  "total": 7,
+  "total": 8,
   "pageCount": 1,
   "posts": [
     {
@@ -12,6 +12,16 @@
       "author": "moara",
       "category": ["Demo"],
       "pinned": true
+    },
+    {
+      "id": "test001",
+      "title": "Markdown 组件语法全览",
+      "date": "2026-10-03 08:20",
+      "last_modified": "2026-10-03 08:20",
+      "author": "moara",
+      "category": ["Demo"],
+      "tags": ["Demo","Markdown"],
+      "desc": "沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。"
     },
     {
       "id": "107",
