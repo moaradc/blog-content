@@ -1,7 +1,7 @@
 ---
 title: Markdown 组件语法全览
 date: 2026-10-03 08:20
-last_modified: 2026-10-03 08:20
+last_modified: 2026-10-03 20:30
 author: moara
 category: ["Demo"]
 tags: ["Demo", "Markdown"]
@@ -15,7 +15,7 @@ math: true
 > 提示框（Admonition）支持 12 种类型：`NOTE` `TIP` `INFO` `IMPORTANT` `WARNING` `CAUTION` `DANGER` `ABSTRACT` `EXAMPLE` `QUOTE` `SUCCESS` `QUESTION`，同义写法（如 `TIP`/`IMPORTANT`）自动归并。
 
 > [!TIP]+ 可折叠提示框
-> 尾缀 `+` 默认展开，`-` 默认收起。折叠态的提示框与折叠面板共享同一套动画协议。
+> 尾缀 `+` 默认展开，`-` 默认收起。展开/收起为即时切换（无动画、零闪烁）。
 
 > [!WARNING]- 收起状态的警告
 > 这一栏默认收起，点击标题即可展开。支持嵌套任意块级语法。
@@ -107,9 +107,13 @@ cd MOARA && npm ci && npm run build
 
 :::video{type="youtube" id="aqz-KE-bpKQ" title="演示：YouTube 嵌入"}
 
-折叠块内推荐使用**叶子形式** `::video`（无需闭合围栏）：
+直链视频**跟随原始比例**渲染（无外壳、无黑边留白）：
 
-:::folding{title="折叠面板内的视频"}
+::video{url="https://www.w3schools.com/html/mov_bbb.mp4" title="演示：直链原生播放器"}
+
+折叠块内既可用叶子形式 `::video`，也可用块形式 `:::video`（渲染位置均正确）：
+
+:::folding{title="折叠面板内的视频（位置修复演示）"}
 
 ::video{url="https://www.w3schools.com/html/mov_bbb.mp4" title="演示：直链原生播放器"}
 
@@ -135,14 +139,23 @@ $$
 \mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t)\, e^{-i\omega t}\, dt
 $$
 
-矩阵与对齐：
+矩阵与对齐环境（`aligned` 多行公式不受段落换行影响）：
 
 $$
-\begin{pmatrix} a & b \\ c & d \end{pmatrix}
-\begin{pmatrix} x \\ y \end{pmatrix}
-=
-\begin{pmatrix} ax + by \\ cx + dy \end{pmatrix}
+\begin{aligned}
+\nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \\
+\nabla \cdot \mathbf{B} &= 0 \\
+\nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t}
+\end{aligned}
 $$
+
+方括号定界符 `\[ ... \]` 同样支持块级公式：
+
+\[
+\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
+\]
+
+行内圆括号 `\( ... \)`：质能方程 \(E = mc^2\) 与分数 \(\tfrac{1}{2}mv^2\)。
 
 ## 7. 行内元素
 
@@ -154,9 +167,9 @@ $$
 
 ## 8. 链接包裹图片（常驻跳转角标）
 
-点击下图会**跳转到目标链接**而不是打开灯箱，图片右上角有常驻角标标识：
+点击**图片本身仍打开灯箱**预览；只有点击右上角的**跳转角标**才跳转（并在新标签页打开）：
 
-[![示例图片：点击跳转 Unsplash](https://picsum.photos/800/450)](https://unsplash.com)
+[![示例图片：角标跳转 Unsplash](https://picsum.photos/800/450)](https://unsplash.com)
 
 裸图（无链接）点击仍打开灯箱预览：
 
@@ -164,7 +177,7 @@ $$
 
 ## 9. 脚注
 
-摩尔 Blog 的脚注语法与 GFM 一致[^gfm]，定义可以写在任意位置[^anywhere]，渲染时统一汇总到文末。
+摩尔 Blog 的脚注语法与 GFM 一致[^gfm]，定义可以写在任意位置[^anywhere]，渲染时统一汇总到文末「注释」区。**未写定义的引用**（如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。
 
 [^gfm]: 参见 GitHub Flavored Markdown Spec 的脚注扩展。
 [^anywhere]: 引用处按首次出现顺序编号，支持[**行内 Markdown**](https://github.github.com/gfm/) 与多行定义。
@@ -207,6 +220,6 @@ flowchart LR
 
 ## 13. 图集标签（可选 links）
 
-<gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , ">
+<gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery>
 
 `links` 属性与 `src` 逐项对应：**有链接的项**显示跳转角标并跳转，**空项**维持灯箱预览。

@@ -211,6 +211,12 @@
         /* 成对自定义标签：<music id="x"></music> / <gallery src="a, b"></gallery> */
         text = text.replace(/<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi, push);
 
+        /* 裸写法防御：<gallery ...> 未闭合会吞掉后续全部内容（HTML 解析将其后元素
+           视为子节点），自闭合 / 裸开标签统一补闭合（成对已在上一步换为占位符，
+           此处剩余必为裸标签）。 */
+        text = text.replace(/<(music|gallery)\b([^>]*?)\s*\/>/gi, '<$1$2></$1>');
+        text = text.replace(/<(music|gallery)\b([^>]*?)>(?!<\/\1>)/gi, '<$1$2></$1>');
+
         /* 旧版折叠框整块 HTML（已废弃，此处仅为防截断保护；渲染走旧 CSS） */
         text = text.replace(/<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, push);
 
@@ -368,19 +374,20 @@
 
         if (!src) return '';
 
-        var inner;
         if (isIframe) {
-            inner = '<iframe src="' + escapeHtml(src) + '" title="' + escapeHtml(title || '嵌入视频') + '"' +
+            /* iframe 无固有尺寸：最小外壳仅承担纵横比（背景/边框/圆角全部移除） */
+            return '<div class="video-embed" style="aspect-ratio:' + escapeHtml(aspect.replace(':', ' / ')) + '" data-aspect="' + escapeHtml(aspect) + '">' +
+                '<iframe src="' + escapeHtml(src) + '" title="' + escapeHtml(title || '嵌入视频') + '"' +
                 ' loading="lazy" scrolling="no"' +
                 ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"' +
-                ' allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>';
-        } else {
-            inner = '<video controls preload="metadata" playsinline src="' + escapeHtml(src) + '"' +
-                (poster ? ' poster="' + escapeHtml(poster) + '"' : '') + '></video>' +
-                (title ? '\n<span class="video-embed-caption">' + escapeHtml(title) + '</span>' : '');
+                ' allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>' +
+                '</div>';
         }
 
-        return '<div class="video-embed" data-aspect="' + escapeHtml(aspect) + '">' + inner + '</div>';
+        /* 直链视频：裸 <video>，跟随原始尺寸（width:100% / height:auto 由 CSS 处理） */
+        return '<video controls preload="metadata" playsinline src="' + escapeHtml(src) + '"' +
+            (poster ? ' poster="' + escapeHtml(poster) + '"' : '') +
+            (title ? ' title="' + escapeHtml(title) + '"' : '') + '></video>';
     }
 
     /**
@@ -409,9 +416,11 @@
         var host = '';
         try { host = new URL(url).hostname; } catch (e) { host = url.replace(/^https?:\/\//, '').split('/')[0]; }
 
+        /* 图标槽预置首字回退：favicon 成功时由运行时替换，失败则保留 */
+        var fallbackChar = (title || host).trim().charAt(0).toUpperCase() || '#';
         return '<a class="md-linkcard" data-linkcard data-url="' + escapeHtml(url) + '"' +
             ' href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
-            '\n<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"></span>' +
+            '\n<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">' + escapeHtml(fallbackChar) + '</span></span>' +
             '\n<span class="md-linkcard-main">' +
             '\n<span class="md-linkcard-title">' + (title ? escapeHtml(title) : escapeHtml(host)) + '</span>' +
             '\n<span class="md-linkcard-host">' + escapeHtml(host) + '</span>' +
@@ -426,6 +435,7 @@
     function renderGithubCard(attrs) {
         var repo = String(attrs.repo || '').trim();
         if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return '';
+        /* 语言/星标/协议由运行时按可得性填充（缺省不显示，无占位符）；描述可为空 */
         return '<a class="md-github-card" data-github-card data-repo="' + escapeHtml(repo) + '"' +
             ' href="https://github.com/' + escapeHtml(repo) + '" target="_blank" rel="noopener noreferrer">' +
             '\n<span class="md-github-card-head">' +
@@ -433,11 +443,8 @@
             '\n<span class="md-github-card-repo">' + escapeHtml(repo) + '</span>' +
             '\n<i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i>' +
             '\n</span>' +
-            '\n<span class="md-github-card-desc" data-github-desc>View repository on GitHub</span>' +
-            '\n<span class="md-github-card-meta">' +
-            '\n<span class="md-github-stat" data-github-stars><i class="ri-star-line" aria-hidden="true"></i><span>—</span></span>' +
-            '\n<span class="md-github-stat" data-github-forks><i class="ri-git-fork-line" aria-hidden="true"></i><span>—</span></span>' +
-            '\n</span>' +
+            '\n<span class="md-github-card-desc" data-github-desc hidden></span>' +
+            '\n<span class="md-github-card-meta" data-github-meta hidden></span>' +
             '\n</a>';
     }
 
@@ -491,6 +498,15 @@
 
         var emitBlock = function (html, indent) {
             out.push('\n\n' + indentBlock(html, indent) + '\n\n');
+        };
+
+        /** 叶子指令落点：容器内 → 帧体缓冲（单行压缩），顶层 → 块输出 */
+        var emitLeaf = function (html, indent) {
+            if (stack.length > 0) {
+                stack[stack.length - 1].bodyLines.push(indent + html.replace(/\n+/g, ' '));
+            } else {
+                emitBlock(html, indent);
+            }
         };
 
         /** 关闭一个栈帧：folding/tab/tabs/video容器/linkcard容器/github容器 */
@@ -550,12 +566,14 @@
                 var name = openMatch[3].toLowerCase();
                 var attrs = parseAttrs(openMatch[4] || '');
 
-                /* 叶子指令（恰好两个冒号）：单行自足 */
+                /* 叶子指令（恰好两个冒号）：单行自足。
+                   位于容器（折叠/选项卡）内时写入容器缓冲（压缩为单行，
+                   保证 marked HTML 块解析不跨空行），否则进入顶层输出。 */
                 if (fenceLen === 2) {
                     if (LEAF_DIRECTIVES.indexOf(name) !== -1) {
                         var leafHtml = renderLeafDirective(name, attrs);
                         if (leafHtml) {
-                            emitBlock(leafHtml, indent);
+                            emitLeaf(leafHtml, indent);
                             i++;
                             continue;
                         }
@@ -573,7 +591,7 @@
                 if (BODYLESS_DIRECTIVES.indexOf(name) !== -1) {
                     var bodylessHtml = renderLeafDirective(name, attrs);
                     if (bodylessHtml) {
-                        emitBlock(bodylessHtml, indent);
+                        emitLeaf(bodylessHtml, indent);
                         i++;
                         continue;
                     }
@@ -683,6 +701,45 @@
     }
 
     /* ------------------------------------------------------------------
+     * ④b 数学公式摘离 / 归还
+     * ------------------------------------------------------------------
+     * marked 开启 breaks 后会把多行 $$ 公式块拆成多个文本节点（<br>），
+     * KaTeX auto-render 无法跨节点匹配定界符。摘离为占位符后，
+     * 公式在文本中始终是单一段落级整体，归还后由运行时统一渲染。
+     * ------------------------------------------------------------------ */
+
+    function extractMath(text, ctx) {
+        if (!/\$|\\\(|\\\[/.test(text)) return text;
+        var spans = [];
+        var nonce = makeNonce();
+        var ph = function (i) { return '%%MD_MATH_' + nonce + '_' + i + '%%'; };
+        var push = function (m) { spans.push(m); return ph(spans.length - 1); };
+
+        /* 块级 $$...$$（可跨行）优先，避免被行内规则截断 */
+        text = text.replace(/\$\$[\s\S]+?\$\$/g, push);
+        /* 行内 $...$（单行、非空、非空白边界） */
+        text = text.replace(/\$(?!\s)([^$\n]+?)(?!\s)\$/g, push);
+        /* LaTeX 定界符 \[...\] 与 \(...\) */
+        text = text.replace(/\\\[[\s\S]+?\\\]/g, push);
+        text = text.replace(/\\\([\s\S]+?\\\)/g, push);
+
+        if (spans.length) {
+            ctx.mathSpans = spans;
+            ctx.mathNonce = nonce;
+        }
+        return text;
+    }
+
+    function restoreMath(html, ctx) {
+        if (!ctx.mathSpans || !ctx.mathSpans.length) return html;
+        var out = String(html);
+        for (var i = 0; i < ctx.mathSpans.length; i++) {
+            out = out.split('%%MD_MATH_' + ctx.mathNonce + '_' + i + '%%').join(ctx.mathSpans[i]);
+        }
+        return out;
+    }
+
+    /* ------------------------------------------------------------------
      * ⑤ 脚注收集与替换
      * ------------------------------------------------------------------ */
 
@@ -722,13 +779,14 @@
         var body = outLines.join('\n');
 
         body = body.replace(/\[\^([^\s\]]+)\]/g, function (whole, label) {
-            if (!(label in defs)) return whole;
+            if (!(label in defs)) return whole; /* 未定义引用保持原文（与 GFM 一致） */
             if (!(label in refMap)) {
                 refMap[label] = Object.keys(refMap).length + 1;
             }
             var n = refMap[label];
-            return '<sup class="fn-ref" id="fnref-' + escapeHtml(label) + '">' +
-                '<a href="#fn-' + escapeHtml(label) + '" aria-label="脚注 ' + escapeHtml(label) + '">' + n + '</a></sup>';
+            /* 按钮协议：运行时平滑滚动（不更新地址栏），键盘可达 */
+            return '<sup class="fn-ref" id="fnref-' + escapeHtml(label) + '" data-fn-ref="' + escapeHtml(label) + '"' +
+                ' role="button" tabindex="0" aria-label="查看脚注 ' + n + '">' + n + '</sup>';
         });
 
         /* 文末汇总区：仅收录被引用的定义 */
@@ -738,12 +796,16 @@
         var items = used.map(function (label) {
             var token = '%%FN_BODY_' + makeNonce() + '%%';
             pending.push({ token: token, md: defs[label], label: label });
-            return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' + token +
-                '<a class="footnote-backref" href="#fnref-' + escapeHtml(label) + '" aria-label="返回引用处">' +
-                '<i class="ri-arrow-left-line" aria-hidden="true"></i></a></li>';
+            return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' +
+                '<span class="footnote-text">' + token + '</span>' +
+                '<button class="footnote-backref" type="button" data-fn-back="fnref-' + escapeHtml(label) + '"' +
+                ' aria-label="返回引用处"><i class="ri-arrow-left-line" aria-hidden="true"></i></button>' +
+                '</li>';
         }).join('\n');
 
-        return body + '\n\n<hr class="footnotes-sep" />\n<section class="footnotes" data-footnotes>' +
+        /* 附加说明区：低调灰底面板，位于正文末尾（上一篇/下一篇导航由模板置于 article 之外） */
+        return body + '\n\n<section class="footnotes" data-footnotes data-notoc>' +
+            '\n<header class="footnotes-title"><i class="ri-information-line" aria-hidden="true"></i><span>注释</span></header>' +
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
     }
 
@@ -776,6 +838,7 @@
         text = text.replace(/\r\n?/g, '\n');
         text = extractCode(text, ctx);
         text = protectLegacyTags(text, ctx);
+        text = extractMath(text, ctx);
         text = transformAdmonitions(text, opts);
         text = transformDirectives(text, opts);
         text = transformFootnotes(text, ctx);
@@ -816,6 +879,9 @@
 
         /* ② 遗留自定义标签还原 */
         out = restoreLegacyTags(out, ctx);
+
+        /* ③ 数学公式还原（置于最后，确保脚注/标签回填不影响占位符） */
+        out = restoreMath(out, ctx);
 
         return out;
     }
