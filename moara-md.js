@@ -497,7 +497,14 @@
         };
 
         var emitBlock = function (html, indent) {
-            out.push('\n\n' + indentBlock(html, indent) + '\n\n');
+            var block = '\n\n' + indentBlock(html, indent) + '\n\n';
+            if (stack.length > 0) {
+                /* 嵌套场景：内层容器闭合时，渲染结果写入父帧体（随父容器
+                   递归渲染包裹），而非直接落文档层 —— 否则嵌套折叠分裂渲染 */
+                stack[stack.length - 1].bodyLines.push(block);
+            } else {
+                out.push(block);
+            }
         };
 
         /** 叶子指令落点：容器内 → 帧体缓冲（单行压缩），顶层 → 块输出 */
@@ -805,7 +812,7 @@
 
         /* 附加说明区：低调灰底面板，位于正文末尾（上一篇/下一篇导航由模板置于 article 之外） */
         return body + '\n\n<section class="footnotes" data-footnotes data-notoc>' +
-            '\n<header class="footnotes-title"><i class="ri-information-line" aria-hidden="true"></i><span>注释</span></header>' +
+            '\n<div class="footnotes-title"><i class="ri-information-line" aria-hidden="true"></i><span>注释</span></div>' +
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
     }
 
