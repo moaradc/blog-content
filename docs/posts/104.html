@@ -44,8 +44,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
     <!-- 本站 CSS -->
-    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
-    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css?v=20261005" />
+    <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css?v=20261005" />
 
     <!-- 第三方库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
@@ -53,7 +53,7 @@
     <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
     <!-- 本站 JS -->
-    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js?v=20261005"></script>
     <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
     <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
@@ -64,7 +64,7 @@
     <style>
       #detail-content { overflow-x: auto; }
       #detail-content pre { max-width: 100%; overflow-x: auto; }
-      #detail-content video, #detail-content iframe, #detail-content img { max-width: 100%; height: auto; }
+      #detail-content video:not(.video-embed > video), #detail-content iframe:not(.video-embed > iframe), #detail-content img { max-width: 100%; height: auto; }
       #detail-content table { max-width: 100%; display: block; overflow-x: auto; }
       body { overflow-x: hidden; max-width: 100%; }
     </style>
@@ -91,7 +91,7 @@
         #detail-content pre { max-width: 100% !important; overflow-x: auto !important; display: block !important; }
         #detail-content pre code { max-width: none !important; overflow: visible !important; word-wrap: normal !important; white-space: pre !important; }
         #detail-content :not(pre) > code { word-break: break-word !important; }
-        #detail-content video, #detail-content iframe, #detail-content img { max-width: 100% !important; height: auto !important; }
+        #detail-content video:not(.video-embed > video), #detail-content iframe:not(.video-embed > iframe), #detail-content img { max-width: 100% !important; height: auto !important; }
         #detail-content table { max-width: 100% !important; display: block !important; overflow-x: auto !important; }
         body { overflow-x: hidden !important; max-width: 100% !important; }
       </style>
@@ -133,7 +133,7 @@
 </nav>
 
 <!-- 文章容器 -->
-<div id="article-view" data-article-id="104" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;pixiv&quot;,&quot;date&quot;:&quot;2025-12-26 08:59&quot;,&quot;last_modified&quot;:&quot;2025-12-26 08:59&quot;,&quot;author&quot;:&quot;Lamb&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;gallery&quot;,&quot;locked&quot;:false}">
+<div id="article-view" data-article-id="104" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;pixiv&quot;,&quot;date&quot;:&quot;2025-12-26 08:59&quot;,&quot;last_modified&quot;:&quot;2025-12-26 08:59&quot;,&quot;author&quot;:&quot;Lamb&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;gallery&quot;,&quot;locked&quot;:false,&quot;math&quot;:false}">
 
     <div class="article-hero-wrapper">
         <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
@@ -243,7 +243,7 @@
             </div>
 
             <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
-            <article class="article-body" id="detail-content">
+            <article class="article-body" id="detail-content" data-math="false">
                 <p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0l000d7w32xne4num52gzj2DIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
 <p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0m000d7w32y3ocobrkotd34DIYPAdYOAdeyDpxPDqJy.jpg" alt=""></p>
 <p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0l000d7w33g3oqn4u6j5t0eDIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
@@ -374,7 +374,8 @@
 </div>
 
 <!-- 文章渲染 -->
-<script src="https://blog.945426.xyz/assets/js/article.js" defer></script>
+<script src="https://blog.945426.xyz/assets/js/moara-md.js?v=20261005" defer></script>
+<script src="https://blog.945426.xyz/assets/js/article.js?v=20261005" defer></script>
 
 </body>
 </html>
