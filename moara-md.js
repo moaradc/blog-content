@@ -44,7 +44,7 @@
  *  6. VitePress 风格 admonition（引用块语法）：
  *         > [!NOTE] 可选自定义标题
  *         > 正文支持任意 Markdown / 指令。
- *     类型见 ADM_TYPES；后缀 + 默认展开可折叠，- 默认折叠。
+ *     类型见 ADM_TYPES；+ 默认展开，- 或无尾缀默认折叠（均可点击切换）。
  *
  *  7. 行内防剧透：:spoiler[被隐藏的文字]
  *
@@ -285,7 +285,7 @@
 
                     var conf = ADM_TYPES[type];
                     var title = escapeHtml(customTitle || conf.label);
-                    var isCollapsible = collapse === '+' || collapse === '-';
+                    var isCollapsible = true; /* 全部可折叠：无尾缀默认收起（用户协议 v4） */
                     var openByDefault = collapse === '+';
 
                     var inner = quote.slice(firstIdx + 1).join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
@@ -375,12 +375,22 @@
         if (!src) return '';
 
         if (isIframe) {
-            /* iframe 无固有尺寸：最小外壳仅承担纵横比（背景/边框/圆角全部移除） */
-            return '<div class="video-embed" style="aspect-ratio:' + escapeHtml(aspect.replace(':', ' / ')) + '" data-aspect="' + escapeHtml(aspect) + '">' +
-                '<iframe src="' + escapeHtml(src) + '" title="' + escapeHtml(title || '嵌入视频') + '"' +
-                ' loading="lazy" scrolling="no"' +
-                ' allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen"' +
-                ' allowfullscreen referrerpolicy="no-referrer-when-downgrade"></iframe>' +
+            /* 点击加载门面（lite-youtube-embed 协议）：首屏零 iframe 请求 ——
+               不可达平台（如 GFW 下 YouTube）不会出现加载失败大空白，
+               点击后才注入真实播放器（autoplay=1）。 */
+            var provider = /player\.bilibili\.com/.test(src) ? 'bilibili' : 'youtube';
+            var pIcon = provider === 'bilibili' ? 'ri-bilibili-line' : 'ri-youtube-line';
+            var pLabel = provider === 'bilibili' ? 'bilibili' : 'YouTube';
+            var autoSrc = provider === 'bilibili'
+                ? src.replace('autoplay=0', 'autoplay=1')
+                : src + '&autoplay=1';
+            return '<div class="video-embed" style="aspect-ratio:' + escapeHtml(aspect.replace(':', ' / ')) + '" data-aspect="' + escapeHtml(aspect) + '" data-video-embed' +
+                ' data-src="' + escapeHtml(autoSrc) + '" data-video-title="' + escapeHtml(title || '嵌入视频') + '">' +
+                '<button class="video-poster" type="button" aria-label="加载视频：' + escapeHtml(title || '嵌入视频') + '">' +
+                '<i class="video-poster-platform ' + pIcon + '" aria-hidden="true"></i>' +
+                '<span class="video-poster-title">' + escapeHtml(title || '嵌入视频') + '</span>' +
+                '<span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 ' + pLabel + ' 播放器</span>' +
+                '</button>' +
                 '</div>';
         }
 
@@ -793,7 +803,7 @@
             var n = refMap[label];
             /* 按钮协议：运行时平滑滚动（不更新地址栏），键盘可达 */
             return '<sup class="fn-ref" id="fnref-' + escapeHtml(label) + '" data-fn-ref="' + escapeHtml(label) + '"' +
-                ' role="button" tabindex="0" aria-label="查看脚注 ' + n + '">' + n + '</sup>';
+                ' role="button" tabindex="0" aria-label="查看注释卡片">' + n + '</sup>';
         });
 
         /* 文末汇总区：仅收录被引用的定义 */
@@ -803,16 +813,18 @@
         var items = used.map(function (label) {
             var token = '%%FN_BODY_' + makeNonce() + '%%';
             pending.push({ token: token, md: defs[label], label: label });
+            /* 序号位改为书形跳转按钮（与卡片标题同款图标），点击返回引用处；
+               尾部 ← 回引按钮移除（用户协议 v4） */
             return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' +
+                '<button class="fn-jump" type="button" data-fn-jump="fnref-' + escapeHtml(label) + '"' +
+                ' aria-label="返回引用处"><i class="ri-book-open-line" aria-hidden="true"></i></button>' +
                 '<span class="footnote-text">' + token + '</span>' +
-                '<button class="footnote-backref" type="button" data-fn-back="fnref-' + escapeHtml(label) + '"' +
-                ' aria-label="返回引用处"><i class="ri-arrow-left-line" aria-hidden="true"></i></button>' +
                 '</li>';
         }).join('\n');
 
         /* 附加说明区：低调灰底面板，位于正文末尾（上一篇/下一篇导航由模板置于 article 之外） */
         return body + '\n\n<section class="footnotes" data-footnotes data-notoc>' +
-            '\n<div class="footnotes-title"><i class="ri-information-line" aria-hidden="true"></i><span>注释</span></div>' +
+            '\n<div class="footnotes-title"><i class="ri-book-open-line" aria-hidden="true"></i><span>注释</span></div>' +
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
     }
 

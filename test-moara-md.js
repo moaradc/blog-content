@@ -34,14 +34,14 @@ function render(md) {
     const md = ['正文[^1]', '', '[^1]: 解释文字'].join('\n');
     const h = render(md);
     t('脚注：<div> 标题（非 header）', h.includes('<div class="footnotes-title">') && !h.includes('<header'));
-    t('脚注：回引按钮', h.includes('footnote-backref'));
+    t('脚注：回引协议 v4（fn-jump 按钮化）', h.includes('data-fn-jump'));
     t('脚注：未定义引用保留原文', render('只剩未定义[^missing]').includes('[^missing]'));
 }
 /* ── 4. 视频发射（纵横比 + 无边框依赖） ── */
 {
     const h = render(':::video{type="bilibili" id="BV1x" title="B"}');
     t('视频：16:9 内联纵横比', h.includes('aspect-ratio:16 / 9'));
-    t('视频：iframe 填充协议', h.includes('video-embed') && h.includes('<iframe'));
+    t('视频：门面容器（无iframe直出）', h.includes('video-embed') && !h.includes('<iframe'));
     t('视频：直链裸 video', render('::video{url="https://x/v.mp4"}').includes('<video'));
 }
 /* ── 5. 数学（回归） ── */
@@ -74,6 +74,26 @@ function render(md) {
     const md = ':::folding{title="X"}\n内容未闭合';
     const h = render(md);
     t('未闭合：内容不丢', h.includes('内容未闭合'));
+}
+
+/* 由生成器追加的 v4 断言组（独立计数） */
+{
+    let v4pass = 0, v4fail = 0;
+    const t4 = (name, cond) => { if (cond) v4pass++; else { v4fail++; console.error('  ✗ [v4] ' + name); } };
+    const h_fn = render('正文[^1]文字\n\n[^1]: 脚注定义');
+    t4('脚注 v4：书形图标（标题与条目）', (h_fn.match(/ri-book-open-line/g) || []).length >= 2);
+    t4('脚注 v4：前置跳转按钮、无尾部回引', h_fn.includes('data-fn-jump') && !h_fn.includes('footnote-backref'));
+    t4('脚注 v4：sup 引用保留', h_fn.includes('fn-ref'));
+    const h_v = render(':::video{type="youtube" id="aqz-KE-bpKQ" title="演示"}');
+    t4('视频 v4：门面按钮、无 iframe 直出', h_v.includes('data-video-embed') && h_v.includes('video-poster') && !h_v.includes('<iframe'));
+    t4('视频 v4：autoplay=1 点击即播', /autoplay=1/.test(h_v));
+    const h_vb = render(':::video{type="bilibili" id="BV1GJ411x7h7" title="演示"}');
+    t4('视频 v4：B站门面 + autoplay', h_vb.includes('ri-bilibili-line') && /autoplay=1/.test(h_vb));
+    t4('提示框 v4：无尾缀默认折叠', (() => { const h = render('> [!TIP] 无尾缀\n> 内容'); return h.includes('data-collapsible') && !h.includes('data-open="true"'); })());
+    t4('提示框 v4：+ 默认展开', (() => { const h = render('> [!TIP]+ 展开\n> 内容'); return h.includes('data-open="true"'); })());
+    t4('提示框 v4：- 显式折叠', (() => { const h = render('> [!TIP]- 收起\n> 内容'); return h.includes('data-collapsible') && !h.includes('data-open="true"'); })());
+    console.log(`v4 组：${v4pass + v4fail} 项：${v4pass} 通过，${v4fail} 失败`);
+    if (v4fail) process.exitCode = 1;
 }
 
 console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
