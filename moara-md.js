@@ -813,18 +813,18 @@
         var items = used.map(function (label) {
             var token = '%%FN_BODY_' + makeNonce() + '%%';
             pending.push({ token: token, md: defs[label], label: label });
-            /* 序号位改为书形跳转按钮（与卡片标题同款图标），点击返回引用处；
-               尾部 ← 回引按钮移除（用户协议 v4） */
+            /* 序号位：圈号数字跳转按钮（与正文 sup 引用同款样式，数字一一对应），
+               点击返回引用处（用户协议 v5） */
             return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' +
                 '<button class="fn-jump" type="button" data-fn-jump="fnref-' + escapeHtml(label) + '"' +
-                ' aria-label="返回引用处"><i class="ri-book-open-line" aria-hidden="true"></i></button>' +
+                ' aria-label="返回引用处 ' + (refMap[label] || '') + '">' + (refMap[label] || '') + '</button>' +
                 '<span class="footnote-text">' + token + '</span>' +
                 '</li>';
         }).join('\n');
 
         /* 附加说明区：低调灰底面板，位于正文末尾（上一篇/下一篇导航由模板置于 article 之外） */
         return body + '\n\n<section class="footnotes" data-footnotes data-notoc>' +
-            '\n<div class="footnotes-title"><i class="ri-book-open-line" aria-hidden="true"></i><span>注释</span></div>' +
+            '\n<div class="footnotes-title"><i class="ri-book-read-line" aria-hidden="true"></i><span>注释</span></div>' +
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
     }
 
