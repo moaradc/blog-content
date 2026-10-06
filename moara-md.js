@@ -410,32 +410,31 @@
         var title = attrs.title ? String(attrs.title) : '';
 
         if (post && !url) {
-            return '<a class="md-linkcard" data-linkcard data-post="' + escapeHtml(post) + '"' +
+            /* 站内文章卡（linlinli markdown-linkcard-post 结构）；
+               标题/日期/分类由运行时按 posts.json 填充 */
+            return '<a class="markdown-linkcard markdown-linkcard-post" data-linkcard data-post="' + escapeHtml(post) + '"' +
                 ' href="/posts/' + encodeURIComponent(post) + '">' +
-                '\n<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><i class="ri-article-line"></i></span>' +
-                '\n<span class="md-linkcard-main">' +
-                '\n<span class="md-linkcard-title">' + (title ? escapeHtml(title) : '加载标题中…') + '</span>' +
-                '\n<span class="md-linkcard-host">本站文章 #' + escapeHtml(post) + '</span>' +
-                '\n</span>' +
-                '\n<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>' +
+                '\n<div class="linkcard-info">' +
+                '\n<div class="linkcard-title" data-post-title>' + (title ? escapeHtml(title) : '加载标题中…') + '</div>' +
+                '\n<div class="linkcard-meta" data-post-meta hidden></div>' +
+                '\n</div>' +
                 '\n</a>';
         }
 
         if (!url) return '';
 
-        var host = '';
-        try { host = new URL(url).hostname; } catch (e) { host = url.replace(/^https?:\/\//, '').split('/')[0]; }
+        var host = '', origin = '';
+        try { var u = new URL(url); host = u.hostname; origin = u.origin; }
+        catch (e) { host = url.replace(/^https?:\/\//, '').split('/')[0]; origin = 'https://' + host; }
 
-        /* 图标槽预置首字回退：favicon 成功时由运行时替换，失败则保留 */
-        var fallbackChar = (title || host).trim().charAt(0).toUpperCase() || '#';
-        return '<a class="md-linkcard" data-linkcard data-url="' + escapeHtml(url) + '"' +
+        /* linlinli 源码结构：info（标题+URL）左 + favicon img 右（内联 onerror，无 JS 依赖） */
+        return '<a class="markdown-linkcard" data-linkcard data-url="' + escapeHtml(url) + '"' +
             ' href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
-            '\n<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">' + escapeHtml(fallbackChar) + '</span></span>' +
-            '\n<span class="md-linkcard-main">' +
-            '\n<span class="md-linkcard-title">' + (title ? escapeHtml(title) : escapeHtml(host)) + '</span>' +
-            '\n<span class="md-linkcard-host">' + escapeHtml(host) + '</span>' +
-            '\n</span>' +
-            '\n<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>' +
+            '\n<div class="linkcard-info">' +
+            '\n<div class="linkcard-title">' + (title ? escapeHtml(title) : escapeHtml(host)) + '</div>' +
+            '\n<div class="linkcard-url">' + escapeHtml(url) + '</div>' +
+            '\n</div>' +
+            '\n<img src="' + escapeHtml(origin) + '/favicon.ico" alt="" class="linkcard-icon" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.remove()">' +
             '\n</a>';
     }
 
@@ -445,20 +444,26 @@
     function renderGithubCard(attrs) {
         var repo = String(attrs.repo || '').trim();
         if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return '';
-        /* 语言/星标/协议由运行时按可得性填充（缺省不显示，无占位符）；描述可为空 */
-        return '<a class="md-github-card" data-github-card data-repo="' + escapeHtml(repo) + '"' +
+        var slash = repo.indexOf('/');
+        var owner = repo.slice(0, slash), name = repo.slice(slash + 1);
+        /* linlinli 源码结构：avatar（内联 onerror）+ owner/repo + 描述；
+           语言/星标/协议由运行时经 API 填充（缺省不显示，无占位符） */
+        return '<a class="markdown-github" data-github-card data-repo="' + escapeHtml(repo) + '"' +
             ' href="https://github.com/' + escapeHtml(repo) + '" target="_blank" rel="noopener noreferrer">' +
-            '\n<span class="md-github-card-head">' +
-            '\n<i class="ri-github-fill" aria-hidden="true"></i>' +
-            '\n<span class="md-github-card-repo">' + escapeHtml(repo) + '</span>' +
-            '\n<i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i>' +
+            '\n<div class="github-header">' +
+            '\n<img class="github-avatar" src="https://avatars.githubusercontent.com/' + escapeHtml(owner) + '?s=64" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.onerror=null;this.remove()">' +
+            '\n<span class="github-titles">' +
+            '\n<span class="github-name"><span class="github-owner">' + escapeHtml(owner) + '/</span>' + escapeHtml(name) + '</span>' +
+            '\n<span class="github-desc" data-github-desc hidden></span>' +
             '\n</span>' +
-            '\n<span class="md-github-card-desc" data-github-desc hidden></span>' +
-            '\n<span class="md-github-card-meta" data-github-meta hidden></span>' +
+            '\n</div>' +
+            '\n<div class="github-meta" data-github-meta hidden></div>' +
             '\n</a>';
     }
 
-    /** 渲染叶子 / 自闭合指令（video、linkcard、github） */
+    /**
+     * 叶子指令分发（单行、无块体）：linkcard / github 等。
+     */
     function renderLeafDirective(name, attrs) {
         switch (name) {
             case 'video':     return renderVideo(attrs);
