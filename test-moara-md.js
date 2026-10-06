@@ -99,4 +99,18 @@ function render(md) {
 }
 
 console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
+/* ── 7. 选项卡折叠协议 + 注释外链新标签页（v13） ── */
+{
+    const h = render('::::tabs\n\n:::tab{title="A"}\n甲\n:::\n\n:::tab{title="B"}\n乙\n:::\n\n::::');
+    t('tabs v13：默认折叠（无 open 类）', h.includes('class="md-tabs" data-md-tabs>') && !h.includes('md-tabs open'));
+    t('tabs v13：右上折叠图标（同 details-icon）', h.includes('md-tabs-toggle') && h.includes('details-icon ri-arrow-right-s-line'));
+    t('tabs v13：折叠图标 aria-expanded=false', /md-tabs-toggle[^>]*aria-expanded="false"/.test(h));
+    t('tabs v13：面板包裹进 md-tabs-body', h.includes('md-tabs-body'));
+    const h2 = render('::::tabs{open}\n\n:::tab{title="A"}\n甲\n:::\n\n::::');
+    t('tabs v13：{open} 默认展开', h2.includes('class="md-tabs open"') && /md-tabs-toggle[^>]*aria-expanded="true"/.test(h2));
+    const hfn = render('见[^1]\n\n[^1]: 参见 [规范](https://example.com/spec) 与锚点');
+    t('注释 v13：外链新标签页（target=_blank + noopener）', hfn.includes('<a href="https://example.com/spec" target="_blank" rel="noopener noreferrer"'));
+    t('注释 v13：fn-jump 回引不受影响（无 target）', /class="fn-ref fn-jump"[^>]*>1</.test(hfn) && !/fn-jump[^>]*target=/.test(hfn));
+}
+console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
 process.exit(fail ? 1 : 0);

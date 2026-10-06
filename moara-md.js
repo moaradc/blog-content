@@ -543,6 +543,10 @@
                     var uid = ++tabsUid;
                     var bar = '';
                     var panels = '';
+                    /* 折叠协议（用户协议 v13）：::::tabs 无属性 → 默认折叠（仅标题栏可见）；
+                       {open} → 默认展开 —— 与 :::folding 的 open 语义一致 */
+                    var tabsOpen = !!(frame.attrs &&
+                        (frame.attrs.open === true || String(frame.attrs.open).toLowerCase() === 'true'));
                     frame.panels.forEach(function (p, idx) {
                         var btnId = 'md-tab-' + uid + '-' + idx;
                         var panelId = 'md-tabpanel-' + uid + '-' + idx;
@@ -557,12 +561,17 @@
                             '</div>\n';
                     });
                     emitBlock(
-                        '<div class="md-tabs" data-md-tabs>' +
+                        '<div class="md-tabs' + (tabsOpen ? ' open' : '') + '" data-md-tabs>' +
+                        '\n<div class="md-tabs-head">' +
                         '\n<div class="md-tabs-bar" role="tablist">' +
                         '\n' + bar +
-                        '</div>' +
-                        '\n' + panels +
-                        '</div>',
+                        '\n</div>' +
+                        '\n<button class="md-tabs-toggle" type="button" aria-expanded="' + (tabsOpen ? 'true' : 'false') + '"' +
+                        ' title="展开/收起面板内容" aria-label="展开/收起面板内容">' +
+                        '<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>' +
+                        '\n</div>' +
+                        '\n<div class="md-tabs-body">' + panels + '</div>' +
+                        '\n</div>',
                         frame.indent
                     );
                     break;
@@ -892,6 +901,12 @@
                 } else {
                     rendered = escapeHtml(fn.md);
                 }
+                /* 注释区外链新标签页打开（用户协议 v13）：仅 http(s) 外链加 target/rel，
+                   文内锚点（fn-jump/回引）不受影响 */
+                rendered = String(rendered).replace(
+                    /<a\s+href="(https?:\/\/[^"]*)"/gi,
+                    '<a href="$1" target="_blank" rel="noopener noreferrer"'
+                );
                 out = out.split(fn.token).join(rendered);
             });
         }
