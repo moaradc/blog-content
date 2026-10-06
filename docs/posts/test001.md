@@ -161,7 +161,7 @@ $$
 - 高亮 <mark>荧光笔标记</mark>（酸绿色，双模式高对比）
 - 键盘按键 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd>
 - 上下标：H<sub>2</sub>O 与 x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup>
-- 行内黑幕（防剧透）：凶手是 :spoiler[黑衣人]，点击显示。
+- 行内黑幕（防剧透）：凶手是:spoiler[黑衣人]，点击显示。
 - 行内代码 `const x = 42;`
 
 ## 8. 链接包裹图片（常驻跳转角标）
