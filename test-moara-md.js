@@ -67,7 +67,7 @@ function render(md) {
 /* ── 9. 链接卡（回归） ── */
 {
     const h = render(':::linkcard{url="https://example.com/a" title="标"}');
-    t('链接卡 v7：linlinli 结构（favicon img 内联）', h.includes('class="linkcard-icon"') && h.includes('favicon.ico'));
+    t('链接卡：首字回退', h.includes('md-linkcard-fallback'));
 }
 /* ── 10. 未闭合降级（回归） ── */
 {
