@@ -61,6 +61,14 @@ print('Nested folding works!')
 
 :::
 
+
+<details>
+<summary>原生 details（HTML 直写）</summary>
+
+与 `:::folding` 视觉统一，垂直节奏同 0.8rem——用于校验裸 `<details>` 标签的留白一致性。
+
+</details>
+
 ## 2. 选项卡 ::::tabs
 
 选项卡支持**默认折叠协议**：无属性时仅显示标题栏（默认折叠），点击右上角**折叠图标**或任一选项卡即可展开；`{open}` 属性（如下方这组）默认展开。选项过多时标题栏支持**横向滑动**，左右边缘有渐隐提示。
