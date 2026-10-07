@@ -112,5 +112,14 @@ console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
     t('注释 v13：外链新标签页（target=_blank + noopener）', hfn.includes('<a href="https://example.com/spec" target="_blank" rel="noopener noreferrer"'));
     t('注释 v13：fn-jump 回引不受影响（无 target）', /class="fn-ref fn-jump"[^>]*>1</.test(hfn) && !/fn-jump[^>]*target=/.test(hfn));
 }
+/* ── 8. 提示框内围栏代码（行内配对回归） ── */
+{
+    const md = '> [!TIP]+ 标题\n> ```mermaid\n> flowchart LR\n>   A --> B\n> ```\n\n::linkcard{url="https://example.com" title="卡片"}';
+    const h = render(md);
+    t('提示框内围栏：代码块保留（language 标记）', h.includes('language-mermaid'));
+    t('提示框内围栏：后续顶层 linkcard 不被吞（无转义）', h.includes('class="md-linkcard"') && !h.includes('&lt;span class=&quot;md-linkcard'));
+    const h2 = render('> [!NOTE]+ 标题\n> ```bash\n> echo hi\n> ```\n\n正文段落。');
+    t('提示框内围栏：bash 块与正文共存', h2.includes('language-bash') && h2.includes('正文段落。'));
+}
 console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
 process.exit(fail ? 1 : 0);

@@ -6,7 +6,7 @@
     <title>Markdown 组件语法全览 | 沫然Blog</title>
     <link rel="icon" href="https://blog.945426.xyz/favicon.jpg" type="image/jpeg" />
 
-    <meta name="description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta name="description" content="沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。" />
     <meta name="keywords" content="Demo,Markdown,沫然,moara,沫然Blog,博客,MOARA Blog" />
     <meta name="author" content="moara" />
     <meta name="robots" content="index, follow, max-image-preview:large" />
@@ -16,7 +16,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="article" />
     <meta property="og:title" content="Markdown 组件语法全览" />
-    <meta property="og:description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta property="og:description" content="沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。" />
     <meta property="og:url" content="https://blog.945426.xyz/posts/test001" />
     <meta property="og:site_name" content="沫然Blog" />
     <meta property="og:locale" content="zh_CN" />
@@ -27,12 +27,12 @@
 
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content="Markdown 组件语法全览" />
-    <meta name="twitter:description" content="沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。" />
+    <meta name="twitter:description" content="沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。" />
     <meta name="twitter:url" content="https://blog.945426.xyz/posts/test001" />
     
 
     <!-- JSON-LD 结构化数据 -->
-    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown 组件语法全览","description":"沫然Blog 全部 Markdown 扩展组件的语法与效果演示：折叠、选项卡、提示框、视频、链接卡片、脚注、数学公式等。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/test001"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-10-03T00:20:00.000Z","dateModified":"2026-10-03T12:30:00.000Z","url":"https://blog.945426.xyz/posts/test001","articleBody":"本文是博客 Markdown 扩展语法的 完整演示 ，全部组件均由 moara-md 扩展层渲染（浏览器端与 /posts/ id 直出共用同一实现，产物一致）。 备注 提示框（Admonition）支持 12 种类型： NOTE TIP INFO IMPORTANT WARNING CAUTION DANGER ABSTRACT EXAMPLE QUOTE SUCCESS QUESTION ，同义写法（如 TIP / IMPORTANT ）自动归并。 可折叠提示框 尾缀 + 默认展开， - 默认收起。展开/收起为即时切换（无动画、零闪烁）。 收起状态的警告 这一栏默认收起，点击标题即可展开。支持嵌套任意块级语法。 1. 折叠面板 :::folding 折叠面板取代了旧版手写 HTML（旧语法不再推荐）。 内部支持所有块级语法 ：列表、表格、代码块、甚至嵌套折叠。 点击展开 — 查看代码块与列表 列表项一 列表项二 列表项三 export interface AdvancedConfig { /** 是否启用实验特性 */ experimental?: boolean; } export const advancedConfig: AdvancedConfig = { experimental: true }; 参数 类型 默认值 left string - center number 0 right boolean true 嵌套折叠：外层面板 外层默认展开（ open 属性）。内部可以继续嵌套折叠： 内层折叠 — 双层嵌套 内层内容：代码、列表、表格在折叠区内 正常渲染 （旧版语法做不到这一点）。 print(&#39;Nested folding works!&#39;) 原生 details（HTML 直写） 与 :::folding 视觉统一，垂直节奏同 0.8rem——用于校验裸 details 标签的留白一致性。 2. 选项卡 ::::tabs 选项卡支持 默认折叠协议 ：无属性时仅显示标题栏（默认折叠），点击右上角 折叠图标 或任一选项卡即可展开； {open} 属性（如下方这组）默认展开。选项过多时标题栏支持 横向滑动 ，左右边缘有渐隐提示。 NPM PNPM 源码构建 使用 npm 安装（默认选项卡）： npm install moara 使用 pnpm 安装： pnpm add moara 从源码构建（本面板标题带 notoc 属性，面板内标题不进入文章目录）： 面板内小节（不进目录） git clone https://github.com/moaradc/MOARA cd MOARA npm ci npm run build 下方这组 未写属性 → 默认折叠 ，且选项卡数量多，可验证标题栏 横向滑动 （左右滑动标题栏查看更多选项；展开后切换选项时选中项自动滚入可见区）： 第 1 步：安装 第 2 步：初始化 第 3 步：配置 第 4 步：迁移 第 5 步：构建 第 6 步：测试 第 7 步：联调 第 8 步：灰度 第 9 步：发布 第 10 步：运维 第 1 步：安装内容：选项卡标题栏在选项过多时可横向滑动。 第 2 步：初始化内容。 第 3 步：配置内容。 第 4 步：迁移内容。 第 5 步：构建内容。 第 6 步：测试内容。 第 7 步：联调内容。 第 8 步：灰度内容。 第 9 步：发布内容。 第 10 步：运维内容。 3. 视频嵌入 :::video 演示：Bilibili 嵌入 点击加载 bilibili 播放器 演示：YouTube 嵌入 点击加载 YouTube 播放器 直链视频 跟随原始比例 渲染（无外壳、无黑边留白）： 折叠块内既可用叶子形式 ::video ，也可用块形式 :::video （渲染位置均正确）： 折叠面板内的视频（位置修复演示） 4. 链接卡片 :::linkcard M MOARA 主仓库 github.com 文 文件链接：按后缀显示文件图标 example.com 站内文章卡片（运行时解析标题） 本站文章 #103 5. 仓库卡片 :::github markedjs/marked 6. 数学公式（frontmatter math: true ） 质能方程 $E = mc^2$ 与质能方程行内形式 $E = mc^2$ 可以混排。块级公式使用 $ ： $ \\mathcal{F}(\\omega) = \\int_{-\\infty}^{\\infty} f(t)\\, e^{-i\\omega t}\\, dt $ 矩阵与对齐环境（ aligned 多行公式不受段落换行影响）： $ \\begin{aligned} \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\varepsilon_0} \\\\ \\nabla \\cdot \\mathbf{B} &= 0 \\\\ \\nabla \\times \\mathbf{E} &= -\\frac{\\partial \\mathbf{B}}{\\partial t} \\end{aligned} $ 方括号定界符 \\[ ... \\] 同样支持块级公式： \\[ \\sum_{n=1}^{\\infty} \\frac{1}{n^2} = \\frac{\\pi^2}{6} \\] 行内圆括号 \\( ... \\) ：质能方程 \\(E = mc^2\\) 与分数 \\(\\tfrac{1}{2}mv^2\\)。 7. 行内元素 高亮 荧光笔标记 （酸绿色，双模式高对比） 键盘按键 Ctrl + Alt + Del 上下标：H 2 O 与 x 2 + y 2 = r 2 行内黑幕（防剧透）：凶手是 黑衣人 ，点击显示。 行内代码 const x = 42; 8. 链接包裹图片（常驻跳转角标） 点击 图片本身仍打开灯箱 预览；只有点击右上角的 跳转角标 才跳转（并在新标签页打开）： 裸图（无链接）点击仍打开灯箱预览： 9. 脚注 摩尔 Blog 的脚注语法与 GFM 一致 1 ，定义可以写在任意位置 2 ，渲染时统一汇总到文末「注释」区。 未写定义的引用 （如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。 10. 表格对齐（修复演示） 三列分别 左、中、右 对齐（此前全被居中，现在按分隔行生效）： :左对齐 居中对齐: 右对齐: b 站 1 1000 云盘 2 2000 邮箱 3 3000 11. Mermaid 图表 flowchart LR A[Markdown 源文] -- B{moara-md 预处理} B -- C[marked v15 解析] C -- D[浏览器端渲染] C -- E[Node 端直出 SEO HTML] D -- F((产物一致)) E -- F 12. 原生 details 折叠 标准 HTML 折叠（与 :::folding 视觉风格统一）： 原生 details 折叠示例 内部同样支持 Markdown 语法（约定 summary 与内容间 保留空行 ）。 项目 A 项目 B 13. 图集标签（可选 links） links 属性与 src 逐项对应： 有链接的项 显示跳转角标并跳转， 空项 维持灯箱预览。 注释 1 参见 GitHub Flavored Markdown Spec 的脚注扩展。 2 引用处按首次出现顺序编号，支持 行内 Markdown 与多行定义。"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown 组件语法全览","item":"https://blog.945426.xyz/posts/test001"}]}]</script>
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown 组件语法全览","description":"沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/test001"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-10-03T00:20:00.000Z","dateModified":"2026-10-07T02:00:00.000Z","url":"https://blog.945426.xyz/posts/test001","articleBody":"本文是博客 Markdown 扩展语法的 完整演示 ：先逐一列举全部组件，再给出 嵌套组合矩阵 。所有组件由 moara-md 扩展层渲染（浏览器端与 /posts/ id 直出共用同一实现，产物一致）。 备注 提示框（Admonition）共 13 种类型 ： NOTE ABSTRACT INFO TIP SUCCESS QUESTION WARNING FAILURE DANGER BUG EXAMPLE QUOTE IMPORTANT 。全部默认可折叠；同义别名（ TLDR CAUTION ERROR 等）自动归并。 可折叠提示框 尾缀 + 默认展开， - 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。 收起状态的警告 这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。 1. 提示框 13 类型全览 备注 备注类型：用于补充说明与背景信息。 摘要 摘要类型：文章概要、TLDR。 信息 信息类型：中性提示。 提示 提示类型：小技巧与最佳实践。 成功 成功类型：完成状态确认。 问题 问题类型：常见疑问。 警告 警告类型：需要注意的事项。 失败 失败类型：出错的场景。 危险 危险类型：高风险操作警示。 缺陷 缺陷类型：已知问题记录。 示例类型（已展开） 示例类型默认展开的样子：内部可以继续嵌套 行内元素 标记 、 Ctrl 按键、 黑幕 与 链接 。 引用 引用类型：摘录他人观点。 重要 重要类型：关键结论。 别名归一演示（ CAUTION → 警告色、 TLDR → 摘要色）： 警告 这是 CAUTION 别名，渲染为 warning 样式。 摘要 这是 TLDR 别名，渲染为 abstract 样式。 2. 折叠面板 :::folding 折叠面板取代了旧版手写 HTML。 内部支持所有块级语法 ：列表、表格、代码块、甚至嵌套折叠。 点击展开 — 查看代码块与列表 列表项一 列表项二 列表项三 export interface Post { id: string; title: string; html: string; } 嵌套折叠：外层面板 外层默认展开（ open 属性）。内层默认收起： 内层折叠 — 双层嵌套 内层折叠内容：双层嵌套演示。 三层折叠 — 第三层 这里是在折叠内、折叠内的 第三层折叠 。 折叠面板内的组件全家桶 以下折叠面板 默认展开 ，内部逐项演示每种组件的嵌套形态： 组件全家桶：折叠内嵌套一切 普通段落：折叠面板内的正文文字，支持 加粗 、 斜体 、 行内代码 、 链接 。 无序列表与有序列表： 无序项 A 无序项 B 有序项一 有序项二 任务列表（GFM）： 已完成的任务 待办任务 另一个待办 表格： 组件 嵌套 说明 折叠 ✓ 任意层级 选项卡 ✓ 见 §3 提示框 ✓ 下一项演示 代码块： console.log(&#39;折叠面板内的代码块&#39;); 提示框： 提示 折叠面板内的提示框：绿色左边条同样生效。 Mermaid 图表： flowchart LR A[折叠内图表] -- B[正常渲染] 数学公式： $ E = mc^2 \\quad \\text{（折叠内公式）} $ 链接卡与仓库卡： 折 折叠内的链接卡 github.com markedjs/marked 视频（叶子形式）： 折叠内的视频 点击加载 bilibili 播放器 图片与引用块： 折叠面板内的引用块（普通 blockquote）。 原生 details （HTML 直写在折叠内）： 折叠内的原生 details 原生 details 嵌套在 :::folding 内部。 行内元素一排： 荧光标记 、 Ctrl 、 黑幕 、H 2 O、x 2 。 3. 选项卡 ::::tabs 选项卡两种形态： {open} 默认展开；无属性默认折叠（仅标题栏可见）。 安装 配置与表格 折叠与代码 图表与公式 嵌套选项卡 卡片与视频 npm install moara-md 面板内小节（ notoc 属性使标题不进目录）： 面板内小节（不进目录） 此处 H3 不会出现在目录卡片中。 选项卡内的表格： 项 值 主题 oklch 字体 Space Grotesk 选项卡内的提示框： 选项卡内提示框 提示框嵌在选项卡面板里，默认展开。 选项卡内的折叠面板： 选项卡内的折叠 折叠面板嵌在选项卡面板里，内部再有代码块： console.log(&#39;tabs folding code&#39;); 选项卡内的 Mermaid： pie showData title 选项卡内饼图 A : 60 B : 40 选项卡内的数学： $ \\int_0^1 x^2 \\, dx = \\frac{1}{3} $ 选项卡嵌套选项卡（内层五冒号围栏）： 内层 A 内层 B 内层选项卡面板 A。 内层选项卡面板 B：嵌套层级不受限制（栈式解析）。 选项卡内的叶子指令（单行压缩）： 选 选项卡内链接卡 github.com markedjs/marked 选项卡内视频 点击加载 YouTube 播放器 横向滑动演示（10 个选项卡，无属性默认折叠）： 第 1 步：安装 第 2 步：初始化 第 3 步：配置 第 4 步：迁移 第 5 步：构建 第 6 步：测试 第 7 步：联调 第 8 步：灰度 第 9 步：发布 第 10 步：运维 第 1 步内容。 第 2 步内容。 第 3 步内容。 第 4 步内容。 第 5 步内容。 第 6 步内容。 第 7 步内容。 第 8 步内容。 第 9 步内容。 第 10 步内容。 4. 提示框内嵌套容器 提示框（引用块变换）内部同样支持容器指令——每行加 前缀即可： 提示框内的折叠面板 提示框内部直接嵌套 :::folding： 提示框内的折叠 折叠面板渲染在提示框内部。 提示框内也可以放 普通嵌套引用 ： 提示框内的一层引用。 提示框内的两层引用。 提示框内的图表与公式 flowchart LR Q[提示框内] -- R[图表正常] $a^2 + b^2 = c^2$ 提示框内的卡片与表格 提 提示框内链接卡 github.com markedjs/marked 提示框内的视频 点击加载 bilibili 播放器 位置 卡片 提示框内 ✓ 5. 视频嵌入 :::video 演示：Bilibili 嵌入 点击加载 bilibili 播放器 演示：YouTube 嵌入 点击加载 YouTube 播放器 直链视频（裸 video 标签，无外壳跟随原始比例）： 折叠块内既可用叶子形式 ::video ，也可用块形式（见 §2 全家桶）。 6. 链接卡片 :::linkcard M MOARA 主仓库 github.com 文 文件链接：按后缀显示文件图标 example.com 站内文章卡片（运行时解析标题） 本站文章 #103 7. 仓库卡片 :::github markedjs/marked 8. 数学公式（frontmatter math: true ） 行内公式 $e^{i\\pi} + 1 = 0$ 与块级公式： $ \\begin{aligned} \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\varepsilon_0} \\\\ \\nabla \\cdot \\mathbf{B} &= 0 \\end{aligned} $ 9. 行内元素 高亮 荧光笔标记 （酸绿色，双模式高对比） 键盘按键 Ctrl + Alt + Del 上下标：H 2 O 与 x 2 + y 2 = r 2 行内黑幕（防剧透）：凶手是 黑衣人 ，点击显示。 行内代码 const x = 42; 10. 链接包裹图片与裸图 链接包裹的图片： 点击图片本身打开灯箱 预览；跳转链接收在灯箱的 i 信息面板里： 裸图（无链接）点击同样打开灯箱预览： 11. 脚注 摩尔 Blog 的脚注语法与 GFM 一致 1 ，定义可以写在任意位置 2 ，渲染时统一汇总到文末「注释」区。 未写定义的引用 （如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。 12. 表格对齐 左对齐列 居中列 右对齐列 GitHub 1 100 掘金 2 200 知乎 3 300 b 站 1 1000 云盘 2 2000 邮箱 3 3000 13. Mermaid 图表类型全集 moara-md 不拦截 Mermaid——交给 article.js 加载的 Mermaid 10.9 渲染。常用 12 种图： flowchart TD A[开始] -- B{条件?} B -- 是 -- C[执行] B -- 否 -- D[跳过] C -- E[结束] D -- E sequenceDiagram participant U as 用户 participant S as 服务器 U- S: 请求文章 S-- U: 返回 HTML U- S: 请求评论 S-- U: 返回 JSON classDiagram class Article { +String title +String html +render() } class Comment { +String body +post() } Article 1 -- n Comment : 拥有 stateDiagram-v2 [*] -- 草稿 草稿 -- 发布: 审核通过 发布 -- 修订: 更新 修订 -- 发布 发布 -- [*] erDiagram USER ||--o{ POST : writes POST ||--o{ COMMENT : has USER ||--o{ COMMENT : leaves gantt title 发版流程 dateFormat YYYY-MM-DD section 开发 功能开发 :a1, 2026-10-01, 6d section 测试 回归测试 :a2, after a1, 3d section 上线 灰度发布 :a3, after a2, 2d pie showData title 流量来源 搜索 : 45 直接 : 30 外链 : 25 journey title 写博客的一天 section 上午 起床: 5: 我 喝咖啡: 4: 我 section 下午 写文章: 5: 我, 读者 section 晚上 发布: 5: 我, 读者 mindmap root((博客)) 内容 文章 评论 技术 Astro moara-md timeline title 博客演进 2023 : 静态 HTML 2024 : Hexo 迁移 2025 : Astro 重构 2026 : moara-md 扩展层 gitGraph commit id: init commit id: posts branch feature commit id: moara-md checkout main merge feature commit id: release quadrantChart title 任务优先级 x-axis 低价值 -- 高价值 y-axis 低成本 -- 高成本 quadrant-1 重点关注 quadrant-2 值得投入 quadrant-3 顺手处理 quadrant-4 果断放弃 写文章 : [0.8, 0.7] 修样式 : [0.5, 0.3] 加彩蛋 : [0.2, 0.6] 14. 原生 details 折叠 标准 HTML 折叠（与 :::folding 视觉风格统一）： 原生 details 折叠示例 内部同样支持 Markdown 语法（约定 summary 与内容间 保留空行 ）。 项目 A 项目 B 原生 details（HTML 直写） 与 :::folding 视觉统一，垂直节奏同 0.8rem——用于校验裸 details 标签的留白一致性"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown 组件语法全览","item":"https://blog.945426.xyz/posts/test001"}]}]</script>
 
     <!-- 第三方资源 -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
@@ -133,7 +133,7 @@
 </nav>
 
 <!-- 文章容器 -->
-<div id="article-view" data-article-id="test001" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown 组件语法全览&quot;,&quot;date&quot;:&quot;2026-10-03 08:20&quot;,&quot;last_modified&quot;:&quot;2026-10-03 20:30&quot;,&quot;author&quot;:&quot;moara&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;,&quot;Markdown&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false,&quot;math&quot;:true}">
+<div id="article-view" data-article-id="test001" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown 组件语法全览&quot;,&quot;date&quot;:&quot;2026-10-03 08:20&quot;,&quot;last_modified&quot;:&quot;2026-10-07 10:00&quot;,&quot;author&quot;:&quot;moara&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;,&quot;Markdown&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false,&quot;math&quot;:true}">
 
     <div class="article-hero-wrapper">
         <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
@@ -244,7 +244,7 @@
 
             <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
             <article class="article-body" id="detail-content" data-math="true">
-                <p>本文是博客 Markdown 扩展语法的<strong>完整演示</strong>，全部组件均由 <code>moara-md</code> 扩展层渲染（浏览器端与 <code>/posts/&lt;id&gt;</code> 直出共用同一实现，产物一致）。</p>
+                <p>本文是博客 Markdown 扩展语法的<strong>完整演示</strong>：先逐一列举全部组件，再给出<strong>嵌套组合矩阵</strong>。所有组件由 <code>moara-md</code> 扩展层渲染（浏览器端与 <code>/posts/&lt;id&gt;</code> 直出共用同一实现，产物一致）。</p>
 <div class="admonition admonition-note" data-collapsible>
 <div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
 <i class="ri-sticky-note-line" aria-hidden="true"></i>
@@ -253,7 +253,7 @@
 </div>
 <div class="admonition-body">
 
-<p>提示框（Admonition）支持 12 种类型：<code>NOTE</code> <code>TIP</code> <code>INFO</code> <code>IMPORTANT</code> <code>WARNING</code> <code>CAUTION</code> <code>DANGER</code> <code>ABSTRACT</code> <code>EXAMPLE</code> <code>QUOTE</code> <code>SUCCESS</code> <code>QUESTION</code>，同义写法（如 <code>TIP</code>/<code>IMPORTANT</code>）自动归并。</p>
+<p>提示框（Admonition）共 <strong>13 种类型</strong>：<code>NOTE</code> <code>ABSTRACT</code> <code>INFO</code> <code>TIP</code> <code>SUCCESS</code> <code>QUESTION</code> <code>WARNING</code> <code>FAILURE</code> <code>DANGER</code> <code>BUG</code> <code>EXAMPLE</code> <code>QUOTE</code> <code>IMPORTANT</code>。全部默认可折叠；同义别名（<code>TLDR</code> <code>CAUTION</code> <code>ERROR</code> 等）自动归并。</p>
 </div>
 </div>
 
@@ -265,7 +265,7 @@
 </div>
 <div class="admonition-body">
 
-<p>尾缀 <code>+</code> 默认展开，<code>-</code> 默认收起。展开/收起为即时切换（无动画、零闪烁）。</p>
+<p>尾缀 <code>+</code> 默认展开，<code>-</code> 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。</p>
 </div>
 </div>
 
@@ -277,12 +277,194 @@
 </div>
 <div class="admonition-body">
 
-<p>这一栏默认收起，点击标题即可展开。支持嵌套任意块级语法。</p>
+<p>这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。</p>
 </div>
 </div>
 
-<h2>1. 折叠面板 :::folding</h2>
-<p>折叠面板取代了旧版手写 HTML（旧语法不再推荐）。<strong>内部支持所有块级语法</strong>：列表、表格、代码块、甚至嵌套折叠。</p>
+<h2>1. 提示框 13 类型全览</h2>
+<div class="admonition admonition-note" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-sticky-note-line" aria-hidden="true"></i>
+<span class="admonition-title-text">备注</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>备注类型：用于补充说明与背景信息。</p>
+</div>
+</div>
+
+<div class="admonition admonition-abstract" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-file-text-line" aria-hidden="true"></i>
+<span class="admonition-title-text">摘要</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>摘要类型：文章概要、TLDR。</p>
+</div>
+</div>
+
+<div class="admonition admonition-info" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-information-line" aria-hidden="true"></i>
+<span class="admonition-title-text">信息</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>信息类型：中性提示。</p>
+</div>
+</div>
+
+<div class="admonition admonition-tip" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-lightbulb-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>提示类型：小技巧与最佳实践。</p>
+</div>
+</div>
+
+<div class="admonition admonition-success" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-checkbox-circle-line" aria-hidden="true"></i>
+<span class="admonition-title-text">成功</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>成功类型：完成状态确认。</p>
+</div>
+</div>
+
+<div class="admonition admonition-question" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-question-line" aria-hidden="true"></i>
+<span class="admonition-title-text">问题</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>问题类型：常见疑问。</p>
+</div>
+</div>
+
+<div class="admonition admonition-warning" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-alert-line" aria-hidden="true"></i>
+<span class="admonition-title-text">警告</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>警告类型：需要注意的事项。</p>
+</div>
+</div>
+
+<div class="admonition admonition-failure" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-close-circle-line" aria-hidden="true"></i>
+<span class="admonition-title-text">失败</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>失败类型：出错的场景。</p>
+</div>
+</div>
+
+<div class="admonition admonition-danger" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-alert-fill" aria-hidden="true"></i>
+<span class="admonition-title-text">危险</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>危险类型：高风险操作警示。</p>
+</div>
+</div>
+
+<div class="admonition admonition-bug" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-bug-line" aria-hidden="true"></i>
+<span class="admonition-title-text">缺陷</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>缺陷类型：已知问题记录。</p>
+</div>
+</div>
+
+<div class="admonition admonition-example" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-flask-line" aria-hidden="true"></i>
+<span class="admonition-title-text">示例类型（已展开）</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>示例类型默认展开的样子：内部可以继续嵌套<strong>行内元素</strong> <mark>标记</mark>、<kbd>Ctrl</kbd> 按键、<span class="spoiler" role="button" tabindex="0" title="防剧透内容，点击显示">黑幕</span> 与<a href="https://example.com">链接</a>。</p>
+</div>
+</div>
+
+<div class="admonition admonition-quote" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-double-quotes-l" aria-hidden="true"></i>
+<span class="admonition-title-text">引用</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>引用类型：摘录他人观点。</p>
+</div>
+</div>
+
+<div class="admonition admonition-important" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-shield-star-line" aria-hidden="true"></i>
+<span class="admonition-title-text">重要</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>重要类型：关键结论。</p>
+</div>
+</div>
+
+<p>别名归一演示（<code>CAUTION</code> → 警告色、<code>TLDR</code> → 摘要色）：</p>
+<div class="admonition admonition-warning" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-alert-line" aria-hidden="true"></i>
+<span class="admonition-title-text">警告</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>这是 <code>CAUTION</code> 别名，渲染为 warning 样式。</p>
+</div>
+</div>
+
+<div class="admonition admonition-abstract" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-file-text-line" aria-hidden="true"></i>
+<span class="admonition-title-text">摘要</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>这是 <code>TLDR</code> 别名，渲染为 abstract 样式。</p>
+</div>
+</div>
+
+<h2>2. 折叠面板 :::folding</h2>
+<p>折叠面板取代了旧版手写 HTML。<strong>内部支持所有块级语法</strong>：列表、表格、代码块、甚至嵌套折叠。</p>
 <div class="details-box" data-fold>
 <div class="details-header" role="button" tabindex="0" aria-expanded="false">
 <span class="details-title">点击展开 — 查看代码块与列表</span>
@@ -296,36 +478,12 @@
 <li>列表项二</li>
 <li>列表项三</li>
 </ul>
-<pre><code class="language-ts">export interface AdvancedConfig {
-  /** 是否启用实验特性 */
-  experimental?: boolean;
+<pre><code class="language-ts">export interface Post {
+  id: string;
+  title: string;
+  html: string;
 }
-export const advancedConfig: AdvancedConfig = { experimental: true };
 </code></pre>
-<table>
-<thead>
-<tr>
-<th align="left">参数</th>
-<th align="center">类型</th>
-<th align="right">默认值</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">left</td>
-<td align="center">string</td>
-<td align="right">-</td>
-</tr>
-<tr>
-<td align="left">center</td>
-<td align="center">number</td>
-<td align="right">0</td>
-</tr>
-<tr>
-<td align="left">right</td>
-<td align="center">boolean</td>
-<td align="right">true</td>
-</tr>
-</tbody></table>
 </div>
 </div>
 </div>
@@ -339,7 +497,7 @@ export const advancedConfig: AdvancedConfig = { experimental: true };
 <div class="details-content-wrapper">
 <div class="details-inner">
 
-<p>外层默认展开（<code>open</code> 属性）。内部可以继续嵌套折叠：</p>
+<p>外层默认展开（<code>open</code> 属性）。内层默认收起：</p>
 <div class="details-box" data-fold>
 <div class="details-header" role="button" tabindex="0" aria-expanded="false">
 <span class="details-title">内层折叠 — 双层嵌套</span>
@@ -348,32 +506,232 @@ export const advancedConfig: AdvancedConfig = { experimental: true };
 <div class="details-content-wrapper">
 <div class="details-inner">
 
-<p>内层内容：代码、列表、表格在折叠区内<strong>正常渲染</strong>（旧版语法做不到这一点）。</p>
-<pre><code class="language-python">print(&#39;Nested folding works!&#39;)
+<p>内层折叠内容：双层嵌套演示。</p>
+</div>
+</div>
+</div>
+
+
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">三层折叠 — 第三层</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>这里是在折叠内、折叠内的<strong>第三层折叠</strong>。</p>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<h3>折叠面板内的组件全家桶</h3>
+<p>以下折叠面板<strong>默认展开</strong>，内部逐项演示每种组件的嵌套形态：</p>
+<div class="details-box open" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="true">
+<span class="details-title">组件全家桶：折叠内嵌套一切</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>普通段落：折叠面板内的正文文字，支持<strong>加粗</strong>、<em>斜体</em>、<code>行内代码</code>、<a href="https://example.com">链接</a>。</p>
+<p>无序列表与有序列表：</p>
+<ul>
+<li>无序项 A</li>
+<li>无序项 B</li>
+</ul>
+<ol>
+<li>有序项一</li>
+<li>有序项二</li>
+</ol>
+<p>任务列表（GFM）：</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 已完成的任务</li>
+<li><input disabled="" type="checkbox"> 待办任务</li>
+<li><input disabled="" type="checkbox"> 另一个待办</li>
+</ul>
+<p>表格：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th align="center">嵌套</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>折叠</td>
+<td align="center">✓</td>
+<td>任意层级</td>
+</tr>
+<tr>
+<td>选项卡</td>
+<td align="center">✓</td>
+<td>见 §3</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓</td>
+<td>下一项演示</td>
+</tr>
+</tbody></table>
+<p>代码块：</p>
+<pre><code class="language-js">console.log(&#39;折叠面板内的代码块&#39;);
+</code></pre>
+<p>提示框：</p>
+<div class="admonition admonition-tip" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-lightbulb-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>折叠面板内的提示框：绿色左边条同样生效。</p>
+</div>
+</div>
+
+<p>Mermaid 图表：</p>
+<pre><code class="language-mermaid">flowchart LR
+    A[折叠内图表] --&gt; B[正常渲染]
+</code></pre>
+<p>数学公式：</p>
+<p>$
+E = mc^2 \quad \text{（折叠内公式）}
+$</p>
+<p>链接卡与仓库卡：</p>
+<p><a class="md-linkcard" data-linkcard data-url="https://github.com/moaradc/MOARA" href="https://github.com/moaradc/MOARA" target="_blank" rel="noopener noreferrer"> <span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">折</span></span> <span class="md-linkcard-main"> <span class="md-linkcard-title">折叠内的链接卡</span> <span class="md-linkcard-host">github.com</span> </span> <i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i> </a></p>
+<p><a class="md-github-card" data-github-card data-repo="markedjs/marked" href="https://github.com/markedjs/marked" target="_blank" rel="noopener noreferrer"> <span class="md-github-card-head"> <i class="ri-github-fill" aria-hidden="true"></i> <span class="md-github-card-repo">markedjs/marked</span> <i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i> </span> <span class="md-github-card-desc" data-github-desc hidden></span> <span class="md-github-card-meta" data-github-meta hidden></span> </a></p>
+<p>视频（叶子形式）：</p>
+<div class="video-embed" style="aspect-ratio:16 / 9" data-aspect="16:9" data-video-embed data-src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7h7&amp;autoplay=1&amp;danmaku=0&amp;page=1&amp;high_quality=1" data-video-title="折叠内的视频"><button class="video-poster" type="button" aria-label="加载视频：折叠内的视频"><i class="video-poster-platform ri-bilibili-line" aria-hidden="true"></i><span class="video-poster-title">折叠内的视频</span><span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 bilibili 播放器</span></button></div>
+
+<p>图片与引用块：</p>
+<p><img src="https://picsum.photos/600/340" alt="折叠内图片"></p>
+<blockquote>
+<p>折叠面板内的引用块（普通 blockquote）。</p>
+</blockquote>
+<p>原生 <code>&lt;details&gt;</code>（HTML 直写在折叠内）：</p>
+<details>
+<summary>折叠内的原生 details</summary>
+
+<p>原生 details 嵌套在 :::folding 内部。</p>
+</details>
+
+<p>行内元素一排：<mark>荧光标记</mark>、<kbd>Ctrl</kbd>、<span class="spoiler" role="button" tabindex="0" title="防剧透内容，点击显示">黑幕</span>、H<sub>2</sub>O、x<sup>2</sup>。</p>
+</div>
+</div>
+</div>
+
+
+<h2>3. 选项卡 ::::tabs</h2>
+<p>选项卡两种形态：<code>{open}</code> 默认展开；无属性默认折叠（仅标题栏可见）。</p>
+<div class="md-tabs open" data-md-tabs>
+<div class="md-tabs-head">
+<div class="md-tabs-bar" role="tablist">
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-0" aria-controls="md-tabpanel-2-0" aria-selected="true">安装</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-1" aria-controls="md-tabpanel-2-1" aria-selected="false" tabindex="-1">配置与表格</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-2" aria-controls="md-tabpanel-2-2" aria-selected="false" tabindex="-1">折叠与代码</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-3" aria-controls="md-tabpanel-2-3" aria-selected="false" tabindex="-1">图表与公式</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-4" aria-controls="md-tabpanel-2-4" aria-selected="false" tabindex="-1">嵌套选项卡</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-5" aria-controls="md-tabpanel-2-5" aria-selected="false" tabindex="-1">卡片与视频</button>
+
+</div>
+<button class="md-tabs-toggle" type="button" aria-expanded="true" title="展开/收起面板内容" aria-label="展开/收起面板内容"><i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>
+</div>
+<div class="md-tabs-body"><div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-0" aria-labelledby="md-tab-2-0" tabindex="0">
+
+
+<pre><code class="language-bash">npm install moara-md
+</code></pre>
+<p>面板内小节（<code>notoc</code> 属性使标题不进目录）：</p>
+<h3>面板内小节（不进目录）</h3>
+<p>此处 H3 不会出现在目录卡片中。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-1" aria-labelledby="md-tab-2-1" tabindex="0" hidden>
+
+
+<p>选项卡内的表格：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主题</td>
+<td>oklch</td>
+</tr>
+<tr>
+<td>字体</td>
+<td>Space Grotesk</td>
+</tr>
+</tbody></table>
+<p>选项卡内的提示框：</p>
+<div class="admonition admonition-example" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-flask-line" aria-hidden="true"></i>
+<span class="admonition-title-text">选项卡内提示框</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>提示框嵌在选项卡面板里，默认展开。</p>
+</div>
+</div>
+
+
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-2" aria-labelledby="md-tab-2-2" tabindex="0" hidden>
+
+
+<p>选项卡内的折叠面板：</p>
+<div class="details-box open" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="true">
+<span class="details-title">选项卡内的折叠</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>折叠面板嵌在选项卡面板里，内部再有代码块：</p>
+<pre><code class="language-js">console.log(&#39;tabs &gt; folding &gt; code&#39;);
 </code></pre>
 </div>
 </div>
 </div>
 
+
 </div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-3" aria-labelledby="md-tab-2-3" tabindex="0" hidden>
+
+
+<p>选项卡内的 Mermaid：</p>
+<pre><code class="language-mermaid">pie showData
+    title 选项卡内饼图
+    &quot;A&quot; : 60
+    &quot;B&quot; : 40
+</code></pre>
+<p>选项卡内的数学：</p>
+<p>$
+\int_0^1 x^2 \, dx = \frac{1}{3}
+$</p>
 </div>
-</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-4" aria-labelledby="md-tab-2-4" tabindex="0" hidden>
 
 
-<details>
-<summary>原生 details（HTML 直写）</summary>
-
-<p>与 <code>:::folding</code> 视觉统一，垂直节奏同 0.8rem——用于校验裸 <code>&lt;details&gt;</code> 标签的留白一致性。</p>
-</details>
-
-<h2>2. 选项卡 ::::tabs</h2>
-<p>选项卡支持<strong>默认折叠协议</strong>：无属性时仅显示标题栏（默认折叠），点击右上角<strong>折叠图标</strong>或任一选项卡即可展开；<code>{open}</code> 属性（如下方这组）默认展开。选项过多时标题栏支持<strong>横向滑动</strong>，左右边缘有渐隐提示。</p>
+<p>选项卡嵌套选项卡（内层五冒号围栏）：</p>
 <div class="md-tabs open" data-md-tabs>
 <div class="md-tabs-head">
 <div class="md-tabs-bar" role="tablist">
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-0" aria-controls="md-tabpanel-1-0" aria-selected="true">NPM</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-1" aria-controls="md-tabpanel-1-1" aria-selected="false" tabindex="-1">PNPM</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-2" aria-controls="md-tabpanel-1-2" aria-selected="false" tabindex="-1">源码构建</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-0" aria-controls="md-tabpanel-1-0" aria-selected="true">内层 A</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-1-1" aria-controls="md-tabpanel-1-1" aria-selected="false" tabindex="-1">内层 B</button>
 
 </div>
 <button class="md-tabs-toggle" type="button" aria-expanded="true" title="展开/收起面板内容" aria-label="展开/收起面板内容"><i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>
@@ -381,127 +739,213 @@ export const advancedConfig: AdvancedConfig = { experimental: true };
 <div class="md-tabs-body"><div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-0" aria-labelledby="md-tab-1-0" tabindex="0">
 
 
-<p>使用 npm 安装（默认选项卡）：</p>
-<pre><code class="language-bash">npm install moara
-</code></pre>
+<p>内层选项卡面板 A。</p>
 </div>
 <div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-1" aria-labelledby="md-tab-1-1" tabindex="0" hidden>
 
 
-<p>使用 pnpm 安装：</p>
-<pre><code class="language-bash">pnpm add moara
-</code></pre>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-1-2" aria-labelledby="md-tab-1-2" tabindex="0" data-notoc hidden>
-
-
-<p>从源码构建（本面板标题带 <code>notoc</code> 属性，面板内标题不进入文章目录）：</p>
-<h3>面板内小节（不进目录）</h3>
-<pre><code class="language-bash">git clone https://github.com/moaradc/MOARA
-cd MOARA &amp;&amp; npm ci &amp;&amp; npm run build
-</code></pre>
+<p>内层选项卡面板 B：嵌套层级不受限制（栈式解析）。</p>
 </div>
 </div>
 </div>
 
 
-<p>下方这组<strong>未写属性 → 默认折叠</strong>，且选项卡数量多，可验证标题栏<strong>横向滑动</strong>（左右滑动标题栏查看更多选项；展开后切换选项时选中项自动滚入可见区）：</p>
-<div class="md-tabs" data-md-tabs>
-<div class="md-tabs-head">
-<div class="md-tabs-bar" role="tablist">
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-0" aria-controls="md-tabpanel-2-0" aria-selected="true">第 1 步：安装</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-1" aria-controls="md-tabpanel-2-1" aria-selected="false" tabindex="-1">第 2 步：初始化</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-2" aria-controls="md-tabpanel-2-2" aria-selected="false" tabindex="-1">第 3 步：配置</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-3" aria-controls="md-tabpanel-2-3" aria-selected="false" tabindex="-1">第 4 步：迁移</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-4" aria-controls="md-tabpanel-2-4" aria-selected="false" tabindex="-1">第 5 步：构建</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-5" aria-controls="md-tabpanel-2-5" aria-selected="false" tabindex="-1">第 6 步：测试</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-6" aria-controls="md-tabpanel-2-6" aria-selected="false" tabindex="-1">第 7 步：联调</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-7" aria-controls="md-tabpanel-2-7" aria-selected="false" tabindex="-1">第 8 步：灰度</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-8" aria-controls="md-tabpanel-2-8" aria-selected="false" tabindex="-1">第 9 步：发布</button>
-<button class="md-tab-btn" type="button" role="tab" id="md-tab-2-9" aria-controls="md-tabpanel-2-9" aria-selected="false" tabindex="-1">第 10 步：运维</button>
-
-</div>
-<button class="md-tabs-toggle" type="button" aria-expanded="false" title="展开/收起面板内容" aria-label="展开/收起面板内容"><i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>
-</div>
-<div class="md-tabs-body"><div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-0" aria-labelledby="md-tab-2-0" tabindex="0">
-
-
-<p>第 1 步：安装内容：选项卡标题栏在选项过多时可横向滑动。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-1" aria-labelledby="md-tab-2-1" tabindex="0" hidden>
-
-
-<p>第 2 步：初始化内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-2" aria-labelledby="md-tab-2-2" tabindex="0" hidden>
-
-
-<p>第 3 步：配置内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-3" aria-labelledby="md-tab-2-3" tabindex="0" hidden>
-
-
-<p>第 4 步：迁移内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-4" aria-labelledby="md-tab-2-4" tabindex="0" hidden>
-
-
-<p>第 5 步：构建内容。</p>
 </div>
 <div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-5" aria-labelledby="md-tab-2-5" tabindex="0" hidden>
 
 
-<p>第 6 步：测试内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-6" aria-labelledby="md-tab-2-6" tabindex="0" hidden>
+<p>选项卡内的叶子指令（单行压缩）：</p>
+<p><a class="md-linkcard" data-linkcard data-url="https://github.com/moaradc/MOARA" href="https://github.com/moaradc/MOARA" target="_blank" rel="noopener noreferrer"> <span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">选</span></span> <span class="md-linkcard-main"> <span class="md-linkcard-title">选项卡内链接卡</span> <span class="md-linkcard-host">github.com</span> </span> <i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i> </a></p>
+<p><a class="md-github-card" data-github-card data-repo="markedjs/marked" href="https://github.com/markedjs/marked" target="_blank" rel="noopener noreferrer"> <span class="md-github-card-head"> <i class="ri-github-fill" aria-hidden="true"></i> <span class="md-github-card-repo">markedjs/marked</span> <i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i> </span> <span class="md-github-card-desc" data-github-desc hidden></span> <span class="md-github-card-meta" data-github-meta hidden></span> </a></p>
+<div class="video-embed" style="aspect-ratio:16 / 9" data-aspect="16:9" data-video-embed data-src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0&amp;autoplay=1" data-video-title="选项卡内视频"><button class="video-poster" type="button" aria-label="加载视频：选项卡内视频"><i class="video-poster-platform ri-youtube-line" aria-hidden="true"></i><span class="video-poster-title">选项卡内视频</span><span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 YouTube 播放器</span></button></div>
 
 
-<p>第 7 步：联调内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-7" aria-labelledby="md-tab-2-7" tabindex="0" hidden>
-
-
-<p>第 8 步：灰度内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-8" aria-labelledby="md-tab-2-8" tabindex="0" hidden>
-
-
-<p>第 9 步：发布内容。</p>
-</div>
-<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-2-9" aria-labelledby="md-tab-2-9" tabindex="0" hidden>
-
-
-<p>第 10 步：运维内容。</p>
 </div>
 </div>
 </div>
 
 
-<h2>3. 视频嵌入 :::video</h2>
+<p>横向滑动演示（10 个选项卡，无属性默认折叠）：</p>
+<div class="md-tabs" data-md-tabs>
+<div class="md-tabs-head">
+<div class="md-tabs-bar" role="tablist">
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-0" aria-controls="md-tabpanel-3-0" aria-selected="true">第 1 步：安装</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-1" aria-controls="md-tabpanel-3-1" aria-selected="false" tabindex="-1">第 2 步：初始化</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-2" aria-controls="md-tabpanel-3-2" aria-selected="false" tabindex="-1">第 3 步：配置</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-3" aria-controls="md-tabpanel-3-3" aria-selected="false" tabindex="-1">第 4 步：迁移</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-4" aria-controls="md-tabpanel-3-4" aria-selected="false" tabindex="-1">第 5 步：构建</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-5" aria-controls="md-tabpanel-3-5" aria-selected="false" tabindex="-1">第 6 步：测试</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-6" aria-controls="md-tabpanel-3-6" aria-selected="false" tabindex="-1">第 7 步：联调</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-7" aria-controls="md-tabpanel-3-7" aria-selected="false" tabindex="-1">第 8 步：灰度</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-8" aria-controls="md-tabpanel-3-8" aria-selected="false" tabindex="-1">第 9 步：发布</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-3-9" aria-controls="md-tabpanel-3-9" aria-selected="false" tabindex="-1">第 10 步：运维</button>
+
+</div>
+<button class="md-tabs-toggle" type="button" aria-expanded="false" title="展开/收起面板内容" aria-label="展开/收起面板内容"><i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>
+</div>
+<div class="md-tabs-body"><div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-0" aria-labelledby="md-tab-3-0" tabindex="0">
+
+
+<p>第 1 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-1" aria-labelledby="md-tab-3-1" tabindex="0" hidden>
+
+
+<p>第 2 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-2" aria-labelledby="md-tab-3-2" tabindex="0" hidden>
+
+
+<p>第 3 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-3" aria-labelledby="md-tab-3-3" tabindex="0" hidden>
+
+
+<p>第 4 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-4" aria-labelledby="md-tab-3-4" tabindex="0" hidden>
+
+
+<p>第 5 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-5" aria-labelledby="md-tab-3-5" tabindex="0" hidden>
+
+
+<p>第 6 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-6" aria-labelledby="md-tab-3-6" tabindex="0" hidden>
+
+
+<p>第 7 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-7" aria-labelledby="md-tab-3-7" tabindex="0" hidden>
+
+
+<p>第 8 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-8" aria-labelledby="md-tab-3-8" tabindex="0" hidden>
+
+
+<p>第 9 步内容。</p>
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-3-9" aria-labelledby="md-tab-3-9" tabindex="0" hidden>
+
+
+<p>第 10 步内容。</p>
+</div>
+</div>
+</div>
+
+
+<h2>4. 提示框内嵌套容器</h2>
+<p>提示框（引用块变换）内部同样支持容器指令——每行加 <code>&gt;</code> 前缀即可：</p>
+<div class="admonition admonition-info" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-information-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示框内的折叠面板</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>提示框内部直接嵌套 :::folding：</p>
+<div class="details-box open" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="true">
+<span class="details-title">提示框内的折叠</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>折叠面板渲染在提示框内部。</p>
+</div>
+</div>
+</div>
+
+
+<p>提示框内也可以放<strong>普通嵌套引用</strong>：</p>
+<blockquote>
+<p>提示框内的一层引用。</p>
+<blockquote>
+<p>提示框内的两层引用。</p>
+</blockquote>
+</blockquote>
+</div>
+</div>
+
+<div class="admonition admonition-question" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-question-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示框内的图表与公式</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<pre><code class="language-mermaid">flowchart LR
+    Q[提示框内] --&gt; R[图表正常]
+</code></pre>
+<p>$a^2 + b^2 = c^2$</p>
+</div>
+</div>
+
+<div class="admonition admonition-note" data-collapsible data-open="true">
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="true">
+<i class="ri-sticky-note-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示框内的卡片与表格</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+
+<a class="md-linkcard" data-linkcard data-url="https://github.com/moaradc/MOARA" href="https://github.com/moaradc/MOARA" target="_blank" rel="noopener noreferrer">
+<span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">提</span></span>
+<span class="md-linkcard-main">
+<span class="md-linkcard-title">提示框内链接卡</span>
+<span class="md-linkcard-host">github.com</span>
+</span>
+<i class="ri-arrow-right-up-line md-linkcard-arrow" aria-hidden="true"></i>
+</a>
+
+
+<a class="md-github-card" data-github-card data-repo="markedjs/marked" href="https://github.com/markedjs/marked" target="_blank" rel="noopener noreferrer">
+<span class="md-github-card-head">
+<i class="ri-github-fill" aria-hidden="true"></i>
+<span class="md-github-card-repo">markedjs/marked</span>
+<i class="ri-arrow-right-up-line md-github-card-arrow" aria-hidden="true"></i>
+</span>
+<span class="md-github-card-desc" data-github-desc hidden></span>
+<span class="md-github-card-meta" data-github-meta hidden></span>
+</a>
+
+
+<div class="video-embed" style="aspect-ratio:16 / 9" data-aspect="16:9" data-video-embed data-src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7h7&amp;autoplay=1&amp;danmaku=0&amp;page=1&amp;high_quality=1" data-video-title="提示框内的视频"><button class="video-poster" type="button" aria-label="加载视频：提示框内的视频"><i class="video-poster-platform ri-bilibili-line" aria-hidden="true"></i><span class="video-poster-title">提示框内的视频</span><span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 bilibili 播放器</span></button></div>
+
+
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>卡片</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提示框内</td>
+<td>✓</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+
+<h2>5. 视频嵌入 :::video</h2>
 <div class="video-embed" style="aspect-ratio:16 / 9" data-aspect="16:9" data-video-embed data-src="https://player.bilibili.com/player.html?bvid=BV1GJ411x7h7&amp;autoplay=1&amp;danmaku=0&amp;page=1&amp;high_quality=1" data-video-title="演示：Bilibili 嵌入"><button class="video-poster" type="button" aria-label="加载视频：演示：Bilibili 嵌入"><i class="video-poster-platform ri-bilibili-line" aria-hidden="true"></i><span class="video-poster-title">演示：Bilibili 嵌入</span><span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 bilibili 播放器</span></button></div>
 
 
 <div class="video-embed" style="aspect-ratio:16 / 9" data-aspect="16:9" data-video-embed data-src="https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ?rel=0&amp;autoplay=1" data-video-title="演示：YouTube 嵌入"><button class="video-poster" type="button" aria-label="加载视频：演示：YouTube 嵌入"><i class="video-poster-platform ri-youtube-line" aria-hidden="true"></i><span class="video-poster-title">演示：YouTube 嵌入</span><span class="video-poster-hint"><i class="ri-play-circle-line" aria-hidden="true"></i>点击加载 YouTube 播放器</span></button></div>
 
 
-<p>直链视频<strong>跟随原始比例</strong>渲染（无外壳、无黑边留白）：</p>
-<p><video controls preload="metadata" playsinline src="https://www.w3schools.com/html/mov_bbb.mp4" title="演示：直链原生播放器"></video></p>
-<p>折叠块内既可用叶子形式 <code>::video</code>，也可用块形式 <code>:::video</code>（渲染位置均正确）：</p>
-<div class="details-box" data-fold>
-<div class="details-header" role="button" tabindex="0" aria-expanded="false">
-<span class="details-title">折叠面板内的视频（位置修复演示）</span>
-<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
-</div>
-<div class="details-content-wrapper">
-<div class="details-inner">
-
-<p><video controls preload="metadata" playsinline src="https://www.w3schools.com/html/mov_bbb.mp4" title="演示：直链原生播放器"></video></p>
-</div>
-</div>
-</div>
-
-
-<h2>4. 链接卡片 :::linkcard</h2>
+<p>直链视频（裸 <code>&lt;video&gt;</code> 标签，无外壳跟随原始比例）：</p>
+<p><video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" controls muted title="演示：直链原生视频"></video></p>
+<p>折叠块内既可用叶子形式 <code>::video</code>，也可用块形式（见 §2 全家桶）。</p>
+<h2>6. 链接卡片 :::linkcard</h2>
 <a class="md-linkcard" data-linkcard data-url="https://github.com/moaradc/MOARA" href="https://github.com/moaradc/MOARA" target="_blank" rel="noopener noreferrer">
 <span class="md-linkcard-icon" data-linkcard-icon aria-hidden="true"><span class="md-linkcard-fallback">M</span></span>
 <span class="md-linkcard-main">
@@ -532,7 +976,7 @@ cd MOARA &amp;&amp; npm ci &amp;&amp; npm run build
 </a>
 
 
-<h2>5. 仓库卡片 :::github</h2>
+<h2>7. 仓库卡片 :::github</h2>
 <a class="md-github-card" data-github-card data-repo="markedjs/marked" href="https://github.com/markedjs/marked" target="_blank" rel="noopener noreferrer">
 <span class="md-github-card-head">
 <i class="ri-github-fill" aria-hidden="true"></i>
@@ -544,25 +988,15 @@ cd MOARA &amp;&amp; npm ci &amp;&amp; npm run build
 </a>
 
 
-<h2>6. 数学公式（frontmatter <code>math: true</code>）</h2>
-<p>质能方程 $E = mc^2$ 与质能方程行内形式 $E = mc^2$ 可以混排。块级公式使用 <code>$</code>：</p>
-<p>$
-\mathcal{F}(\omega) = \int_{-\infty}^{\infty} f(t)\, e^{-i\omega t}\, dt
-$</p>
-<p>矩阵与对齐环境（<code>aligned</code> 多行公式不受段落换行影响）：</p>
+<h2>8. 数学公式（frontmatter <code>math: true</code>）</h2>
+<p>行内公式 $e^{i\pi} + 1 = 0$ 与块级公式：</p>
 <p>$
 \begin{aligned}
 \nabla \cdot \mathbf{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \mathbf{B} &= 0 \\
-\nabla \times \mathbf{E} &= -\frac{\partial \mathbf{B}}{\partial t}
+\nabla \cdot \mathbf{B} &= 0
 \end{aligned}
 $</p>
-<p>方括号定界符 <code>\[ ... \]</code> 同样支持块级公式：</p>
-<p>\[
-\sum_{n=1}^{\infty} \frac{1}{n^2} = \frac{\pi^2}{6}
-\]</p>
-<p>行内圆括号 <code>\( ... \)</code>：质能方程 \(E = mc^2\) 与分数 \(\tfrac{1}{2}mv^2\)。</p>
-<h2>7. 行内元素</h2>
+<h2>9. 行内元素</h2>
 <ul>
 <li>高亮 <mark>荧光笔标记</mark>（酸绿色，双模式高对比）</li>
 <li>键盘按键 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd></li>
@@ -570,24 +1004,38 @@ $</p>
 <li>行内黑幕（防剧透）：凶手是 <span class="spoiler" role="button" tabindex="0" title="防剧透内容，点击显示">黑衣人</span>，点击显示。</li>
 <li>行内代码 <code>const x = 42;</code></li>
 </ul>
-<h2>8. 链接包裹图片（常驻跳转角标）</h2>
-<p>点击<strong>图片本身仍打开灯箱</strong>预览；只有点击右上角的<strong>跳转角标</strong>才跳转（并在新标签页打开）：</p>
-<p><a href="https://unsplash.com"><img src="https://picsum.photos/800/450" alt="示例图片：角标跳转 Unsplash"></a></p>
-<p>裸图（无链接）点击仍打开灯箱预览：</p>
+<h2>10. 链接包裹图片与裸图</h2>
+<p>链接包裹的图片：<strong>点击图片本身打开灯箱</strong>预览；跳转链接收在灯箱的 <em>i</em> 信息面板里：</p>
+<p><a href="https://unsplash.com"><img src="https://picsum.photos/800/450" alt="示例图片：点击开灯箱"></a></p>
+<p>裸图（无链接）点击同样打开灯箱预览：</p>
 <p><img src="https://picsum.photos/800/450" alt="裸图：点击打开灯箱"></p>
-<h2>9. 脚注</h2>
+<h2>11. 脚注</h2>
 <p>摩尔 Blog 的脚注语法与 GFM 一致<sup class="fn-ref" id="fnref-gfm" data-fn-ref="gfm" role="button" tabindex="0" aria-label="查看注释卡片">1</sup>，定义可以写在任意位置<sup class="fn-ref" id="fnref-anywhere" data-fn-ref="anywhere" role="button" tabindex="0" aria-label="查看注释卡片">2</sup>，渲染时统一汇总到文末「注释」区。<strong>未写定义的引用</strong>（如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。</p>
-<h2>10. 表格对齐（修复演示）</h2>
-<p>三列分别<strong>左、中、右</strong>对齐（此前全被居中，现在按分隔行生效）：</p>
+<h2>12. 表格对齐</h2>
 <table>
 <thead>
 <tr>
-<th align="left">:左对齐</th>
-<th align="center">居中对齐:</th>
-<th align="right">右对齐:</th>
+<th align="left">左对齐列</th>
+<th align="center">居中列</th>
+<th align="right">右对齐列</th>
 </tr>
 </thead>
 <tbody><tr>
+<td align="left">GitHub</td>
+<td align="center">1</td>
+<td align="right">100</td>
+</tr>
+<tr>
+<td align="left">掘金</td>
+<td align="center">2</td>
+<td align="right">200</td>
+</tr>
+<tr>
+<td align="left">知乎</td>
+<td align="center">3</td>
+<td align="right">300</td>
+</tr>
+<tr>
 <td align="left">b 站</td>
 <td align="center">1</td>
 <td align="right">1000</td>
@@ -603,16 +1051,111 @@ $</p>
 <td align="right">3000</td>
 </tr>
 </tbody></table>
-<h2>11. Mermaid 图表</h2>
-<pre><code class="language-mermaid">flowchart LR
-    A[Markdown 源文] --&gt; B{moara-md 预处理}
-    B --&gt; C[marked v15 解析]
-    C --&gt; D[浏览器端渲染]
-    C --&gt; E[Node 端直出 SEO HTML]
-    D --&gt; F((产物一致))
-    E --&gt; F
+<h2>13. Mermaid 图表类型全集</h2>
+<p><code>moara-md</code> 不拦截 Mermaid——交给 <code>article.js</code> 加载的 Mermaid 10.9 渲染。常用 12 种图：</p>
+<pre><code class="language-mermaid">flowchart TD
+    A[开始] --&gt; B{条件?}
+    B -- 是 --&gt; C[执行]
+    B -- 否 --&gt; D[跳过]
+    C --&gt; E[结束]
+    D --&gt; E
 </code></pre>
-<h2>12. 原生 details 折叠</h2>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant U as 用户
+    participant S as 服务器
+    U-&gt;&gt;S: 请求文章
+    S--&gt;&gt;U: 返回 HTML
+    U-&gt;&gt;S: 请求评论
+    S--&gt;&gt;U: 返回 JSON
+</code></pre>
+<pre><code class="language-mermaid">classDiagram
+    class Article {
+        +String title
+        +String html
+        +render()
+    }
+    class Comment {
+        +String body
+        +post()
+    }
+    Article &quot;1&quot; --&gt; &quot;n&quot; Comment : 拥有
+</code></pre>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; 草稿
+    草稿 --&gt; 发布: 审核通过
+    发布 --&gt; 修订: 更新
+    修订 --&gt; 发布
+    发布 --&gt; [*]
+</code></pre>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o{ POST : writes
+    POST ||--o{ COMMENT : has
+    USER ||--o{ COMMENT : leaves
+</code></pre>
+<pre><code class="language-mermaid">gantt
+    title 发版流程
+    dateFormat YYYY-MM-DD
+    section 开发
+    功能开发 :a1, 2026-10-01, 6d
+    section 测试
+    回归测试 :a2, after a1, 3d
+    section 上线
+    灰度发布 :a3, after a2, 2d
+</code></pre>
+<pre><code class="language-mermaid">pie showData
+    title 流量来源
+    &quot;搜索&quot; : 45
+    &quot;直接&quot; : 30
+    &quot;外链&quot; : 25
+</code></pre>
+<pre><code class="language-mermaid">journey
+    title 写博客的一天
+    section 上午
+      起床: 5: 我
+      喝咖啡: 4: 我
+    section 下午
+      写文章: 5: 我, 读者
+    section 晚上
+      发布: 5: 我, 读者
+</code></pre>
+<pre><code class="language-mermaid">mindmap
+  root((博客))
+    内容
+      文章
+      评论
+    技术
+      Astro
+      moara-md
+</code></pre>
+<pre><code class="language-mermaid">timeline
+    title 博客演进
+    2023 : 静态 HTML
+    2024 : Hexo 迁移
+    2025 : Astro 重构
+    2026 : moara-md 扩展层
+</code></pre>
+<pre><code class="language-mermaid">gitGraph
+    commit id: &quot;init&quot;
+    commit id: &quot;posts&quot;
+    branch feature
+    commit id: &quot;moara-md&quot;
+    checkout main
+    merge feature
+    commit id: &quot;release&quot;
+</code></pre>
+<pre><code class="language-mermaid">quadrantChart
+    title 任务优先级
+    x-axis &quot;低价值&quot; --&gt; &quot;高价值&quot;
+    y-axis &quot;低成本&quot; --&gt; &quot;高成本&quot;
+    quadrant-1 &quot;重点关注&quot;
+    quadrant-2 &quot;值得投入&quot;
+    quadrant-3 &quot;顺手处理&quot;
+    quadrant-4 &quot;果断放弃&quot;
+    &quot;写文章&quot;: [0.8, 0.7]
+    &quot;修样式&quot;: [0.5, 0.3]
+    &quot;加彩蛋&quot;: [0.2, 0.6]
+</code></pre>
+<h2>14. 原生 details 折叠</h2>
 <p>标准 HTML 折叠（与 <code>:::folding</code> 视觉风格统一）：</p>
 <details>
 <summary>原生 details 折叠示例</summary>
@@ -624,9 +1167,197 @@ $</p>
 </ul>
 </details>
 
-<h2>13. 图集标签（可选 links）</h2>
+<details>
+<summary>原生 details（HTML 直写）</summary>
+
+<p>与 <code>:::folding</code> 视觉统一，垂直节奏同 0.8rem——用于校验裸 <code>&lt;details&gt;</code> 标签的留白一致性。</p>
+</details>
+
+<details open>
+<summary>默认展开 + 内部嵌套</summary>
+
+<p>原生 details 内的提示框与代码：</p>
+<div class="admonition admonition-tip" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-lightbulb-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>提示框嵌在原生 details 里。</p>
+</div>
+</div>
+
+<pre><code class="language-js">console.log(&#39;details &gt; code&#39;);
+</code></pre>
+</details>
+
+<h2>15. 图集标签（可选 links）</h2>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
-<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>显示跳转角标并跳转，<strong>空项</strong>维持灯箱预览。</p>
+<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。</p>
+<h2>16. 长代码块自动折叠</h2>
+<p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
+<pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
+type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: Error };
+
+async function fetchPost(id: string): Promise&lt;Result&lt;string&gt;&gt; {
+    const res = await fetch(`/posts/${id}.html`);
+    if (!res.ok) return { ok: false, error: new Error(String(res.status)) };
+    const html = await res.text();
+    return { ok: true, value: html };
+}
+
+function parseFrontmatter(md: string): { data: Record&lt;string, unknown&gt;; body: string } {
+    const m = md.match(/^---\n([\s\S]*?)\n---\n/);
+    if (!m) return { data: {}, body: md };
+    const data: Record&lt;string, unknown&gt; = {};
+    for (const line of m[1].split(&#39;\n&#39;)) {
+        const idx = line.indexOf(&#39;:&#39;);
+        if (idx &lt; 2) continue;
+        const key = line.slice(0, idx).trim();
+        const raw = line.slice(idx + 1).trim();
+        try { data[key] = JSON.parse(raw); } catch { data[key] = raw; }
+    }
+    return { data, body: md.slice(m[0].length) };
+}
+
+const DEMO_LINES = Array.from({ length: 20 }, (_, i) =&gt;
+    `console.log(&#39;line ${i + 1} of the long code demo&#39;);`);
+
+DEMO_LINES.forEach((l) =&gt; eval(l));
+
+async function main() {
+    const r = await fetchPost(&#39;test001&#39;);
+    if (r.ok) {
+        const { body } = parseFrontmatter(r.value);
+        console.log(body.slice(0, 80));
+    } else {
+        console.error(r.error);
+    }
+}
+
+main();
+</code></pre>
+<h2>17. 嵌套矩阵速查</h2>
+<p>下表汇总本文实际演示过的嵌套组合（✓ 均有对应段落）：</p>
+<table>
+<thead>
+<tr>
+<th>内层组件 \ 外层</th>
+<th align="center">顶层</th>
+<th align="center">折叠内</th>
+<th align="center">选项卡内</th>
+<th align="center">提示框内</th>
+<th align="center">原生 details 内</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>段落 / 列表 / 任务列表</td>
+<td align="center">✓</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>表格</td>
+<td align="center">✓ §12</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>代码块 / 长代码</td>
+<td align="center">✓ §16</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—（用嵌套引用 §4）</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>折叠面板（含三层）</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>选项卡（含嵌套选项卡）</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>Mermaid（12 类型）</td>
+<td align="center">✓ §13</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>视频（iframe / 直链）</td>
+<td align="center">✓ §5</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>链接卡 / 仓库卡</td>
+<td align="center">✓ §6-7</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>数学公式</td>
+<td align="center">✓ §8</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>原生 details</td>
+<td align="center">✓ §14</td>
+<td align="center">✓ §2</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>行内元素（mark/kbd/spoiler 等）</td>
+<td align="center">✓ §9</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>图集 gallery</td>
+<td align="center">✓ §15</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+</tbody></table>
+<p>引擎要点：容器指令<strong>栈式解析</strong>（<code>::::tabs</code> &gt; <code>:::tab</code> &gt; <code>:::folding</code> 逐层闭合）；提示框先于容器变换，内部容器每行加 <code>&gt;</code> 前缀；<code>::video</code> <code>::linkcard</code> <code>::github</code> 为叶子指令，容器内压缩为单行。</p>
 <section class="footnotes" data-footnotes data-notoc>
 <div class="footnotes-title"><i class="ri-book-open-line" aria-hidden="true"></i><span>注释</span></div>
 <ol class="footnotes-list">

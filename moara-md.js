@@ -173,8 +173,10 @@
             return ph(codeSpans.length - 1);
         });
 
-        /* 行内 code span：成对反引号，内容不含空行（与 CommonMark 宽松近似） */
-        var inlineCodeRegex = /(`+)(?!`)((?:[^`]|\n(?!\n))+?)\1(?!`)/g;
+        /* 行内 code span：成对 1-2 个反引号、不从更长反引号串中间起配。
+           3+ 反引号串留给围栏语义：否则引用块内（> 前缀）的 ``` 围栏会被
+           误配对成跨行行内代码，占位符吞掉 > 前缀后围栏失衡，殃及后续顶层指令。 */
+        var inlineCodeRegex = /(?<!`)(`{1,2})(?!`)((?:[^`]|\n(?!\n))+?)\1(?!`)/g;
         text = text.replace(inlineCodeRegex, function (match) {
             codeSpans.push(match);
             return ph(codeSpans.length - 1);
@@ -285,7 +287,7 @@
 
                     var conf = ADM_TYPES[type];
                     var title = escapeHtml(customTitle || conf.label);
-                    var isCollapsible = true; /* 全部可折叠：无尾缀默认收起（用户协议 v4） */
+                    var isCollapsible = true; /* 无尾缀默认收起 */
                     var openByDefault = collapse === '+';
 
                     var inner = quote.slice(firstIdx + 1).join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
@@ -543,8 +545,7 @@
                     var uid = ++tabsUid;
                     var bar = '';
                     var panels = '';
-                    /* 折叠协议（用户协议 v13）：::::tabs 无属性 → 默认折叠（仅标题栏可见）；
-                       {open} → 默认展开 —— 与 :::folding 的 open 语义一致 */
+                    /* ::::tabs 无属性 → 默认折叠（仅标题栏可见）；{open} → 默认展开（与 :::folding 语义一致） */
                     var tabsOpen = !!(frame.attrs &&
                         (frame.attrs.open === true || String(frame.attrs.open).toLowerCase() === 'true'));
                     frame.panels.forEach(function (p, idx) {
@@ -822,8 +823,7 @@
         var items = used.map(function (label) {
             var token = '%%FN_BODY_' + makeNonce() + '%%';
             pending.push({ token: token, md: defs[label], label: label });
-            /* 序号位：与正文 .fn-ref 完全同源（共用 class，源码复制，像素级一致），
-               数字一一对应，点击返回引用处（用户协议 v6） */
+            /* 序号位与正文 .fn-ref 同源（共用 class，像素级一致），点击返回引用处 */
             return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' +
                 '<button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-' + escapeHtml(label) + '"' +
                 ' aria-label="返回引用处 ' + (refMap[label] || '') + '">' + (refMap[label] || '') + '</button>' +
@@ -901,8 +901,7 @@
                 } else {
                     rendered = escapeHtml(fn.md);
                 }
-                /* 注释区外链新标签页打开（用户协议 v13）：仅 http(s) 外链加 target/rel，
-                   文内锚点（fn-jump/回引）不受影响 */
+                /* 注释区 http(s) 外链新标签页打开；文内锚点（fn-jump/回引）不受影响 */
                 rendered = String(rendered).replace(
                     /<a\s+href="(https?:\/\/[^"]*)"/gi,
                     '<a href="$1" target="_blank" rel="noopener noreferrer"'
