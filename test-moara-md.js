@@ -98,6 +98,20 @@ function render(md) {
     if (v4fail) process.exitCode = 1;
 }
 
+/* ── 8. 代码围栏 info 串：title / {行号}（v14） ── */
+{
+    const h = render('```ts title="src/config/site.ts" {3, 6-8}\ntype A = 1;\n\nexport const x = 2;\n```');
+    t('围栏 v14：title + 行高亮重写为 pre data 属性', h.includes('<pre data-title="src/config/site.ts" data-lines="3,6-8"><code class="language-ts">'));
+    t('围栏 v14：代码内容 HTML 转义保留', h.includes('type A = 1;'));
+    const h2 = render('```bash title="终端命令"\npnpm install\n```');
+    t('围栏 v14：仅标题（无 data-lines）', h2.includes('<pre data-title="终端命令"><code class="language-bash">') && !h2.includes('data-lines'));
+    const h3 = render('```js\nconsole.log(1);\n```');
+    t('围栏 v14：普通围栏走 marked 原路径（无 data 属性）', h3.includes('<code class="language-js">') && !h3.includes('data-title'));
+    const h4 = render('```py {2, 4-5}\na = 1\nb = 2\n```');
+    t('围栏 v14：仅行高亮 + 语言保留', h4.includes('<pre data-lines="2,4-5"><code class="language-py">'));
+    const h5 = render(':::folding{title="c"}\n```js title="in.js"\nlet a = 1;\n```\n:::');
+    t('围栏 v14：折叠内围栏同步重写', h5.includes('data-title=&quot;in.js&quot;') || h5.includes('data-title="in.js"'));
+}
 console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
 /* ── 7. 选项卡折叠协议 + 注释外链新标签页（v13） ── */
 {

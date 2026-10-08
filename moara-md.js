@@ -11,6 +11,17 @@
  *
  *  ── 指令语法（本文档为准，docs/posts/README.md 面向作者摘录） ──
  *
+ *  0. 代码围栏 info 串（title / 行高亮）：
+ *         ```ts title="src/config/site.ts" {3, 6-8}
+ *         ……
+ *         ```
+ *         ```bash title="终端命令"    （仅标题，无高亮）
+ *     title 给出标题（含文件名时按扩展名推断图标）；{行号} 高亮指定
+ *     行或区间（如 {3, 6-8}），空行计入行号。两者可任一/组合使用；
+ *     无附加 info 的普通围栏行为不变。带附加 info 时重写为携带
+ *     data-title / data-lines 的 <pre><code> HTML 块，行号/标题渲染
+ *     由前端（article.js）在 hljs 高亮后完成。
+ *
  *  1. 折叠面板（取代旧版 <div class="details-box"> 手写 HTML）：
  *         :::folding{title="点击展开 — 查看详细配置说明"}
  *         任意块级内容（列表 / 表格 / 代码块 / 嵌套折叠 …）
@@ -156,6 +167,41 @@
      * ① 代码区摘离 / ⑦ 归还
      * ------------------------------------------------------------------ */
 
+    /* 围栏 info 串解析：```lang title="..." {3, 6-8}
+       title / 行区间 marked 默认丢弃 → 取出后重写为携带 data 属性的
+       <pre><code> HTML（marked 视作 html 块原样透传），行号/标题渲染
+       由前端完成。无附加 info 的围栏原样归还 marked。 */
+    function parseCodeFenceInfo(raw) {
+        var rest = String(raw || '').trim();
+        if (!rest) return null;
+        var lines = null;
+        rest = rest.replace(/\{\s*([\d\s,\-]+?)\s*\}/, function (all, g) {
+            lines = g.replace(/\s+/g, '');
+            return ' ';
+        });
+        var title = null;
+        rest = rest.replace(/title\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s}]+))/, function (all, a, b, c) {
+            title = (a != null && a !== '') ? a : ((b != null && b !== '') ? b : c);
+            return ' ';
+        });
+        if (title == null && lines == null) return null;
+        return { lang: rest.trim().split(/\s+/)[0] || '', title: title, lines: lines };
+    }
+
+    function rewriteFenceInfo(fenceText) {
+        var lines = fenceText.split('\n');
+        var m = lines[0].match(/^[ \t]*(`{3,}|~{3,})[ \t]*(.*)$/);
+        if (!m) return fenceText;
+        var info = parseCodeFenceInfo(m[2]);
+        if (!info) return fenceText;
+        var body = lines.slice(1, lines.length - 1).join('\n');
+        var langCls = info.lang ? ' class="language-' + escapeHtml(info.lang) + '"' : '';
+        var attrs = '';
+        if (info.title) attrs += ' data-title="' + escapeHtml(info.title) + '"';
+        if (info.lines) attrs += ' data-lines="' + escapeHtml(info.lines) + '"';
+        return '<pre' + attrs + '><code' + langCls + '>' + escapeHtml(body) + '</code></pre>';
+    }
+
     /**
      * 摘离围栏代码块与行内 code span，防止其内容被后续变换误处理。
      * 占位符含随机 nonce，避免与正文同形文本碰撞；还原用 split/join，
@@ -166,10 +212,11 @@
         var nonce = makeNonce();
         var ph = function (i) { return '%%MD_CODE_' + nonce + '_' + i + '%%'; };
 
-        /* fenced code block：```lang 或 ~~~lang 起始，同串围栏闭合 */
+        /* fenced code block：```lang 或 ~~~lang 起始，同串围栏闭合。
+           info 串带 title / {行号} 时重写为 <pre data-*> 原生 HTML 块。 */
         var fenceRegex = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n[ \t]*\1[ \t]*(?=\n|$)/gm;
         text = text.replace(fenceRegex, function (match) {
-            codeSpans.push(match);
+            codeSpans.push(rewriteFenceInfo(match));
             return ph(codeSpans.length - 1);
         });
 

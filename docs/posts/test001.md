@@ -712,3 +712,54 @@ main();
 | 图集 gallery | ✓ §15 | — | — | — | — |
 
 引擎要点：容器指令**栈式解析**（`::::tabs` > `:::tab` > `:::folding` 逐层闭合）；提示框先于容器变换，内部容器每行加 `>` 前缀；`::video` `::linkcard` `::github` 为叶子指令，容器内压缩为单行。
+
+## 18. 代码块标题与行高亮
+
+带标题（按文件名推断图标）与行号，`{行号}` 高亮指定行或区间（空行计入行号，支持所有语言）：
+
+```ts title="src/config/site.ts" {3, 6-8}
+type ColorMode = 'light' | 'dark' | 'auto';
+
+// 高亮这一行
+export function setMode(mode: ColorMode) {
+  // 以下三行被高亮
+  const isDark = mode === 'dark'
+    || (mode === 'auto'
+      && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', isDark);
+}
+```
+
+```bash title="终端命令"
+pnpm install
+pnpm dev
+pnpm build
+```
+
+```json title="package.json" {2, 4}
+{
+  "name": "moara-blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module"
+}
+```
+
+仅行高亮（无标题）：
+
+```python {2, 4-5}
+import os
+BASE = os.environ.get("BASE_DIR", "/tmp")
+def build(target):
+    print("building", target)
+    return True
+```
+
+:::folding{title="折叠内的带标题代码块"}
+
+```js title="utils/in-fold.js" {2}
+export const fold = (x) => x;
+export const twice = (x) => fold(x) * 2;
+```
+
+:::
