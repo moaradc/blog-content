@@ -13,6 +13,8 @@
 ## 博客文章
 
 - [测试](https://blog.945426.xyz/posts/test000): 2026-09-27
+- [123云盘"公摊网盘"事件调研](https://blog.945426.xyz/posts/test002): 2026-10-08 — 9月24日双空间公告、大众舆论导向与独立判断
+- [Markdown 组件语法全览](https://blog.945426.xyz/posts/test001): 2026-10-03 — 沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。
 - [Markdown写作指南](https://blog.945426.xyz/posts/107): 2026-06-09 — 一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。
 - [Hello world!](https://blog.945426.xyz/posts/106): 2025-12-29 — Hello world!
 - [pixiv](https://blog.945426.xyz/posts/104): 2025-12-26

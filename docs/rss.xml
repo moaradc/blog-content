@@ -6,11 +6,1068 @@
     <link>https://blog.945426.xyz</link>
     <description>极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Sun, 27 Sep 2026 10:17:00 GMT</lastBuildDate>
+    <lastBuildDate>Thu, 08 Oct 2026 13:27:00 GMT</lastBuildDate>
     <generator>generate-rss.js (PagesCMS)</generator>
     <atom:link href="https://blog.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>123云盘&quot;公摊网盘&quot;事件调研</title>
+      <link>https://blog.945426.xyz/posts/test002</link>
+      <guid isPermaLink="false">test002</guid>
+      <pubDate>Thu, 08 Oct 2026 13:27:00 GMT</pubDate>
+      <description>9月24日双空间公告、大众舆论导向与独立判断</description>
+      <content:encoded><![CDATA[<p><strong>报告日期：2026年10月8日</strong> Qwen3.8-Flash</p>
+<h2>摘要</h2>
+<p>2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成&quot;标准空间&quot;与&quot;专业空间&quot;两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。调整后免费用户能自主上传的容量只有50GB，会员也只到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。舆论把这套规则压缩成一句&quot;全球首创有公摊的网盘&quot;，媒体按50GB与2TB的配置算出97%的&quot;公摊比例&quot;并广泛转载<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a>,<a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>；法律界人士认为对服务期内的付费用户大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖与QQ频道内部讨论均未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。</p>
+<h2>1. 公告本身：一次把&quot;共享池&quot;和&quot;独占池&quot;切开的空间重构</h2>
+<h3>1.1 9月24日公告的规则实质</h3>
+<p>123云盘于2026年9月24日14:30起正式实施双空间机制，把运行多年的单一存储空间一分为二<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。原空间更名为&quot;标准空间&quot;，沿用重复文件与回收站不计容量的机制，用于存放用户转存自他人的文件及其他非独占文件；新增的&quot;专业空间&quot;采用多副本分布式对象存储，用于存放用户独自存储的文件、大于10GB的超大文件、分卷压缩文件组，以及直链、图床、视频转码服务产生的文件，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。</p>
+<blockquote>
+<p>[!IMPORTANT] 公告真正的变化不在&quot;新增空间&quot;，而在&quot;额度不再通用&quot;
+拆分之前，用户看到的是一整块容量；拆分之后，同一块容量被划成两个互不通用的池子。规则上，只有专业空间能承载用户自己上传的文件，标准空间承载的是用户之间互相转存的文件<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。这意味着&quot;我买了多少TB&quot;这个问题，从9月24日起有了两个答案。</p>
+</blockquote>
+<p>从成本结构看，这两块空间的造价完全不同：标准空间依托去重技术，同一份热门资源在服务器上只存一份物理数据，平台边际成本极低；专业空间是多副本对象存储，每一份都要真实占用物理硬盘，成本显著更高<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。公告把&quot;是否独占&quot;作为分界线，本质上是用文件的物理成本重新给用户的额度定价。</p>
+<pre><code class="language-mermaid">flowchart TD
+    A[文件写入123云盘] --&gt; B{是否为用户独自持有}
+    B -- 是 --&gt; P[计入专业空间&lt;br&gt;多副本对象存储&lt;br&gt;每份独立计容量]
+    B -- 否，转存自他人 --&gt; S[计入标准空间&lt;br&gt;重复文件与回收站不计容量]
+    A --&gt; C{单文件是否大于10GB&lt;br&gt;或为分卷压缩组}
+    C -- 是 --&gt; P
+    A --&gt; D{是否由直链/图床/视频转码产生}
+    D -- 是 --&gt; P
+    P --&gt; X[额度耗尽即无法继续上传&lt;br&gt;标准空间剩余容量不可借用]
+</code></pre>
+<p>新老用户以2026年9月24日14:30:00为界区分，此前注册的是老用户，此后注册的是新用户<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。配额落地的实际结果如下表。</p>
+<p><strong>表1：双空间机制下的用户配额对照</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">用户类型</th>
+<th align="left">专业空间</th>
+<th align="left">标准空间</th>
+<th align="left">口径说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">老用户（免费）</td>
+<td align="left">50GB</td>
+<td align="left">2TB</td>
+<td align="left">原有空间不因升级减少<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup></td>
+</tr>
+<tr>
+<td align="left">新免费未实名用户</td>
+<td align="left">50GB</td>
+<td align="left">50GB</td>
+<td align="left">注册基础权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新免费已实名用户</td>
+<td align="left">50GB</td>
+<td align="left">2TB</td>
+<td align="left">完成实名认证后提升<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新VIP已实名用户</td>
+<td align="left">1TB</td>
+<td align="left">20TB</td>
+<td align="left">基础空间叠加会员权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新SVIP已实名用户</td>
+<td align="left">2TB</td>
+<td align="left">100TB</td>
+<td align="left">基础空间叠加会员权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+</tbody></table>
+<p>:::folding{title=&quot;点开补充：配额表之外的三条细则&quot;}</p>
+<ul>
+<li>历史文件兼容处理：升级上线时账号内已存在的文件，无论原始来源或属性，统一归类为标准文件并计入标准空间，不占用专业空间配额；此后这些文件再次发生操作时，系统按新规则重新判断属性，重新分类后若对应空间超额，按该空间容量管理规则执行<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a>,<a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。</li>
+<li>实名认证口径：老用户后续完成实名认证不重复增加标准空间，新用户首次实名后标准空间提升至2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。</li>
+<li>快科技与腾讯网在9月25日转述的公告截图中还列出未实名新会员档位：新VIP未实名用户为专业空间1TB加标准空间18TB+50GB，新SVIP未实名用户为专业空间2TB加标准空间98TB+50GB；同批报道指出，标准空间对转存文件同样设有单文件10GB的上限。</li>
+</ul>
+<p>:::</p>
+<h3>1.2 从上线到致歉的十二天</h3>
+<p>事件的第一处程序性缺陷在于时间顺序。公告的发布时刻是2026年9月24日15:41，而双空间机制的生效时刻是同日14:30<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>——规则已经落地，公告随后才发出。多家媒体在梳理用户不满时指出，本次重大规则调整几乎没有提前公示和提醒，这成为舆论集中攻击的点。</p>
+<blockquote>
+<p>[!WARNING] 生效在前、公告在后
+用户在9月24日下午打开云盘时看到的是已经改好的额度，而不是一份可供预留过渡期的预告。这一顺序问题，在后续致歉声明中被官方归入&quot;上线节奏&quot;与&quot;规则说明&quot;两项不足。</p>
+</blockquote>
+<p>舆论发酵四天后，123云盘于9月28日发布《关于近期&quot;专业空间&quot;升级调整的说明与致歉》<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。官方承认本次调整在上线节奏、产品设计、规则说明和存量权益衔接四方面存在不足，并提出五条优化方向：提高各等级用户赠送的专业空间容量并向老用户倾斜；优化空间归属规则，不再简单以文件大小区分；多人共有文件占用空间由各拥有人账户均摊；完善存量会员权益过渡方案；更清晰地展示规则变化<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。优化方案力争在2026年11月前上线，对无法继续正常使用的用户支持按原支付渠道退还剩余服务期对应费用，同时官方强调不会因规则调整擅自删除用户正常存储的文件<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<pre><code class="language-mermaid">timeline
+    title 事件十二天
+    2026-09-24 14:30 : 双空间机制生效
+    2026-09-24 15:41 : 升级公告发布
+    2026-09-25 : 媒体集中报道配额落差
+    2026-09-28 : 官方说明与致歉
+    2026-09-29 : 话题进入微博热搜
+    2026-09-30 : 社区复盘与成本解读
+    2026-11 前 : 优化方案目标上线节点
+</code></pre>
+<p>致歉之后又追加了一次程序回滚。因升级后出现程序缺陷，部分历史文件被误判为专业文件，修复程序执行24小时未处理完毕，官方最终把所有用户的已用专业容量列入标准容量<sup><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">腾讯网</a></sup>。对首次报告该缺陷并帮助定位问题的用户，官方表示将予以感谢和奖励<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。至9月28日，安卓客户端的更新说明中已把&quot;新增专业空间&quot;列为版本特性，用户可在文件列表中按所属空间筛选文件。</p>
+<p>:::folding{title=&quot;这里值得留意的一点：致歉改的是&#39;分法&#39;，不是&#39;分不开&#39;&quot;}</p>
+<p>五条优化方向里，第2条与第3条直接回应争议核心——不再简单以文件大小区分归属、共有文件由拥有人均摊。但官方同时明确，双空间制度本身不会被取消，能接受调整的继续用，不能接受的老会员可申请退款<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。换句话说，致歉修正的是分类规则的粗糙程度与告知方式，把&quot;独占文件要单独计账&quot;这一底层设计保留了下来。凤凰网与快科技在9月29日转载致歉声明全文时，同样把它概括为&quot;优化空间规则并支持退款&quot;，而非&quot;撤回调整&quot;。</p>
+<p>:::</p>
+<h2>2. 大众导向：情绪如何凝聚成&quot;公摊网盘&quot;这一个词</h2>
+<h3>2.1 标签的传播路径与杀伤力</h3>
+<p>&quot;全球首创有公摊的网盘&quot;是本次事件中传播效率最高的一句话，用户在吐槽时给123云盘贴上了这个标签<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a></sup>。它之所以能迅速跑开，靠的是一次跨领域类比：住房公摊是被广泛熟悉且长期被抱怨的制度，把&quot;标准空间不计入自主上传&quot;翻译成了&quot;买房面积里有97%是公摊&quot;。</p>
+<blockquote>
+<p>[!QUOTE] 传播链条
+微博话题以&quot;#123云盘被吐槽全球首创有公摊网盘#&quot;与&quot;#123云盘公开道歉#&quot;双标签形式在9月29日聚合发布；搜狐、网易、快科技、今日头条、百家号、AcFun、UC头条、什么值得买在9月25日至10月3日间接力同一表述，AcFun弹幕视频网也转载了&quot;网友吐槽全球首创有公摊网盘&quot;的相关内容<sup><a href="https://www.acfun.cn/a/ac48881070?_t=t">acfun.cn</a></sup>。</p>
+</blockquote>
+<p>媒体在计算这个类比时给出了具体比例：按免费用户50GB专业空间加2TB标准空间的配置，公摊比例高达97%<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。这一数字的杀伤力来自反差——被抱怨多年的住房公摊比例往往只在20%左右，而网盘给出的&quot;公摊&quot;接近其五倍。</p>
+<pre><code class="language-mermaid">pie showData
+    title 免费用户名义空间的构成（按双空间规则）
+    &quot;标准空间（不可自主上传，被类比为公摊）&quot; : 97
+    &quot;专业空间（可自主上传）&quot; : 3
+</code></pre>
+<p>标签的负面效果不止于比价。大众媒体普遍把本次事件解读为网盘行业在存储成本压力下主动&quot;赶客&quot;，有评论直言这次调整的本质是&quot;借机收回免费用户手里的存储空间&quot;，甚至被理解为&quot;免费用户请自觉卸载&quot;<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。从&quot;公摊&quot;到&quot;赶客&quot;，舆论完成了一次从产品规则到经营诚意的定性升级：用户不再讨论容量本身，而是讨论平台是否还想服务免费用户。</p>
+<h3>2.2 分渠道观察：B站、贴吧、QQ频道与其他社区</h3>
+<p>::::tabs</p>
+<p>:::tab{title=&quot;B站：拆解规则与动员维权&quot;}</p>
+<p>B站长文动态《123云盘这次，踩雷区了》把新旧配额落差逐条摊开：新免费用户可自行上传的空间从2TB缩减至50GB，新SVIP用户从102TB缩减至2TB，并给出结论&quot;不管是对老用户还是新用户，均是不利的&quot;<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。文中有会员晒出专业空间仅剩1TB的截图，也有用户提出不能简单退款了事，因为迁移所花的时间成本无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。</p>
+<p>视频区的情绪更直接：有UP主发布题为&quot;现在的123云盘【2025年9月起】&quot;的内容，以及&quot;严肃谴责123云盘违约&quot;&quot;避雷这个网站&quot;一类视频，反映的是对规则变更的正面拒绝<sup><a href="https://www.bilibili.com/video/BV1jA4KzfEpH/">哔哩哔哩</a></sup>。</p>
+<p>需要说明渠道对抗的历史。2026年4月30日，123云盘曾发布严正声明，称bili_13514709093、剑客泰菲123456、apngda三名B站用户恶意造谣诽谤，已对侵权内容与传播数据做公证保全并向公安机关报案，声明中提到相关不实内容累计播放数万次、单条最高播放量突破1.7万<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。也就是说，B站同时是本次舆情发酵的主阵地，也是123云盘历史上唯一公开点名维权的平台。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;百度贴吧：长期不满的沉淀池&quot;}</p>
+<p>经过多轮精准搜索（含&quot;123云盘吧 专业空间 吐槽&quot;、&quot;123云盘吧 公摊 9月&quot;、&quot;123云盘吧 双空间 搬家&quot;以及 site:tieba.baidu.com 定向检索），百度贴吧&quot;123云盘吧&quot;关于9月24日双空间事件的专项讨论帖未被搜索引擎公开索引。可检索到的贴吧内容呈现的是长期积累的不满：在&quot;各位免费用户开始准备搬家吧&quot;一帖中，有用户评论&quot;开了三年会员的我都不用了，何况免费的，简直狗屎一般，体验极差，早点换115吧&quot;；另有用户指出&quot;这个盘刚公测了四年，就由当初宣称的永不限速改成了现在这个德性，彻底堵死了非会员的路&quot;<sup><a href="https://tieba.baidu.com/p/10270118510">百度贴吧</a></sup>。资源社区相关帖子里还能看到&quot;离线成功率太低&quot;&quot;同步有bug&quot;这类功能性抱怨<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup>。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;QQ频道与QQ群：入口存在，内容不可见&quot;}</p>
+<p>同样经过多轮检索（含&quot;123云盘 QQ频道 专业空间 讨论&quot;、&quot;123云盘 官方QQ群 9月24日 双空间&quot;），未找到针对9月24日双空间事件的QQ频道或QQ群原始讨论内容。目前仅能确认123云盘资源社区网站置顶帖中提及存在&quot;123社区qq群组、tg频道&amp;群组&quot;<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>，其内部关于该事件的具体讨论未被公开搜索引擎索引。这部分舆论样本只能定性为不可获取，任何&quot;QQ群内一片叫好或一片声讨&quot;的判断都没有依据。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;其他社区：换盘与止损&quot;}</p>
+<p>卡饭论坛IT资讯区转载相关新闻后，用户&quot;风屿法师&quot;留言&quot;刚把我的旧版安装包合集放到123盘上面去分发，早知道不碰它了&quot;，用户&quot;DeepFormat&quot;回复&quot;我换天翼了&quot;，用户&quot;hardkin&quot;评论&quot;之前可以直接浏览器下载的，现在都要转存入自己网盘才能使用浏览器下载&quot;&quot;123在逐渐向全面收费过渡&quot;<sup><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">kafan.cn</a></sup>。</p>
+<p>:::</p>
+<p>::::</p>
+<p><strong>表2：各渠道信息可得性（截至2026年10月8日检索）</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">渠道</th>
+<th align="left">覆盖状态</th>
+<th align="left">关键发现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">官方公告与致歉</td>
+<td align="left">完整</td>
+<td align="left">双空间规则、五条优化方向、退款政策、程序回滚说明<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup></td>
+</tr>
+<tr>
+<td align="left">B站</td>
+<td align="left">完整</td>
+<td align="left">长文拆解落差、UP主谴责违约、平台历史上曾点名维权<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+<tr>
+<td align="left">大众媒体与微博</td>
+<td align="left">完整</td>
+<td align="left">&quot;公摊&quot;标签、97%比例、违约分析、行业成本解读<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">卡饭论坛 / AcFun</td>
+<td align="left">完整</td>
+<td align="left">用户表达换盘意向，媒体转载&quot;公摊网盘&quot;吐槽<sup><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">kafan.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">百度贴吧</td>
+<td align="left">部分缺失</td>
+<td align="left">事件专项帖未被索引，仅可检索到长期不满与搬家讨论<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup></td>
+</tr>
+<tr>
+<td align="left">QQ频道与QQ群</td>
+<td align="left">未覆盖</td>
+<td align="left">仅确认存在官方社群入口，事件内部讨论未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup></td>
+</tr>
+</tbody></table>
+<p>:::folding{title=&quot;补充观察：检索不到的渠道，怎么处理才诚实&quot;}</p>
+<p>贴吧与QQ频道的缺口，是本次调研必须写进结论的一部分，而不是藏在脚注里。原因是这两个渠道恰好是网盘重度用户与资源分享者的聚集地，它们的沉默不代表情绪温和，只代表内容不公开可索引。因此在评估大众导向时，可公开验证的样本集中在B站、微博话题、媒体报道与卡饭论坛四处；把这几处的负面强度外推为&quot;全网一致反对&quot;是可行的，外推为&quot;所有用户都在搬家&quot;则超出证据范围。</p>
+<p>:::</p>
+<h2>3. 争议底层：权益账、成本账与合规账</h2>
+<h3>3.1 付费老用户的权益缩水与违约争议</h3>
+<p>用户真正被削减的不是容量数字，而是容量的用途。法律界人士在评估本次调整时给出的判断是：对仍在服务期内的付费用户，本次改动大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。依据是民法典的格式条款原则——平台协议中&quot;有权调整规则&quot;的条款，不能用来单方面削减用户已经付费购买的核心服务权益；用户购买的是完整存储空间，平台私自拆分并限制使用属于实质性减损权益，道歉与退款都是事后补救，不代表当初行为合法合规<sup><a href="https://www.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。</p>
+<p>落差的具体量级可以从自主上传容量的变化读出。</p>
+<p><strong>表3：用户可自行上传容量在调整前后的变化（数据出自B站长文《123云盘这次，踩雷区了》）</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">用户档位</th>
+<th align="left">调整前自主上传容量</th>
+<th align="left">调整后自主上传容量</th>
+<th align="left">溯源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">新免费用户</td>
+<td align="left">2TB</td>
+<td align="left">50GB</td>
+<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+<tr>
+<td align="left">新VIP用户</td>
+<td align="left">22TB</td>
+<td align="left">1TB</td>
+<td align="left">该长文口径，本轮检索未获第二个独立来源交叉验证</td>
+</tr>
+<tr>
+<td align="left">新SVIP用户</td>
+<td align="left">102TB</td>
+<td align="left">2TB</td>
+<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+</tbody></table>
+<p>退款为什么不足以平息争议，B站长文里那条评论给出了答案：多年会员的钱已经交了，文件也已经搬进来了，现在使用条件变了，即便能退款，整理和迁移花掉的时间也无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。这是一种典型的&quot;沉没成本加迁移成本&quot;结构——退给用户的只是剩余服务期的对价，用户付出的却是把数十TB文件重新分类、下载、再上传另一块盘的劳动与时间。<a href="%E8%BF%81%E7%A7%BB%E6%88%90%E6%9C%AC%E5%9C%A8%E6%9C%AC%E6%AC%A1%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%B9%B6%E9%9D%9E%E6%8A%BD%E8%B1%A1%E6%8B%85%E5%BF%A7%E3%80%82%E8%87%B4%E6%AD%89%E5%A3%B0%E6%98%8E%E6%8F%90%E5%88%B0%EF%BC%8C%E5%9B%A0%E7%A8%8B%E5%BA%8F%E7%BC%BA%E9%99%B7%E5%AF%BC%E8%87%B4%E9%83%A8%E5%88%86%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E8%A2%AB%E8%AF%AF%E5%88%A4%E4%B8%BA%E4%B8%93%E4%B8%9A%E6%96%87%E4%BB%B6%EF%BC%8C%E4%BF%AE%E5%A4%8D%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C24%E5%B0%8F%E6%97%B6%E6%9C%AA%E5%A4%84%E7%90%86%E5%AE%8C%E6%AF%95%EF%BC%8C%E5%AE%98%E6%96%B9%E6%9C%80%E7%BB%88%E5%B0%86%E8%A2%AB%E8%AF%AF%E5%88%A4%E7%94%A8%E6%88%B7%E7%9A%84%E5%B7%B2%E7%94%A8%E4%B8%93%E4%B8%9A%E5%AE%B9%E9%87%8F%E9%87%8D%E7%BD%AE%E4%B8%BA%E6%A0%87%E5%87%86%E6%96%87%E4%BB%B6%3Csup%3E%5B%E8%85%BE%E8%AE%AF%E7%BD%91%5D(https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap)%3C/sup%3E%EF%BC%9B%E8%A7%84%E5%88%99%E6%9C%AC%E8%BA%AB%E8%BF%98%E8%A6%81%E6%B1%82%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E5%9C%A8%E5%86%8D%E6%AC%A1%E5%8F%91%E7%94%9F%E6%93%8D%E4%BD%9C%E6%97%B6%E6%8C%89%E6%96%B0%E8%A7%84%E5%88%99%E9%87%8D%E6%96%B0%E5%88%A4%E6%96%AD%E5%B1%9E%E6%80%A7%3Csup%3E%5Bdonews.com%5D(https://www.donews.com/news/1/6724009.html)%3C/sup%3E%EF%BC%8C%E8%BF%99%E6%84%8F%E5%91%B3%E7%9D%80%E7%94%A8%E6%88%B7%E9%9C%80%E8%A6%81%E5%8F%8D%E5%A4%8D%E6%A0%B8%E5%AF%B9%E6%96%87%E4%BB%B6%E5%BD%92%E5%B1%9E%E3%80%82">^migrate</a></p>
+<blockquote>
+<p>[!FAILURE] 用户不满的层次结构
+检索到的反馈可以分成三层：较浅的一层是&quot;额度不够用&quot;，对应的是50GB专业空间与个人备份需求之间的缺口<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>；中间一层是&quot;事先没告诉我&quot;，对应的是生效在前、公告在后的顺序问题；较深的一层是&quot;我不再相信这个规则会稳定&quot;，它来自此前多轮权益收紧的累积，单靠一次退款无法修复。</p>
+</blockquote>
+<h3>3.2 平台的成本账与行业背景</h3>
+<p>平台的解释有事实基础。123云盘在致歉声明中把调整动因归为三项：AIGC与短视频等内容快速增长，独有文件、多版本文件与个性化文件不断增多，文件去重效率下降；存储硬件、带宽、机房和运维成本持续上升，网盘服务的长期运营压力增加；部分用户存在商业视频素材、直播录屏、监控录像这类共有率极低的存储需求，与面向个人日常存储和分享设计的标准空间存在差异<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。大众媒体在复盘时同样把存储芯片暴涨与运营商跨网流量结算成本上升，认定为123云盘调整的根本动因<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。</p>
+<p>:::folding{title=&quot;点开看：123云盘成本传导的两年时间线（媒体公开报道口径）&quot;}</p>
+<ul>
+<li>2025年11月26日：发布免费用户权益调整通知，免费提取流量由PC与网页端单日累计上限1GB，调整为全端单月累计上限10GB；在线播放音视频计入流量；取消游客下载100MB以内文件的免费权益。官方称打击对象是批量注册、破解接口、盗链建站的&quot;羊毛党&quot;，并用&quot;不是撑不住，是守得住&quot;作为说明标题。</li>
+<li>2025年12月12日：发布部分商品价格调整通知，理由是三网运营商实施跨网流量省间结算、跨网跨省流量结算成本显著上升，服务器硬盘与内存采购维护成本出现数倍增长，自2026年1月1日0时起调价；通知附带的结算规则显示跨网结算价拟按6000元/G执行。</li>
+<li>2026年4月30日：对三名B站用户发布严正声明并报案，指其恶意造谣诽谤<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。</li>
+<li>2026年5月31日：发布沉默用户服务冻结通知，连续一年以上未登录的免费账号数据转入冷存并冻结30天，逾期未激活将被清理，付费会员不受影响。</li>
+<li>2026年6月4日：开通&quot;账号使用权过户&quot;官方服务，过户服务费按合同成交价的20%计收、最低100元。</li>
+<li>2026年8月：博主&quot;6GHz&quot;公开称花2999元购买5年期1PB空间加会员，仅上传18TB摄影素材即以触发风控为由被停用账号，客服要求加钱升级商用版，当事人向市场监管部门投诉并获受理；同容量方案此后报价降至2699元10年。</li>
+<li>2026年9月21日：集邦咨询判断云端需求走强、企业级SSD第四季度价格预计继续上涨，B站长文引用该判断作为行业成本压力的佐证<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。</li>
+<li>2026年9月24日：双空间机制生效<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。</li>
+</ul>
+<p>:::</p>
+<p>把这条时间线排开之后，9月24日的调整就不再是孤立动作，而是一套连续的成本回收路径：先收流量、再涨价、再清沉默账号、再把独占文件单独计账。什么值得买在9月29日的复盘里给了一种更直白的读法——免费容量与促销容量一直是获客补贴，补贴退坡时规则必然被重新定义，&quot;公摊&quot;是给过去的超售补课：卖出去的容量从来是按转存热度复用的物理空间，现在干脆把复用部分明码标出。</p>
+<blockquote>
+<p>[!NOTE] 两条账不能互相抵
+成本上升解释的是&quot;为什么要改&quot;，不解释&quot;为什么可以不打招呼就改&quot;。存储芯片涨价是行业共同面对的约束，同期各家网盘的处理方式并不相同；把成本压力直接等同于调整程序的正当性，是平台侧叙事里最容易滑过去的一步。</p>
+</blockquote>
+<h2>4. 我的判断：这件事应该怎么读，用户该怎么办</h2>
+<h3>4.1 对公告与舆论双方的评估</h3>
+<p>就公告本身，我的判断分两层。商业逻辑层，这次调整站得住：去重技术决定的&quot;共享文件近乎免费、独占文件全额占用物理盘&quot;这一成本结构是客观事实，把两类文件分账管理，方向上与行业通行做法一致<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。产品程序层，这次调整站不住：生效时刻早于公告时刻、历史文件在用户不知情的情况下被重新归类、以文件大小作为一刀切的判定标尺，这三点合起来构成的是程序上的不合格，官方在9月28日的致歉里承认的四项不足也正是这四项<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。用一句更直白的话概括：把&quot;独占文件要单独算账&quot;这件事做成制度，是可以的；把它做成用户醒来才发现自己已经住进公摊房，是不可以的。</p>
+<p>就舆论，&quot;公摊&quot;标签精准但过于简化，它把合理的成本区分与不合理的告知方式一并否定掉了。97%这个数字在传播上是有效的，在技术上却偷换了单位——它比较的是&quot;名义面积&quot;与&quot;可使用面积&quot;，而标准空间本来就是被去重技术支持的共享池，用户过去实际也在共用它，并不是新出现的公摊。真正值得追问的不是&quot;公摊比例多高&quot;，而是下一次规则变更用户能否提前知道。UC头条在9月30日的评论里把这点写得很清楚：&quot;我关心的不是道歉，是下一次改规则谁先知道&quot;。这类反思比单纯的情绪声讨更有推动力，因为它指向可验证的机制改动，而不是要求平台撤销一项成本上必要的制度。</p>
+<p>:spoiler[把话说到底：这是一次把&quot;信息不对称红利&quot;公开化的定价改革，只是选错了执行顺序。]</p>
+<h3>4.2 给不同用户的选择建议与观察指标</h3>
+<p>判断去留的依据应当是个人的文件构成，而不是舆论声量。</p>
+<pre><code class="language-mermaid">quadrantChart
+    title 受损程度分布（本图为笔者基于事件规则的判断，非检索数据）
+    x-axis &quot;转存共享为主&quot; --&gt; &quot;独占原创为主&quot;
+    y-axis &quot;免费身份&quot; --&gt; &quot;服务期内付费&quot;
+    quadrant-1 &quot;受损最重，优先谈退款&quot;
+    quadrant-2 &quot;受损轻，可观望&quot;
+    quadrant-3 &quot;几乎不受影响&quot;
+    quadrant-4 &quot;受损重，需重算总账&quot;
+    &quot;摄影素材备份者&quot;: [0.85, 0.9]
+    &quot;监控与录播存储者&quot;: [0.9, 0.75]
+    &quot;资源党转存用户&quot;: [0.15, 0.2]
+    &quot;普通相册备份用户&quot;: [0.7, 0.35]
+</code></pre>
+<ul>
+<li><strong>以转存他人分享为主的免费用户</strong>：标准空间的机制没有变化，重复文件与回收站依旧不计容量，实际体验的变动有限<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。真正影响这类用户的是流量侧的收紧，与双空间属于两条线。</li>
+<li><strong>以相机原片、加密备份、商用素材为主的付费用户</strong>：这是受损最重的一群。自有文件几乎必然落入专业空间，而专业空间的免费额度只有50GB，会员也仅到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。</li>
+<li><strong>把123云盘当WebDAV与直链源的用户</strong>：直链、图床、视频转码服务产生的文件全部计入专业空间，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。这类用法的成本模型被规则直接改写，属于必须重算的一类。</li>
+</ul>
+<p>对还在观望的用户，我建议只盯三项验证指标，不必被每日的舆论噪音推着做决定：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 专业空间赠送容量是否真的提高，且对老用户的倾斜有明确数字，而不是&quot;适当倾斜&quot;这类表述</li>
+<li><input disabled="" type="checkbox"> 空间归属规则是否取消文件大小这条标尺，直链与图床场景是否被单独豁免</li>
+<li><input disabled="" type="checkbox"> 重大规则调整前是否建立了提前公示与灰度验证机制，官方在致歉里承诺&quot;完善重大规则调整前的用户沟通和灰度验证机制&quot;<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup></li>
+</ul>
+<p>这三项在2026年11月前落地，则本次事件可视为一次被舆论修正的产品事故；若落地内容仍停留在容量数字的微调，则用户需要接受一个新的基本前提：在123云盘里，名义容量与可用容量是两件事，任何后续文件都应按这一前提估值。退款窗口按原支付渠道退还剩余服务期对应费用，是当下唯一可以立刻执行的止损手段<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<h2>核心参考文献</h2>
+<p><a href="https://www.sohu.com/a/1082873644_184641">全球首创网盘公摊，123云盘突然开始“赶客”_用户_文件_空间</a></p>
+<p><a href="https://i.ifeng.com/c/8woLLQzD9gx">123云盘调整空间规则后引发用户不满，官方致歉并披露优化方向_凤凰网</a></p>
+<p><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">123云盘新增专业空间:原空间更名为标准空间,老用户免费配额为 50GB+2TB</a></p>
+<p><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">【#123云盘被吐槽全球首创有公摊网盘#】#123云盘公开道歉#9月29日消息，日前，123云盘对存储空间体系进行调整，将原有空间更名为“标准空间”，同时新增“专业空间”，用于分类管理不同类型文件。按照新规则，无论是用户自行上传还是转存文件，只要单个文件超过10GB，就会占用专业空间；10GB以下文件则计入标准空间。这一调整很快引发大量用户不满，有网友甚至吐槽其为“全球首创有公摊的网盘”。对此，123云盘日前发布公告，就专业空间调整进行说明并公开道歉。123云盘表示，在认真查看用户反馈、批评和建议后，公司意识到此次调整在上线节奏、产品设计、规则说明以及存量权益衔接等方面存在不足，并向受到影响的用户致歉。针对用户集中反馈的问题，123云盘已经形成初步优化方案，主要包括以下几个方向：1、提高各等级用户赠送的专业空间容量，并对老用户给予适当倾斜；2、优化空间归属规则，不再简单以文件大小区分文件所属空间；3、多人共有文件占用的存储空间，由各拥有人账户均摊分担；4、完善存量会员权益过渡方案，确保用户已购买的服务在有效期内得到合理保障;5、更清晰地展示空间占用、规则变化和文件管理方式，减少用户理解成本。123云盘表示，由于产品调研、设计策划等需要一定时间，相关优化方案力争在2026年11月前正式上线。对于因本次调整无法继续正常使用服务的用户，123云盘也明确支持退款。用户可联系在线客服登记，平台在核实订单信息及剩余权益后，将按照原支付渠道退还剩余服务期对应费用。此外，123云盘强调，除法律法规另有规定，或用户违反服务协议等情况外，不会因为此次规则调整擅自删除用户正常存储的文件，</a></p>
+<p><a href="https://www.toutiao.com/article/7691149615235695144/">123 云盘私自改存储规则惹众怒后致歉！对付费用户是否构成违约 - 今日头条</a></p>
+<p><a href="https://m.toutiao.com/article/7691149615235695144/">123云盘私自改存储规则惹众怒后致歉！对付费用户是否构成违约</a></p>
+<p><a href="https://www.donews.com/news/1/6724009.html">123云盘9月24日上线双空间机制：标准空间与专业空间</a></p>
+<p><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">123云盘这次，踩雷区了</a></p>
+<p><a href="https://www.bilibili.com/opus/1253671915455774738">123云盘这次，踩雷区了 - 哔哩哔哩</a></p>
+<p><a href="https://tieba.baidu.com/p/10270118510">各位免费用户开始准备搬家吧【123云盘吧】_百度贴吧</a></p>
+<p><a href="https://www.donews.com/news/1/6726888.html">123云盘调整空间规则引争议，承诺11月前优化并支持退款</a></p>
+<p><a href="https://www.toutiao.com/article/7691314738873123347/">全球首创网盘公摊，123云盘突然开始“赶客” - 今日头条</a></p>
+<p><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">123 云盘官宣大调整！免费白嫖大文件日子结束：自传空间仅剩 50GB_ZAKER新闻</a></p>
+<p><a href="https://www.bilibili.com/video/BV1jA4KzfEpH/">现在的123云盘【2025年9月起】</a></p>
+<p><a href="https://www.toutiao.com/article/7634474714823524891/">123云盘声明称3名B站用户恶意造谣诽谤，已向公安机关报案 - 今日头条</a></p>
+<p><a href="https://tieba.baidu.com/p/9371711126">萌新请教一下123云盘相关问题_123云盘吧_百度贴吧</a></p>
+<p><a href="https://tieba.baidu.com/p/9332852980">123云盘资源社区_123云盘吧_百度贴吧</a></p>
+<p><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">网友吐槽全球首创有公摊网盘！123云盘道歉：优化空间归属规则、支持退款_IT资讯区_资讯专区 卡饭论坛 - 互助分享 - 大气谦和!</a></p>
+<p><a href="https://i.ifeng.com/c/8whi6AdA4Gx">123云盘新增专业空间：原空间更名为标准空间，老用户免费配额为50GB + 2TB_凤凰网</a></p>
+<p><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款</a></p>
+<p><a href="https://www.bilibili.com/video/BV17avCeeEqc/">突发！123云盘被三大运营商标记为诈骗网站</a></p>
+<p><a href="https://news.qq.com/rain/a/20260430A06T8700">123 云盘声明称 3 名B站用户恶意造谣诽谤，已向公安机关报案_腾讯新闻</a></p>
+<p><a href="https://tieba.baidu.com/p/9321302158">123的离线下载功能怎么样呀【123云盘吧】_百度贴吧</a></p>
+<p><a href="http://t.cj.sina.com.cn/articles/view/5828676220/15b6a8a7c02001le5e">全球首创网盘公摊，123云盘突然开始“赶客”__财经头条__新浪财经</a></p>
+<p><a href="https://m.163.com/dy/article/L83KMIN10511BE1V.html?spss=adap_pc">全球首创网盘公摊，123云盘突然开始“赶客”|哈希值|服务器|腾讯版小龙虾|赶客_手机网易网</a></p>
+<p><a href="https://www.163.com/dy/article/KRORUV0605119K9O.html">又一良心网盘撑不住了，正式涨价！|云存储|运营商|满血版模型_网易订阅</a></p>
+<p><a href="https://www.163.com/dy/article/KGTU737J051288MF.html">不跑路但涨价！运营商新规+硬件暴涨“双杀”，云盘更难了？|云存储|流量包|蓝屏事件_网易订阅</a></p>
+<p><a href="https://www.acfun.cn/a/ac48881070?_t=t">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款 - AcFun弹幕视频网 - 认真你就输啦 (?ω?)ノ- ( ゜- ゜)つロ</a></p>
+<p><a href="https://www.123pan.com/Notice/?id=570152">关于近期“专业空间” 升级调整的说明与致歉</a></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>Markdown 组件语法全览</title>
+      <link>https://blog.945426.xyz/posts/test001</link>
+      <guid isPermaLink="false">test001</guid>
+      <pubDate>Sat, 03 Oct 2026 00:20:00 GMT</pubDate>
+      <description>沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。</description>
+      <content:encoded><![CDATA[<p>本文是博客 Markdown 扩展语法的<strong>完整演示</strong>：先逐一列举全部组件，再给出<strong>嵌套组合矩阵</strong>。所有组件由 <code>moara-md</code> 扩展层渲染（浏览器端与 <code>/posts/&lt;id&gt;</code> 直出共用同一实现，产物一致）。</p>
+<blockquote>
+<p>[!NOTE]
+提示框（Admonition）共 <strong>13 种类型</strong>：<code>NOTE</code> <code>ABSTRACT</code> <code>INFO</code> <code>TIP</code> <code>SUCCESS</code> <code>QUESTION</code> <code>WARNING</code> <code>FAILURE</code> <code>DANGER</code> <code>BUG</code> <code>EXAMPLE</code> <code>QUOTE</code> <code>IMPORTANT</code>。全部默认可折叠；同义别名（<code>TLDR</code> <code>CAUTION</code> <code>ERROR</code> 等）自动归并。</p>
+</blockquote>
+<blockquote>
+<p>[!TIP]+ 可折叠提示框
+尾缀 <code>+</code> 默认展开，<code>-</code> 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。</p>
+</blockquote>
+<blockquote>
+<p>[!WARNING]- 收起状态的警告
+这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。</p>
+</blockquote>
+<h2>1. 提示框 13 类型全览</h2>
+<blockquote>
+<p>[!NOTE]
+备注类型：用于补充说明与背景信息。</p>
+</blockquote>
+<blockquote>
+<p>[!ABSTRACT]
+摘要类型：文章概要、TLDR。</p>
+</blockquote>
+<blockquote>
+<p>[!INFO]
+信息类型：中性提示。</p>
+</blockquote>
+<blockquote>
+<p>[!TIP]
+提示类型：小技巧与最佳实践。</p>
+</blockquote>
+<blockquote>
+<p>[!SUCCESS]
+成功类型：完成状态确认。</p>
+</blockquote>
+<blockquote>
+<p>[!QUESTION]
+问题类型：常见疑问。</p>
+</blockquote>
+<blockquote>
+<p>[!WARNING]
+警告类型：需要注意的事项。</p>
+</blockquote>
+<blockquote>
+<p>[!FAILURE]
+失败类型：出错的场景。</p>
+</blockquote>
+<blockquote>
+<p>[!DANGER]
+危险类型：高风险操作警示。</p>
+</blockquote>
+<blockquote>
+<p>[!BUG]
+缺陷类型：已知问题记录。</p>
+</blockquote>
+<blockquote>
+<p>[!EXAMPLE]+ 示例类型（已展开）
+示例类型默认展开的样子：内部可以继续嵌套<strong>行内元素</strong> <mark>标记</mark>、<kbd>Ctrl</kbd> 按键、:spoiler[黑幕] 与<a href="https://example.com">链接</a>。</p>
+</blockquote>
+<blockquote>
+<p>[!QUOTE]
+引用类型：摘录他人观点。</p>
+</blockquote>
+<blockquote>
+<p>[!IMPORTANT]
+重要类型：关键结论。</p>
+</blockquote>
+<p>别名归一演示（<code>CAUTION</code> → 警告色、<code>TLDR</code> → 摘要色）：</p>
+<blockquote>
+<p>[!CAUTION]
+这是 <code>CAUTION</code> 别名，渲染为 warning 样式。</p>
+</blockquote>
+<blockquote>
+<p>[!TLDR]
+这是 <code>TLDR</code> 别名，渲染为 abstract 样式。</p>
+</blockquote>
+<h2>2. 折叠面板 :::folding</h2>
+<p>折叠面板取代了旧版手写 HTML。<strong>内部支持所有块级语法</strong>：列表、表格、代码块、甚至嵌套折叠。</p>
+<p>:::folding{title=&quot;点击展开 — 查看代码块与列表&quot;}</p>
+<ul>
+<li>列表项一</li>
+<li>列表项二</li>
+<li>列表项三</li>
+</ul>
+<pre><code class="language-ts">export interface Post {
+  id: string;
+  title: string;
+  html: string;
+}
+</code></pre>
+<p>:::</p>
+<p>:::folding{title=&quot;嵌套折叠：外层面板&quot; open}</p>
+<p>外层默认展开（<code>open</code> 属性）。内层默认收起，<strong>内层里面还有第三层</strong>：</p>
+<p>:::folding{title=&quot;内层折叠 — 双层嵌套&quot;}</p>
+<p>内层折叠内容：内层面板内部再嵌一层：</p>
+<p>:::folding{title=&quot;三层折叠 — 第三层&quot;}</p>
+<p>这里是在折叠内、折叠内的<strong>第三层折叠</strong>——外层、内层、第三层逐层缩进嵌套。</p>
+<p>:::</p>
+<p>:::</p>
+<p>:::</p>
+<h3>折叠面板内的组件全家桶</h3>
+<p>以下折叠面板<strong>默认展开</strong>，内部逐项演示每种组件的嵌套形态：</p>
+<p>:::folding{title=&quot;组件全家桶：折叠内嵌套一切&quot; open}</p>
+<p>普通段落：折叠面板内的正文文字，支持<strong>加粗</strong>、<em>斜体</em>、<code>行内代码</code>、<a href="https://example.com">链接</a>。</p>
+<p>无序列表与有序列表：</p>
+<ul>
+<li>无序项 A</li>
+<li>无序项 B</li>
+</ul>
+<ol>
+<li>有序项一</li>
+<li>有序项二</li>
+</ol>
+<p>任务列表（GFM）：</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 已完成的任务</li>
+<li><input disabled="" type="checkbox"> 待办任务</li>
+<li><input disabled="" type="checkbox"> 另一个待办</li>
+</ul>
+<p>表格：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th align="center">嵌套</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>折叠</td>
+<td align="center">✓</td>
+<td>任意层级</td>
+</tr>
+<tr>
+<td>选项卡</td>
+<td align="center">✓</td>
+<td>见 §3</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓</td>
+<td>下一项演示</td>
+</tr>
+</tbody></table>
+<p>代码块：</p>
+<pre><code class="language-js">console.log(&#39;折叠面板内的代码块&#39;);
+</code></pre>
+<p>提示框：</p>
+<blockquote>
+<p>[!TIP]
+折叠面板内的提示框：绿色左边条同样生效。</p>
+</blockquote>
+<p>Mermaid 图表：</p>
+<pre><code class="language-mermaid">flowchart LR
+    A[折叠内图表] --&gt; B[正常渲染]
+</code></pre>
+<p>数学公式：</p>
+<p>$$
+E = mc^2 \quad \text{（折叠内公式）}
+$$</p>
+<p>链接卡与仓库卡：</p>
+<p>::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;折叠内的链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>视频（叶子形式）：</p>
+<p>::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;折叠内的视频&quot;}</p>
+<p>图片与引用块：</p>
+<p><img src="https://picsum.photos/600/340" alt="折叠内图片"></p>
+<blockquote>
+<p>折叠面板内的引用块（普通 blockquote）。</p>
+</blockquote>
+<p>原生 <code>&lt;details&gt;</code>（HTML 直写在折叠内）：</p>
+<details>
+<summary>折叠内的原生 details</summary>
+
+<p>原生 details 嵌套在 :::folding 内部。</p>
+</details>
+
+<p>行内元素一排：<mark>荧光标记</mark>、<kbd>Ctrl</kbd>、:spoiler[黑幕]、H<sub>2</sub>O、x<sup>2</sup>。</p>
+<p>:::</p>
+<h2>3. 选项卡 ::::tabs</h2>
+<p>选项卡两种形态：<code>{open}</code> 默认展开；无属性默认折叠（仅标题栏可见）。</p>
+<p><code>notoc</code> 属性控制容器内标题是否进目录：提示框 <code>&gt; [!NOTE]{notoc}</code>、折叠面板
+<code>:::folding{notoc}</code>、选项卡面板 <code>:::tab{notoc}</code> 均可单点排除；组级
+<code>::::tabs{notoc}</code> 一键排除整组面板，面板级 <code>notoc=false</code> 可单独放开。</p>
+<p>::::tabs{notoc}</p>
+<p>:::tab{title=&quot;组级排除&quot;}</p>
+<pre><code class="language-bash">npm install moara-md
+</code></pre>
+<p>面板内小节（组级 <code>notoc</code> 排除，不进目录）：</p>
+<h3>组级排除的小节</h3>
+<p>:::</p>
+<p>:::tab{title=&quot;单独放开&quot; notoc=false}</p>
+<p>面板写 <code>notoc=false</code>：仅本面板标题回到目录。</p>
+<h3>面板级放开的小节</h3>
+<p>:::</p>
+<p>::::</p>
+<blockquote>
+<p>[!NOTE]{notoc} 提示框排除（标题自定义）
+<code>&gt; [!NOTE]{notoc}</code>：框内标题不进目录。</p>
+<h3>提示框排除的小节</h3>
+<p>此 H3 不出现在目录卡片中。</p>
+</blockquote>
+<p>:::folding{title=&quot;折叠面板 notoc 演示&quot; notoc open}</p>
+<p><code>:::folding{notoc}</code>：面板内标题不进目录。</p>
+<h3>折叠面板排除的小节</h3>
+<p>:::</p>
+<p>:::::tabs{open}</p>
+<p>:::tab{title=&quot;安装&quot; notoc}</p>
+<pre><code class="language-bash">npm install moara-md
+</code></pre>
+<p>面板内小节（<code>notoc</code> 属性使标题不进目录）：</p>
+<h3>面板内小节（不进目录）</h3>
+<p>此处 H3 不会出现在目录卡片中。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;配置与表格&quot;}</p>
+<p>选项卡内的表格：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主题</td>
+<td>oklch</td>
+</tr>
+<tr>
+<td>字体</td>
+<td>Space Grotesk</td>
+</tr>
+</tbody></table>
+<p>选项卡内的提示框：</p>
+<blockquote>
+<p>[!EXAMPLE]+ 选项卡内提示框
+提示框嵌在选项卡面板里，默认展开。</p>
+</blockquote>
+<p>:::</p>
+<p>:::tab{title=&quot;折叠与代码&quot;}</p>
+<p>选项卡内的折叠面板：</p>
+<p>:::folding{title=&quot;选项卡内的折叠&quot; open}</p>
+<p>折叠面板嵌在选项卡面板里，内部再有代码块：</p>
+<pre><code class="language-js">console.log(&#39;tabs &gt; folding &gt; code&#39;);
+</code></pre>
+<p>:::</p>
+<p>:::</p>
+<p>:::tab{title=&quot;图表与公式&quot;}</p>
+<p>选项卡内的 Mermaid：</p>
+<pre><code class="language-mermaid">pie showData
+    title 选项卡内饼图
+    &quot;A&quot; : 60
+    &quot;B&quot; : 40
+</code></pre>
+<p>选项卡内的数学：</p>
+<p>$$
+\int_0^1 x^2 , dx = \frac{1}{3}
+$$</p>
+<p>:::</p>
+<p>:::tab{title=&quot;嵌套选项卡&quot;}</p>
+<p>选项卡嵌套选项卡（内层五冒号围栏）：</p>
+<p>:::::tabs{open}</p>
+<p>:::tab{title=&quot;内层 A&quot;}</p>
+<p>内层选项卡面板 A。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;内层 B&quot;}</p>
+<p>内层选项卡面板 B：嵌套层级不受限制（栈式解析）。</p>
+<p>:::</p>
+<p>:::::</p>
+<p>:::</p>
+<p>:::tab{title=&quot;卡片与视频&quot;}</p>
+<p>选项卡内的叶子指令（单行压缩）：</p>
+<p>::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;选项卡内链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>::video{type=&quot;youtube&quot; id=&quot;aqz-KE-bpKQ&quot; title=&quot;选项卡内视频&quot;}</p>
+<p>:::</p>
+<p>:::::</p>
+<p>横向滑动演示（10 个选项卡，无属性默认折叠）：</p>
+<p>:::::tabs</p>
+<p>:::tab{title=&quot;第 1 步：安装&quot;}</p>
+<p>第 1 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 2 步：初始化&quot;}</p>
+<p>第 2 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 3 步：配置&quot;}</p>
+<p>第 3 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 4 步：迁移&quot;}</p>
+<p>第 4 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 5 步：构建&quot;}</p>
+<p>第 5 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 6 步：测试&quot;}</p>
+<p>第 6 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 7 步：联调&quot;}</p>
+<p>第 7 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 8 步：灰度&quot;}</p>
+<p>第 8 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 9 步：发布&quot;}</p>
+<p>第 9 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 10 步：运维&quot;}</p>
+<p>第 10 步内容。</p>
+<p>:::</p>
+<p>:::::</p>
+<h2>4. 提示框内嵌套容器</h2>
+<p>提示框（引用块变换）内部同样支持容器指令——每行加 <code>&gt;</code> 前缀即可：</p>
+<blockquote>
+<p>[!INFO]+ 提示框内的折叠面板
+提示框内部直接嵌套 :::folding：</p>
+<p>:::folding{title=&quot;提示框内的折叠&quot; open}</p>
+<p>折叠面板渲染在提示框内部。</p>
+<p>:::</p>
+<p>提示框内也可以放<strong>普通嵌套引用</strong>：</p>
+<blockquote>
+<p>提示框内的一层引用。</p>
+<blockquote>
+<p>提示框内的两层引用。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>[!QUESTION]+ 提示框内的图表与公式</p>
+<pre><code class="language-mermaid">flowchart LR
+    Q[提示框内] --&gt; R[图表正常]
+</code></pre>
+<p>$$a^2 + b^2 = c^2$$</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]+ 提示框内的卡片与表格
+::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;提示框内链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;提示框内的视频&quot;}</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>卡片</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提示框内</td>
+<td>✓</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h2>5. 视频嵌入 :::video</h2>
+<p>::::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;演示：Bilibili 嵌入&quot;}</p>
+<p>::::video{type=&quot;youtube&quot; id=&quot;aqz-KE-bpKQ&quot; title=&quot;演示：YouTube 嵌入&quot;}</p>
+<p>直链视频（裸 <code>&lt;video&gt;</code> 标签，无外壳跟随原始比例）：</p>
+<p><video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" controls muted title="演示：直链原生视频"></video></p>
+<p>折叠块内既可用叶子形式 <code>::video</code>，也可用块形式（见 §2 全家桶）。</p>
+<h2>6. 链接卡片 :::linkcard</h2>
+<p>:::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;MOARA 主仓库&quot;}</p>
+<p>:::linkcard{url=&quot;<a href="https://example.com/docs/guide.pdf">https://example.com/docs/guide.pdf</a>&quot; title=&quot;文件链接：按后缀显示文件图标&quot;}</p>
+<p>:::linkcard{post=&quot;103&quot; title=&quot;站内文章卡片（标题由目标文章 frontmatter 自动填充）&quot;}</p>
+<p>:::linkcard{url=&quot;<a href="https://www.baidu.com">https://www.baidu.com</a>&quot; title=&quot;直连 favicon 演示：取自 <a href="http://www.baidu.com/favicon.ico%22%7D">www.baidu.com/favicon.ico&quot;}</a></p>
+<h2>7. 仓库卡片 :::github</h2>
+<p>:::github{repo=&quot;markedjs/marked&quot;}</p>
+<h2>8. 数学公式（frontmatter <code>math: true</code>）</h2>
+<p>行内公式 $e^{i\pi} + 1 = 0$ 与块级公式：</p>
+<p>$$
+\begin{aligned}
+\nabla \cdot \mathbf{E} &amp;= \frac{\rho}{\varepsilon_0} \
+\nabla \cdot \mathbf{B} &amp;= 0
+\end{aligned}
+$$</p>
+<h2>9. 行内元素</h2>
+<ul>
+<li>高亮 <mark>荧光笔标记</mark>（酸绿色，双模式高对比）</li>
+<li>键盘按键 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd></li>
+<li>上下标：H<sub>2</sub>O 与 x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup></li>
+<li>行内黑幕（防剧透）：凶手是 :spoiler[黑衣人]，点击显示。</li>
+<li>行内代码 <code>const x = 42;</code></li>
+</ul>
+<h2>10. 链接包裹图片与裸图</h2>
+<p>链接包裹的图片：<strong>点击图片本身打开灯箱</strong>预览；跳转链接收在灯箱的 <em>i</em> 信息面板里：</p>
+<p><a href="https://unsplash.com"><img src="https://picsum.photos/800/450" alt="示例图片：点击开灯箱"></a></p>
+<p>裸图（无链接）点击同样打开灯箱预览：</p>
+<p><img src="https://picsum.photos/800/450" alt="裸图：点击打开灯箱"></p>
+<h2>11. 脚注</h2>
+<p>摩尔 Blog 的脚注语法与 GFM 一致[^gfm]，定义可以写在任意位置[^anywhere]，渲染时统一汇总到文末「注释」区。<strong>未写定义的引用</strong>（如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。</p>
+<p>[^gfm]: 参见 GitHub Flavored Markdown Spec 的脚注扩展。
+[^anywhere]: 引用处按首次出现顺序编号，支持<a href="https://github.github.com/gfm/"><strong>行内 Markdown</strong></a> 与多行定义。</p>
+<h2>12. 表格对齐</h2>
+<table>
+<thead>
+<tr>
+<th align="left">左对齐列</th>
+<th align="center">居中列</th>
+<th align="right">右对齐列</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">GitHub</td>
+<td align="center">1</td>
+<td align="right">100</td>
+</tr>
+<tr>
+<td align="left">掘金</td>
+<td align="center">2</td>
+<td align="right">200</td>
+</tr>
+<tr>
+<td align="left">知乎</td>
+<td align="center">3</td>
+<td align="right">300</td>
+</tr>
+<tr>
+<td align="left">b 站</td>
+<td align="center">1</td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td align="left">云盘</td>
+<td align="center">2</td>
+<td align="right">2000</td>
+</tr>
+<tr>
+<td align="left">邮箱</td>
+<td align="center">3</td>
+<td align="right">3000</td>
+</tr>
+</tbody></table>
+<h2>13. Mermaid 图表类型全集</h2>
+<p><code>moara-md</code> 不拦截 Mermaid——交给 <code>article.js</code> 加载的 Mermaid 10.9 渲染。常用 12 种图：</p>
+<pre><code class="language-mermaid">flowchart TD
+    A[开始] --&gt; B{条件?}
+    B -- 是 --&gt; C[执行]
+    B -- 否 --&gt; D[跳过]
+    C --&gt; E[结束]
+    D --&gt; E
+</code></pre>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant U as 用户
+    participant S as 服务器
+    U-&gt;&gt;S: 请求文章
+    S--&gt;&gt;U: 返回 HTML
+    U-&gt;&gt;S: 请求评论
+    S--&gt;&gt;U: 返回 JSON
+</code></pre>
+<pre><code class="language-mermaid">classDiagram
+    class Article {
+        +String title
+        +String html
+        +render()
+    }
+    class Comment {
+        +String body
+        +post()
+    }
+    Article &quot;1&quot; --&gt; &quot;n&quot; Comment : 拥有
+</code></pre>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; 草稿
+    草稿 --&gt; 发布: 审核通过
+    发布 --&gt; 修订: 更新
+    修订 --&gt; 发布
+    发布 --&gt; [*]
+</code></pre>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o{ POST : writes
+    POST ||--o{ COMMENT : has
+    USER ||--o{ COMMENT : leaves
+</code></pre>
+<pre><code class="language-mermaid">gantt
+    title 发版流程
+    dateFormat YYYY-MM-DD
+    section 开发
+    功能开发 :a1, 2026-10-01, 6d
+    section 测试
+    回归测试 :a2, after a1, 3d
+    section 上线
+    灰度发布 :a3, after a2, 2d
+</code></pre>
+<pre><code class="language-mermaid">pie showData
+    title 流量来源
+    &quot;搜索&quot; : 45
+    &quot;直接&quot; : 30
+    &quot;外链&quot; : 25
+</code></pre>
+<pre><code class="language-mermaid">journey
+    title 写博客的一天
+    section 上午
+      起床: 5: 我
+      喝咖啡: 4: 我
+    section 下午
+      写文章: 5: 我, 读者
+    section 晚上
+      发布: 5: 我, 读者
+</code></pre>
+<pre><code class="language-mermaid">mindmap
+  root((博客))
+    内容
+      文章
+      评论
+    技术
+      Astro
+      moara-md
+</code></pre>
+<pre><code class="language-mermaid">timeline
+    title 博客演进
+    2023 : 静态 HTML
+    2024 : Hexo 迁移
+    2025 : Astro 重构
+    2026 : moara-md 扩展层
+</code></pre>
+<pre><code class="language-mermaid">gitGraph
+    commit id: &quot;init&quot;
+    commit id: &quot;posts&quot;
+    branch feature
+    commit id: &quot;moara-md&quot;
+    checkout main
+    merge feature
+    commit id: &quot;release&quot;
+</code></pre>
+<pre><code class="language-mermaid">quadrantChart
+    title 任务优先级
+    x-axis &quot;低价值&quot; --&gt; &quot;高价值&quot;
+    y-axis &quot;低成本&quot; --&gt; &quot;高成本&quot;
+    quadrant-1 &quot;重点关注&quot;
+    quadrant-2 &quot;值得投入&quot;
+    quadrant-3 &quot;顺手处理&quot;
+    quadrant-4 &quot;果断放弃&quot;
+    &quot;写文章&quot;: [0.8, 0.7]
+    &quot;修样式&quot;: [0.5, 0.3]
+    &quot;加彩蛋&quot;: [0.2, 0.6]
+</code></pre>
+<h2>14. 原生 details 折叠</h2>
+<p>标准 HTML 折叠（与 <code>:::folding</code> 视觉风格统一）：</p>
+<details>
+<summary>原生 details 折叠示例</summary>
+
+<p>内部同样支持 Markdown 语法（约定 summary 与内容间<strong>保留空行</strong>）。</p>
+<ul>
+<li>项目 A</li>
+<li>项目 B</li>
+</ul>
+</details>
+
+<details>
+<summary>原生 details（HTML 直写）</summary>
+
+<p>与 <code>:::folding</code> 视觉统一，垂直节奏同 0.8rem——用于校验裸 <code>&lt;details&gt;</code> 标签的留白一致性。</p>
+</details>
+
+<details open>
+<summary>默认展开 + 内部嵌套</summary>
+
+<p>原生 details 内的提示框与代码：</p>
+<blockquote>
+<p>[!TIP]
+提示框嵌在原生 details 里。</p>
+</blockquote>
+<pre><code class="language-js">console.log(&#39;details &gt; code&#39;);
+</code></pre>
+</details>
+
+<h2>15. 图集标签（可选 links）</h2>
+<p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
+<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。</p>
+<h2>16. 长代码块自动折叠</h2>
+<p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
+<pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
+type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: Error };
+
+async function fetchPost(id: string): Promise&lt;Result&lt;string&gt;&gt; {
+    const res = await fetch(`/posts/${id}.html`);
+    if (!res.ok) return { ok: false, error: new Error(String(res.status)) };
+    const html = await res.text();
+    return { ok: true, value: html };
+}
+
+function parseFrontmatter(md: string): { data: Record&lt;string, unknown&gt;; body: string } {
+    const m = md.match(/^---\n([\s\S]*?)\n---\n/);
+    if (!m) return { data: {}, body: md };
+    const data: Record&lt;string, unknown&gt; = {};
+    for (const line of m[1].split(&#39;\n&#39;)) {
+        const idx = line.indexOf(&#39;:&#39;);
+        if (idx &lt; 2) continue;
+        const key = line.slice(0, idx).trim();
+        const raw = line.slice(idx + 1).trim();
+        try { data[key] = JSON.parse(raw); } catch { data[key] = raw; }
+    }
+    return { data, body: md.slice(m[0].length) };
+}
+
+const DEMO_LINES = Array.from({ length: 20 }, (_, i) =&gt;
+    `console.log(&#39;line ${i + 1} of the long code demo&#39;);`);
+
+DEMO_LINES.forEach((l) =&gt; eval(l));
+
+async function main() {
+    const r = await fetchPost(&#39;test001&#39;);
+    if (r.ok) {
+        const { body } = parseFrontmatter(r.value);
+        console.log(body.slice(0, 80));
+    } else {
+        console.error(r.error);
+    }
+}
+
+main();
+</code></pre>
+<h2>17. 嵌套矩阵速查</h2>
+<p>下表汇总本文实际演示过的嵌套组合（✓ 均有对应段落）：</p>
+<table>
+<thead>
+<tr>
+<th>内层组件 \ 外层</th>
+<th align="center">顶层</th>
+<th align="center">折叠内</th>
+<th align="center">选项卡内</th>
+<th align="center">提示框内</th>
+<th align="center">原生 details 内</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>段落 / 列表 / 任务列表</td>
+<td align="center">✓</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>表格</td>
+<td align="center">✓ §12</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>代码块 / 长代码</td>
+<td align="center">✓ §16</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—（用嵌套引用 §4）</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>折叠面板（含三层）</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>选项卡（含嵌套选项卡）</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>Mermaid（12 类型）</td>
+<td align="center">✓ §13</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>视频（iframe / 直链）</td>
+<td align="center">✓ §5</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>链接卡 / 仓库卡</td>
+<td align="center">✓ §6-7</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>数学公式</td>
+<td align="center">✓ §8</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>原生 details</td>
+<td align="center">✓ §14</td>
+<td align="center">✓ §2</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>行内元素（mark/kbd/spoiler 等）</td>
+<td align="center">✓ §9</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>图集 gallery</td>
+<td align="center">✓ §15</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+</tbody></table>
+<p>引擎要点：容器指令<strong>栈式解析</strong>（<code>::::tabs</code> &gt; <code>:::tab</code> &gt; <code>:::folding</code> 逐层闭合）；提示框先于容器变换，内部容器每行加 <code>&gt;</code> 前缀；<code>::video</code> <code>::linkcard</code> <code>::github</code> 为叶子指令，容器内压缩为单行。</p>
+<h2>18. 代码块标题</h2>
+<p><code>title=&quot;...&quot;</code> 给代码块加标题栏（按文件名推断图标，支持所有语言）：</p>
+<pre><code class="language-ts">type ColorMode = &#39;light&#39; | &#39;dark&#39; | &#39;auto&#39;;
+
+export function setMode(mode: ColorMode) {
+  const isDark = mode === &#39;dark&#39;
+    || (mode === &#39;auto&#39;
+      &amp;&amp; window.matchMedia(&#39;(prefers-color-scheme: dark)&#39;).matches);
+  document.documentElement.classList.toggle(&#39;dark&#39;, isDark);
+}
+</code></pre>
+<pre><code class="language-bash">pnpm install
+pnpm dev
+pnpm build
+</code></pre>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;moara-blog&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;private&quot;: true,
+  &quot;type&quot;: &quot;module&quot;
+}
+</code></pre>
+<p>:::folding{title=&quot;折叠内的带标题代码块&quot;}</p>
+<pre><code class="language-js">export const fold = (x) =&gt; x;
+export const twice = (x) =&gt; fold(x) * 2;
+</code></pre>
+<p>:::</p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
     <item>
       <title>测试</title>
       <link>https://blog.945426.xyz/posts/test000</link>
@@ -929,8 +1986,12 @@ footer {
 <h3>5. 其他组件测试</h3>
 <p>根据你的 JS，这里还有防剧透和折叠块功能：</p>
 <p>点击查看隐藏内容：<span class='spoiler'>这是被剧透隐藏的文字内容！</span></p>
-<div class='details-box'><div class='details-header'>👉 点击展开详细说明</div><div class='details-content-wrapper'><div class='details-inner'><p>这里是折叠区域的内容。</p><p>可以包含文字、图片甚至另一个代码块。</p><pre><code class='language-python'>print('Inside Details')</code></pre></div></div></div>
-
+<p>:::folding{title=&quot;👉 点击展开详细说明&quot;}</p>
+<p>这里是折叠区域的内容。</p>
+<p>可以包含文字、图片甚至另一个代码块 —— 现在直接使用<strong>标准围栏代码块</strong>（内部代码会被正常高亮）：</p>
+<pre><code class="language-python">print(&#39;Inside Details&#39;)
+</code></pre>
+<p>:::</p>
 <p><gallery src="https://ts1.tc.mm.bing.net/th/id/OIP-C.mH9YLFEL5YdVxJM82mjVJQHaEo?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.e7588db8cf1d3592f05c59354c7d7f34?rik=rVGbZ1IKYj3dSg&riu=http%3a%2f%2fseopic.699pic.com%2fphoto%2f50073%2f0161.jpg_wh1200.jpg&ehk=ugyPJtY83rc68SfHXsUbzdSMvslDJR7BzyoTGXDUPew%3d&risl=&pid=ImgRaw&r=0,https://ts2.tc.mm.bing.net/th/id/OIP-C.kLs3tJ8EFQKVT5Z1VdC5EgHaE7?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.f5ae2e9a9976bee71d118dd402d80658?rik=nJChOY5iJSFRhQ&riu=http%3a%2f%2fimg3.redocn.com%2f20140308%2fRedocn_2014030311195180.jpg&ehk=9QqSiDRFgnBUaxV3u38ZMjQcWmYatan1pQzsCfbLFao%3d&risl=&pid=ImgRaw&r=0"></gallery></p>
 <p>音乐卡片</p>
 <p><music id="1"></music>
