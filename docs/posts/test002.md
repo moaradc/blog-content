@@ -7,11 +7,11 @@ category: ["Demo"]
 tags: ["Demo", "Markdown"]
 desc: 9月24日双空间公告、大众舆论导向与独立判断
 ---
-**报告日期：2026年10月8日** Qwen3.8-Flash
+**报告日期：2026年10月8日** 由 Qwen3.8-Flash 撰写，内容并非 100% 准确
 
 ## 摘要
 
-2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成"标准空间"与"专业空间"两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup>[donews.com](https://www.donews.com/news/1/6724009.html),[ZAKER新闻](https://www.myzaker.com/article/6ab74be58e9f0930da5ac851)</sup>。调整后免费用户能自主上传的容量只有50GB，会员也只到1TB或2TB<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup>。舆论把这套规则压缩成一句"全球首创有公摊的网盘"，媒体按50GB与2TB的配置算出97%的"公摊比例"并广泛转载<sup>[weibo.cn](https://m.weibo.cn/detail/5348416278495832?wm=90194_90009),[搜狐](https://www.sohu.com/a/1082873644_184641)</sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup>[凤凰网](https://i.ifeng.com/c/8woLLQzD9gx)</sup>；法律界人士认为对服务期内的付费用户大概率构成违约<sup>[今日头条](https://m.toutiao.com/article/7691149615235695144/)</sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖与QQ频道内部讨论均未被公开索引<sup>[百度贴吧](https://tieba.baidu.com/p/9332852980)</sup>。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。
+2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成"标准空间"与"专业空间"两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup>[donews.com](https://www.donews.com/news/1/6724009.html),[ZAKER新闻](https://www.myzaker.com/article/6ab74be58e9f0930da5ac851)</sup>。调整后免费用户能自主上传的容量只有50GB，会员也只到1TB/2TB/3TB<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup>。舆论把这套规则压缩成一句"全球首创有公摊的网盘"，媒体按50GB与2TB的配置算出97%的"公摊比例"并广泛转载<sup>[weibo.cn](https://m.weibo.cn/detail/5348416278495832?wm=90194_90009),[搜狐](https://www.sohu.com/a/1082873644_184641)</sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup>[凤凰网](https://i.ifeng.com/c/8woLLQzD9gx)</sup>；法律界人士认为对服务期内的付费用户大概率构成违约<sup>[今日头条](https://m.toutiao.com/article/7691149615235695144/)</sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖与QQ频道内部讨论均未被公开索引<sup>[百度贴吧](https://tieba.baidu.com/p/9332852980)</sup>。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。
 
 ## 1. 公告本身：一次把"共享池"和"独占池"切开的空间重构
 
@@ -47,6 +47,7 @@ flowchart TD
 | 新免费已实名用户 | 50GB | 2TB | 完成实名认证后提升<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup> |
 | 新VIP已实名用户 | 1TB | 20TB | 基础空间叠加会员权益<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup> |
 | 新SVIP已实名用户 | 2TB | 100TB | 基础空间叠加会员权益<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup> |
+| 长期VIP已实名用户 | 3TB | 6PB+2TB | 基础空间叠加会员权益 |
 
 :::folding{title="点开补充：配额表之外的三条细则"}
 
@@ -68,8 +69,8 @@ flowchart TD
 ```mermaid
 timeline
     title 事件十二天
-    2026-09-24 14:30 : 双空间机制生效
-    2026-09-24 15:41 : 升级公告发布
+    2026-09-24 14时30分 : 双空间机制生效
+    2026-09-24 15时41分 : 升级公告发布
     2026-09-25 : 媒体集中报道配额落差
     2026-09-28 : 官方说明与致歉
     2026-09-29 : 话题进入微博热搜
@@ -169,8 +170,8 @@ B站长文动态《123云盘这次，踩雷区了》把新旧配额落差逐条�
 | 用户档位 | 调整前自主上传容量 | 调整后自主上传容量 | 溯源 |
 | :--- | :--- | :--- | :--- |
 | 新免费用户 | 2TB | 50GB | <sup>[网易](https://m.163.com/dy/article/L82ITOUJ0531BB1N.html)</sup> |
-| 新VIP用户 | 22TB | 1TB | 该长文口径，本轮检索未获第二个独立来源交叉验证 |
-| 新SVIP用户 | 102TB | 2TB | <sup>[网易](https://m.163.com/dy/article/L82ITOUJ0531BB1N.html)</sup> |
+| 新VIP用户 | 20TB | 1TB | 该长文口径，本轮检索未获第二个独立来源交叉验证 |
+| 新SVIP用户 | 100TB | 2TB | <sup>[网易](https://m.163.com/dy/article/L82ITOUJ0531BB1N.html)</sup> |
 
 退款为什么不足以平息争议，B站长文里那条评论给出了答案：多年会员的钱已经交了，文件也已经搬进来了，现在使用条件变了，即便能退款，整理和迁移花掉的时间也无法计算<sup>[网易](https://m.163.com/dy/article/L82ITOUJ0531BB1N.html)</sup>。这是一种典型的"沉没成本加迁移成本"结构——退给用户的只是剩余服务期的对价，用户付出的却是把数十TB文件重新分类、下载、再上传另一块盘的劳动与时间。[^migrate]
 
@@ -231,7 +232,7 @@ quadrantChart
 ```
 
 - **以转存他人分享为主的免费用户**：标准空间的机制没有变化，重复文件与回收站依旧不计容量，实际体验的变动有限<sup>[ZAKER新闻](https://www.myzaker.com/article/6ab74be58e9f0930da5ac851)</sup>。真正影响这类用户的是流量侧的收紧，与双空间属于两条线。
-- **以相机原片、加密备份、商用素材为主的付费用户**：这是受损最重的一群。自有文件几乎必然落入专业空间，而专业空间的免费额度只有50GB，会员也仅到1TB或2TB<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。
+- **以相机原片、加密备份、商用素材为主的付费用户**：这是受损最重的一群。自有文件几乎必然落入专业空间，而专业空间的免费额度只有50GB，会员也仅到1TB/2TB/3TB<sup>[uc.cn](https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80)</sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。
 - **把123云盘当WebDAV与直链源的用户**：直链、图床、视频转码服务产生的文件全部计入专业空间，且相同专业文件每份独立计算容量<sup>[donews.com](https://www.donews.com/news/1/6724009.html)</sup>。这类用法的成本模型被规则直接改写，属于必须重算的一类。
 
 对还在观望的用户，我建议只盯三项验证指标，不必被每日的舆论噪音推着做决定：
