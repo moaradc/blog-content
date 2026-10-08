@@ -60,6 +60,8 @@
  *         > 正文支持任意 Markdown / 指令。
  *     类型见 ADM_TYPES；+ 默认展开，- 或无尾缀默认折叠（均可点击切换）。
  *     属性写法 > [!NOTE]{notoc}：框内标题不进目录（可与尾缀/标题并用）。
+ *     单行式（标记行后无正文，如 > [!INFO] 一句话说明）为静态信息条：
+ *     不折叠、无 v 图标、不输出 body，尾缀 + / - 失去意义。
  *
  *  7. 行内防剧透：:spoiler[被隐藏的文字]
  *
@@ -346,10 +348,12 @@
 
                     var conf = ADM_TYPES[type];
                     var title = escapeHtml(customTitle || conf.label);
-                    var isCollapsible = true; /* 无尾缀默认收起 */
-                    var openByDefault = collapse === '+';
-
                     var inner = quote.slice(firstIdx + 1).join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
+                    var hasBody = inner.trim() !== '';
+                    /* 无正文（单行式）为静态信息条：不可折叠、无 v 图标，
+                       尾缀 + / - 与 body 一并失去意义 */
+                    var isCollapsible = hasBody;
+                    var openByDefault = hasBody && collapse === '+';
 
                     var headAttrs = isCollapsible
                         ? ' role="button" tabindex="0" aria-expanded="' + (openByDefault ? 'true' : 'false') + '"'
@@ -368,9 +372,11 @@
                         '\n<i class="' + conf.icon + '" aria-hidden="true"></i>' +
                         '\n<span class="admonition-title-text">' + title + '</span>' + chevron +
                         '\n</div>' +
-                        '\n<div class="admonition-body">' +
-                        '\n\n' + inner + '\n\n' +
-                        '\n</div>' +
+                        (hasBody
+                            ? '\n<div class="admonition-body">' +
+                              '\n\n' + inner + '\n\n' +
+                              '\n</div>'
+                            : '') +
                         '\n</div>'
                     );
                     i = j;
