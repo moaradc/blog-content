@@ -162,5 +162,25 @@ console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
     const h2 = render('> [!NOTE]+ 标题\n> ```bash\n> echo hi\n> ```\n\n正文段落。');
     t('提示框内围栏：bash 块与正文共存', h2.includes('language-bash') && h2.includes('正文段落。'));
 }
+/* ── 10. 单行式提示框静态条（v17，第二十九轮） ── */
+{
+    const h1 = render('> [!INFO] 本站已开启 RSS 订阅');
+    t('静态条 v17：同行式渲染提示框', h1.includes('admonition admonition-info') && h1.includes('本站已开启 RSS 订阅'));
+    t('静态条 v17：无 body 折叠体', !h1.includes('admonition-body'));
+    t('静态条 v17：无 v 图标、无折叠协议', !h1.includes('admonition-chevron') && !h1.includes('data-collapsible') && !h1.includes('role="button"'));
+    const h2 = render('> [!WARNING]-');
+    t('静态条 v17：- 尾缀失去意义（仍静态）', h2.includes('admonition-warning') && !h2.includes('data-collapsible') && !h2.includes('data-open'));
+    const h3 = render('> [!TIP]+ 快速提示写法');
+    t('静态条 v17：+ 尾缀失去意义（不展开）', h3.includes('快速提示写法') && !h3.includes('data-open="true"') && !h3.includes('data-collapsible'));
+    const h4 = render('> [!NOTE]{notoc} 静态条也能带属性');
+    t('静态条 v17：{notoc} 属性照常落 data-notoc', h4.includes('data-notoc') && !h4.includes('admonition-body'));
+    const h5 = render('> [!DANGER]');
+    t('静态条 v17：裸类型（无标题无正文）按默认标签渲染', h5.includes('admonition-danger') && !h5.includes('admonition-body'));
+    const h6 = render('> [!NOTE] 多行备注\n> 这是正文。');
+    t('静态条 v17：多行式回归（折叠协议保留）', h6.includes('data-collapsible') && h6.includes('admonition-body'));
+    const h7 = render('> [!TIP] 甲静态\n\n> [!NOTE] 乙多行\n> 丙正文');
+    t('静态条 v17：静态条与多行式连排互不干扰', h7.includes('甲静态') && h7.includes('丙正文')
+        && (h7.match(/admonition-body/g) || []).length === 1);
+}
 console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
 process.exit(fail ? 1 : 0);
