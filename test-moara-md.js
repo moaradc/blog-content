@@ -112,6 +112,33 @@ function render(md) {
     const h5 = render(':::folding{title="c"}\n```js title="in.js"\nlet a = 1;\n```\n:::');
     t('围栏 v15：折叠内围栏同步重写', h5.includes('data-title=&quot;in.js&quot;') || h5.includes('data-title="in.js"'));
 }
+/* ── 9. notoc 属性族：提示框 / 折叠面板 / 选项卡组级（v16，第二十八轮） ── */
+{
+    const h1 = render('> [!NOTE]{notoc}\n> ## 框内标题\n> 正文');
+    t('notoc v16：提示框 {notoc} 落 data-notoc', h1.includes('data-collapsible data-notoc>'));
+    t('notoc v16：提示框框内标题保留渲染', h1.includes('<h2>框内标题</h2>'));
+    const h2 = render('> [!TIP]+{notoc} 可折叠提示\n> 内容');
+    t('notoc v16：{notoc} 与 + 尾缀及自定义标题并用', h2.includes('data-collapsible data-open="true" data-notoc>') && h2.includes('可折叠提示'));
+    const h3 = render('> [!NOTE]\n> 正文');
+    t('notoc v16：无属性提示框不受影响', h3.includes('admonition-note') && !h3.includes('data-notoc'));
+    const h4 = render(':::folding{title="测试" notoc}\n\n## 面板内标题\n\n:::');
+    t('notoc v16：折叠面板 notoc 落 data-notoc', h4.includes('<div class="details-box" data-notoc data-fold>'));
+    const h5 = render(':::folding{title="测试"}\n\n内容\n\n:::');
+    t('notoc v16：普通折叠面板不受影响', h5.includes('data-fold') && !h5.includes('data-notoc'));
+    const src = '::::tabs{notoc}\n:::tab{title="A"}\n## 甲\n:::\n:::tab{title="B" notoc=false}\n## 乙\n:::\n::::';
+    const h6 = render(src);
+    const segA = h6.slice(h6.indexOf('role="tabpanel"'), h6.indexOf('## 甲'));
+    const segB = h6.slice(h6.lastIndexOf('role="tabpanel"'), h6.indexOf('## 乙'));
+    t('notoc v16：组级 notoc 排除面板 A', segA.includes('data-notoc'));
+    t('notoc v16：面板级 notoc=false 放开 B', !segB.includes('data-notoc'));
+    t('notoc v16：面板内容照常渲染', h6.includes('<h2>甲</h2>') && h6.includes('<h2>乙</h2>'));
+    const h7 = render('::::tabs\n:::tab{title="A"}\n## 甲\n:::\n::::');
+    t('notoc v16：无组级属性整组不受影响', !h7.includes('data-notoc'));
+    const h8 = render('::::tabs\n:::tab{title="X" notoc=true}\n## 丙\n:::\n::::');
+    t('notoc v16：字符串 true 与旗标等价（面板级直写）', h8.includes('data-notoc'));
+    const h9 = render('::::tabs\n:::tab{title="Y" notoc}\n## 丁\n:::\n::::');
+    t('notoc v16：裸旗标 notoc 面板级单点排除', h9.includes('data-notoc'));
+}
 console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
 /* ── 7. 选项卡折叠协议 + 注释外链新标签页（v13） ── */
 {

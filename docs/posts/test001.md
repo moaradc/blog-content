@@ -193,6 +193,49 @@ $$
 
 选项卡两种形态：`{open}` 默认展开；无属性默认折叠（仅标题栏可见）。
 
+`notoc` 属性控制容器内标题是否进目录：提示框 `> [!NOTE]{notoc}`、折叠面板
+`:::folding{notoc}`、选项卡面板 `:::tab{notoc}` 均可单点排除；组级
+`::::tabs{notoc}` 一键排除整组面板，面板级 `notoc=false` 可单独放开。
+
+::::tabs{notoc}
+
+:::tab{title="组级排除"}
+
+```bash
+npm install moara-md
+```
+
+面板内小节（组级 `notoc` 排除，不进目录）：
+
+### 组级排除的小节
+
+:::
+
+:::tab{title="单独放开" notoc=false}
+
+面板写 `notoc=false`：仅本面板标题回到目录。
+
+### 面板级放开的小节
+
+:::
+
+::::
+
+> [!NOTE]{notoc} 提示框排除（标题自定义）
+> `> [!NOTE]{notoc}`：框内标题不进目录。
+>
+> ### 提示框排除的小节
+> 此 H3 不出现在目录卡片中。
+
+:::folding{title="折叠面板 notoc 演示" notoc open}
+
+`:::folding{notoc}`：面板内标题不进目录。
+
+### 折叠面板排除的小节
+
+:::
+
+
 :::::tabs{open}
 
 :::tab{title="安装" notoc}

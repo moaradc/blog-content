@@ -25,7 +25,8 @@
  *         :::folding{title="点击展开 — 查看详细配置说明"}
  *         任意块级内容（列表 / 表格 / 代码块 / 嵌套折叠 …）
  *         :::
- *     加 open 属性默认展开：:::folding{title="..." open}
+ *     加 open 属性默认展开：:::folding{title="..." open}；
+ *     加 notoc 属性面板内标题不进目录：:::folding{title="..." notoc}
  *
  *  2. 选项卡：
  *         ::::tabs
@@ -36,7 +37,10 @@
  *         内容……
  *         :::
  *         ::::
- *     notoc：面板内标题不进目录。围栏长度决定嵌套层级（同 CommonMark 代码围栏）。
+ *     围栏长度决定嵌套层级（同 CommonMark 代码围栏）。
+ *     notoc：面板内标题不进目录；组级 ::::tabs{notoc} 一键排除整组
+ *     面板（数据属性落在各面板 div 上），面板级 notoc=false 可单独
+ *     放开——面板级显式值优先于组级。
  *
  *  3. 视频嵌入（容器形式 / 叶子形式皆可，叶子形式用于折叠块内部）：
  *         :::video{type="bilibili" id="BVxxxxxxxx"}
@@ -55,6 +59,7 @@
  *         > [!NOTE] 可选自定义标题
  *         > 正文支持任意 Markdown / 指令。
  *     类型见 ADM_TYPES；+ 默认展开，- 或无尾缀默认折叠（均可点击切换）。
+ *     属性写法 > [!NOTE]{notoc}：框内标题不进目录（可与尾缀/标题并用）。
  *
  *  7. 行内防剧透：:spoiler[被隐藏的文字]
  *
@@ -124,6 +129,19 @@
         return attrs;
     }
 
+    /** 布尔属性解析：旗标 / ="true" → true；="false" → false；
+        缺省或未识别值 → undefined（供面板级继承组级语义）。 */
+    function attrBool(v) {
+        if (v === true) return true;
+        if (v === false) return false;
+        if (typeof v === 'string') {
+            var s = v.trim().toLowerCase();
+            if (s === 'true') return true;
+            if (s === 'false') return false;
+        }
+        return undefined;
+    }
+
     function indentBlock(text, indent) {
         if (!indent) return text;
         return text.split('\n').map(function (l) { return l ? indent + l : l; }).join('\n');
@@ -160,7 +178,8 @@
         highlight: 'important'
     };
 
-    var ADM_MARKER_RE = /^\[!(\w+)\][ \t]*([+-]?)[ \t]*(.*)$/;
+    /* 标记行语法：[!TYPE] + {attrs}（尾缀前后均可）+ 可选折叠尾缀 + 可选自定义标题 */
+    var ADM_MARKER_RE = /^\[!(\w+)\][ \t]*(?:\{([^}]*)\})?[ \t]*([+-]?)[ \t]*(?:\{([^}]*)\})?[ \t]*(.*)$/;
 
     /* ------------------------------------------------------------------
      * ① 代码区摘离 / ⑦ 归还
@@ -313,8 +332,9 @@
                 if (marker) {
                     var rawType = marker[1].toLowerCase();
                     var type = ADM_ALIASES[rawType] || rawType;
-                    var collapse = marker[2] || '';
-                    var customTitle = marker[3].trim();
+                    var admAttrs = parseAttrs(marker[2] != null ? marker[2] : (marker[4] || ''));
+                    var collapse = marker[3] || '';
+                    var customTitle = marker[5].trim();
 
                     if (!ADM_TYPES[type]) {
                         /* 未知类型：原样输出引用块，告警不吞内容 */
@@ -337,9 +357,10 @@
                     var chevron = isCollapsible
                         ? '\n<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>'
                         : '';
-                    var boxAttrs = isCollapsible
+                    var boxAttrs = (isCollapsible
                         ? ' data-collapsible' + (openByDefault ? ' data-open="true"' : '')
-                        : '';
+                        : '')
+                        + (attrBool(admAttrs.notoc) === true ? ' data-notoc' : '');
 
                     out.push(
                         '<div class="admonition admonition-' + type + '"' + boxAttrs + '>' +
@@ -515,7 +536,9 @@
             ? String(attrs.title)
             : '点击展开';
         var open = attrs.open === true || String(attrs.open).toLowerCase() === 'true';
-        return '<div class="details-box' + (open ? ' open' : '') + '" data-fold>' +
+        return '<div class="details-box' + (open ? ' open' : '') + '"'
+            + (attrBool(attrs.notoc) === true ? ' data-notoc' : '')
+            + ' data-fold>' +
             '\n<div class="details-header" role="button" tabindex="0" aria-expanded="' + (open ? 'true' : 'false') + '">' +
             '\n<span class="details-title">' + escapeHtml(title) + '</span>' +
             '\n<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>' +
@@ -724,11 +747,16 @@
                     var frame = stack.pop();
                     if (frame.name === 'tab') {
                         var innerHtml = transformDirectives(frame.bodyLines.join('\n'), opts);
+                        /* 面板级 notoc 优先（true/false 显式值）；
+                           缺省继承组级 ::::tabs{notoc} 的整组排除 */
+                        var panelNotoc = attrBool(frame.attrs.notoc);
                         frame.owner.panels.push({
                             title: frame.attrs.title != null && String(frame.attrs.title).trim() !== ''
                                 ? String(frame.attrs.title)
                                 : ('Tab ' + (frame.owner.panels.length + 1)),
-                            notoc: frame.attrs.notoc === true,
+                            notoc: panelNotoc !== undefined
+                                ? panelNotoc
+                                : (attrBool(frame.owner.attrs.notoc) === true),
                             html: innerHtml
                         });
                     } else {
