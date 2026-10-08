@@ -418,7 +418,9 @@ $$
 
 :::linkcard{url="https://example.com/docs/guide.pdf" title="文件链接：按后缀显示文件图标"}
 
-:::linkcard{post="103" title="站内文章卡片（运行时解析标题）"}
+:::linkcard{post="103" title="站内文章卡片（标题由目标文章 frontmatter 自动填充）"}
+
+:::linkcard{url="https://www.baidu.com" title="直连 favicon 演示：取自 www.baidu.com/favicon.ico"}
 
 ## 7. 仓库卡片 :::github
 
