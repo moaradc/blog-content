@@ -1,89 +1,8 @@
-/* =========================================================================
- *  moara-md.js — 沫然Blog Markdown 扩展层（浏览器 / Node 双端共享）
- * =========================================================================
- *  同一份实现同时供两条渲染管线使用，保证产物一致：
- *    - 浏览器端：/article?id=<> 页面由 article.js 调用（marked v15 前置变换）
- *    - Node 端 ：blog-content 仓 generate-article-html.js require 本文件
- *                （/posts/<id> SEO 直出 HTML）
- *
- *  与本文件保持同步的副本：blog-content 仓根目录 moara-md.js（复制即用，
- *  两仓无共享子模块机制，以文件头版本号标记同步点）。
- *
- *  ── 指令语法（本文档为准，docs/posts/README.md 面向作者摘录） ──
- *
- *  0. 代码围栏 info 串（title）：
- *         ```ts title="src/config/site.ts"
- *         ……
- *         ```
- *         ```bash title="终端命令"
- *     title 给出标题（含文件名时按扩展名推断图标），支持所有语言；
- *     无 title 的普通围栏行为不变。带 title 时重写为携带 data-title
- *     的 <pre><code> HTML 块（marked 视作 html 块透传），标题栏渲染
- *     由前端（article.js）完成。
- *
- *  1. 折叠面板（取代旧版 <div class="details-box"> 手写 HTML）：
- *         :::folding{title="点击展开 — 查看详细配置说明"}
- *         任意块级内容（列表 / 表格 / 代码块 / 嵌套折叠 …）
- *         :::
- *     加 open 属性默认展开：:::folding{title="..." open}；
- *     加 notoc 属性面板内标题不进目录：:::folding{title="..." notoc}
- *
- *  2. 选项卡：
- *         ::::tabs
- *         :::tab{title="NPM"}
- *         内容……
- *         :::
- *         :::tab{title="PNPM" notoc}
- *         内容……
- *         :::
- *         ::::
- *     围栏长度决定嵌套层级（同 CommonMark 代码围栏）。
- *     notoc：面板内标题不进目录；组级 ::::tabs{notoc} 一键排除整组
- *     面板（数据属性落在各面板 div 上），面板级 notoc=false 可单独
- *     放开——面板级显式值优先于组级。
- *
- *  3. 视频嵌入（容器形式 / 叶子形式皆可，叶子形式用于折叠块内部）：
- *         :::video{type="bilibili" id="BVxxxxxxxx"}
- *         ::video{type="youtube" id="dQw4w9WgXcQ"}
- *         ::video{url="https://example.com/demo.mp4" poster="..."}
- *     type + id 支持 bilibili / youtube；url/src 为直链视频走原生播放器。
- *
- *  4. 链接卡片：
- *         :::linkcard{url="https://example.com" title="示例站点"}
- *         ::linkcard{post="104"}          → 站内文章卡片（运行时解析标题）
- *     图标策略：文件后缀 → 文件类型图标；普通域名 → favicon；皆无 → 不显示。
- *
- *  5. 仓库卡片：:::github{repo="owner/repo"}（运行时经 GitHub API 填充星标）
- *
- *  6. VitePress 风格 admonition（引用块语法）：
- *         > [!NOTE] 可选自定义标题
- *         > 正文支持任意 Markdown / 指令。
- *     类型见 ADM_TYPES；+ 默认展开，- 或无尾缀默认折叠（均可点击切换）。
- *     属性写法 > [!NOTE]{notoc}：框内标题不进目录（可与尾缀/标题并用）。
- *     单行式（标记行后无正文，如 > [!INFO] 一句话说明）为静态信息条：
- *     不折叠、无 v 图标、不输出 body，尾缀 + / - 失去意义。
- *
- *  7. 行内防剧透：:spoiler[被隐藏的文字]
- *
- *  8. 脚注：[^1] 引用（可多处复用）；[^1]: 定义可出现在全文任意位置，
- *     生成物统一汇总至文末（正文占位，postprocess 阶段 inline 渲染定义体）。
- *
- *  ── 管线 ──
- *    preprocess(bodyMd)  → { text, ctx }
- *        ① 摘离代码区（围栏 / 行内）→ 随机占位符（防误解析，之后原样归还）
- *        ② 保护遗留自定义标签（<music>/<gallery>/旧 details-box/黑幕/待办）
- *        ③ admonition 变换（引用块 [!TYPE]）
- *        ④ 容器指令变换（栈式解析 + 递归，支持任意嵌套）
- *        ⑤ 脚注收集与引用替换
- *        ⑥ 行内 :spoiler[] 变换
- *        ⑦ 归还代码区（让 marked 正常解析高亮 / Mermaid）
- *    postprocess(html, ctx, { parseInline }) → html
- *        ① 脚注定义体 inline 渲染回填
- *        ② 遗留自定义标签占位符还原
- *
- *  纯字符串变换、零 DOM 依赖；防御式实现：未知指令 / 未闭合围栏一律按
- *  原文输出并告警（opts.onWarn），绝不吞正文。
- * ========================================================================= */
+/* moara-md.js — 沫然Blog Markdown 扩展层（浏览器 / Node 双端共享）
+ * 同一份实现同时供两条渲染管线使用，保证产物一致：
+ * - 浏览器端：/article?id=<> 页面由 article.js 调用（marked v15 前置变换）
+ * - Node 端 ：blog-content 仓 generate-article-html.js require 本文件（/posts/<id> SEO 直出 HTML）
+ * 与本文件保持同步的副本：blog-content 仓根目录 moara-md.js（复制即用，两仓无共享子模块机制） */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
@@ -95,9 +14,7 @@
 
     var VERSION = '1.0.0';
 
-    /* ------------------------------------------------------------------
-     * 基础工具
-     * ------------------------------------------------------------------ */
+    /* 基础工具 */
 
     function escapeHtml(s) {
         return String(s == null ? '' : s)
@@ -112,10 +29,7 @@
         return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     }
 
-    /**
-     * 解析指令属性串 {a="1" b='2' c=3 flag}
-     * 布尔旗标（无 =）置 true；返回普通对象。
-     */
+    /** 解析指令属性串 {a="1" b='2' c=3 flag}，布尔旗标（无 =）置 true；返回普通对象 */
     function parseAttrs(raw) {
         var attrs = {};
         if (!raw) return attrs;
@@ -131,8 +45,7 @@
         return attrs;
     }
 
-    /** 布尔属性解析：旗标 / ="true" → true；="false" → false；
-        缺省或未识别值 → undefined（供面板级继承组级语义）。 */
+    /** 布尔属性解析：旗标 / ="true" → true；="false" → false；缺省或未识别值 → undefined（供面板级继承组级语义） */
     function attrBool(v) {
         if (v === true) return true;
         if (v === false) return false;
@@ -149,10 +62,7 @@
         return text.split('\n').map(function (l) { return l ? indent + l : l; }).join('\n');
     }
 
-    /* ------------------------------------------------------------------
-     * admonition（> [!TYPE]）类型表
-     * ------------------------------------------------------------------ */
-
+    /* admonition（> [!TYPE]）类型表 */
     var ADM_TYPES = {
         note:     { icon: 'ri-sticky-note-line',      label: '备注'   },
         abstract: { icon: 'ri-file-text-line',        label: '摘要'   },
@@ -183,14 +93,9 @@
     /* 标记行语法：[!TYPE] + {attrs}（尾缀前后均可）+ 可选折叠尾缀 + 可选自定义标题 */
     var ADM_MARKER_RE = /^\[!(\w+)\][ \t]*(?:\{([^}]*)\})?[ \t]*([+-]?)[ \t]*(?:\{([^}]*)\})?[ \t]*(.*)$/;
 
-    /* ------------------------------------------------------------------
-     * ① 代码区摘离 / ⑦ 归还
-     * ------------------------------------------------------------------ */
+    /* ① 代码区摘离 / ⑦ 归还 */
 
-    /* 围栏 info 串解析：```lang title="..."
-       title marked 默认丢弃 → 取出后重写为携带 data-title 的
-       <pre><code> HTML（marked 视作 html 块原样透传），标题栏渲染
-       由前端完成。无 title 的围栏原样归还 marked。 */
+    /* 围栏 info 串解析：```lang title="..."；title marked 默认丢弃 → 取出后重写为携带 data-title 的<pre><code> HTML（marked 视作 html 块原样透传），标题栏渲染由前端完成。无 title 的围栏原样归还 marked */
     function parseCodeFenceInfo(raw) {
         var rest = String(raw || '').trim();
         if (!rest) return null;
@@ -215,27 +120,20 @@
             + escapeHtml(body) + '</code></pre>';
     }
 
-    /**
-     * 摘离围栏代码块与行内 code span，防止其内容被后续变换误处理。
-     * 占位符含随机 nonce，避免与正文同形文本碰撞；还原用 split/join，
-     * 规避 String.replace 对 $ 等替换特殊字符的二次解释。
-     */
+    /** 摘离围栏代码块与行内 code span，防止其内容被后续变换误处理。占位符含随机 nonce，避免与正文同形文本碰撞；还原用 split/join，规避 String.replace 对 $ 等替换特殊字符的二次解释 */
     function extractCode(text, ctx) {
         var codeSpans = [];
         var nonce = makeNonce();
         var ph = function (i) { return '%%MD_CODE_' + nonce + '_' + i + '%%'; };
 
-        /* fenced code block：```lang 或 ~~~lang 起始，同串围栏闭合。
-           info 串带 title 时重写为 <pre data-title> 原生 HTML 块。 */
+        /* fenced code block：```lang 或 ~~~lang 起始，同串围栏闭合。info 串带 title 时重写为 <pre data-title> 原生 HTML 块 */
         var fenceRegex = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n[ \t]*\1[ \t]*(?=\n|$)/gm;
         text = text.replace(fenceRegex, function (match) {
             codeSpans.push(rewriteFenceInfo(match));
             return ph(codeSpans.length - 1);
         });
 
-        /* 行内 code span：成对 1-2 个反引号、不从更长反引号串中间起配。
-           3+ 反引号串留给围栏语义：否则引用块内（> 前缀）的 ``` 围栏会被
-           误配对成跨行行内代码，占位符吞掉 > 前缀后围栏失衡，殃及后续顶层指令。 */
+        /* 行内 code span：成对 1-2 个反引号、不从更长反引号串中间起配。3+ 反引号串留给围栏语义：否则引用块内（> 前缀）的 ``` 围栏会被误配对成跨行行内代码，占位符吞掉 > 前缀后围栏失衡，殃及后续顶层指令 */
         var inlineCodeRegex = /(?<!`)(`{1,2})(?!`)((?:[^`]|\n(?!\n))+?)\1(?!`)/g;
         text = text.replace(inlineCodeRegex, function (match) {
             codeSpans.push(match);
@@ -256,10 +154,7 @@
         return out;
     }
 
-    /* ------------------------------------------------------------------
-     * ② 遗留自定义标签保护（与旧版行为等价，旧语法仅作兼容降级）
-     * ------------------------------------------------------------------ */
-
+    /* ② 遗留自定义标签保护（与旧版行为等价，旧语法仅作兼容降级） */
     function protectLegacyTags(text, ctx) {
         var placeholders = ctx.customTags || (ctx.customTags = []);
         var nonce = ctx.tagNonce || (ctx.tagNonce = makeNonce());
@@ -273,9 +168,7 @@
         /* 成对自定义标签：<music id="x"></music> / <gallery src="a, b"></gallery> */
         text = text.replace(/<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi, push);
 
-        /* 裸写法防御：<gallery ...> 未闭合会吞掉后续全部内容（HTML 解析将其后元素
-           视为子节点），自闭合 / 裸开标签统一补闭合（成对已在上一步换为占位符，
-           此处剩余必为裸标签）。 */
+        /* 裸写法防御：<gallery ...> 未闭合会吞掉后续全部内容（HTML 解析将其后元素视为子节点），自闭合 / 裸开标签统一补闭合（成对已在上一步换为占位符，此处剩余必为裸标签）。 */
         text = text.replace(/<(music|gallery)\b([^>]*?)\s*\/>/gi, '<$1$2></$1>');
         text = text.replace(/<(music|gallery)\b([^>]*?)>(?!<\/\1>)/gi, '<$1$2></$1>');
 
@@ -284,7 +177,6 @@
 
         /* 行内黑幕 <span class='spoiler'>…</span> */
         text = text.replace(/<span\b[^>]*class=['"][^'"]*spoiler[^'"]*['"][^>]*>[\s\S]*?<\/span>/gi, function (match) {
-            /* 行内元素占位符不加换行，避免污染段落结构 */
             var idx = placeholders.length;
             placeholders.push(match);
             return '%%CUSTOM_TAG_' + nonce + '_' + idx + '%%';
@@ -305,10 +197,7 @@
         return out;
     }
 
-    /* ------------------------------------------------------------------
-     * ③ admonition 变换（> [!TYPE] 引用块 → 提示框 HTML）
-     * ------------------------------------------------------------------ */
-
+    /* ③ admonition 变换（> [!TYPE] 引用块 → 提示框 HTML） */
     function transformAdmonitions(text, opts) {
         var lines = text.split('\n');
         var out = [];
@@ -317,7 +206,6 @@
         while (i < lines.length) {
             var line = lines[i];
 
-            /* 收集连续引用块行（含 > 空行） */
             if (/^[ \t]*>/.test(line)) {
                 var j = i;
                 var quote = [];
@@ -326,7 +214,7 @@
                     j++;
                 }
 
-                /* 标记必须位于引用块首个非空行（与 GitHub 行为一致） */
+                /* 标记必须位于引用块首个非空行 */
                 var firstIdx = 0;
                 while (firstIdx < quote.length && !quote[firstIdx].trim()) firstIdx++;
                 var marker = firstIdx < quote.length ? quote[firstIdx].match(ADM_MARKER_RE) : null;
@@ -339,7 +227,7 @@
                     var customTitle = marker[5].trim();
 
                     if (!ADM_TYPES[type]) {
-                        /* 未知类型：原样输出引用块，告警不吞内容 */
+                        /* 未知类型：原样输出引用块 */
                         if (opts && opts.onWarn) opts.onWarn('[moara-md] 未知 admonition 类型: ' + rawType);
                         out.push(lines.slice(i, j).join('\n'));
                         i = j;
@@ -350,8 +238,7 @@
                     var title = escapeHtml(customTitle || conf.label);
                     var inner = quote.slice(firstIdx + 1).join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
                     var hasBody = inner.trim() !== '';
-                    /* 无正文（单行式）为静态信息条：不可折叠、无 v 图标，
-                       尾缀 + / - 与 body 一并失去意义 */
+                    /* 无正文（单行式）为静态信息条：不可折叠、无 v 图标，尾缀 + / - 与 body 一并失去意义 */
                     var isCollapsible = hasBody;
                     var openByDefault = hasBody && collapse === '+';
 
@@ -393,10 +280,7 @@
         return out.join('\n');
     }
 
-    /* ------------------------------------------------------------------
-     * ④ 容器指令变换（栈式解析）
-     * ------------------------------------------------------------------ */
-
+    /* ④ 容器指令变换（栈式解析） */
     var DIRECTIVE_OPEN_RE = /^([ \t]*)(::+)([a-zA-Z][\w-]*)(?:[ \t]*\{(.*)\})?[ \t]*$/;
     var DIRECTIVE_CLOSE_RE = /^([ \t]*)(::+)[ \t]*$/;
 
@@ -404,15 +288,12 @@
     var LEAF_DIRECTIVES = ['video', 'linkcard', 'github'];
     /* 容器指令（三冒号及以上、需闭合围栏） */
     var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab'];
-    /* 无正文指令：三冒号形式同样自足（不消费闭合围栏，正文无意义）。
-       文档约定：折叠块内建议使用 :: 叶子形式，避免围栏歧义。 */
+    /* 无正文指令：三冒号形式同样自足（不消费闭合围栏，正文无意义）。文档约定：折叠块内建议使用 :: 叶子形式，避免围栏歧义。 */
     var BODYLESS_DIRECTIVES = ['video', 'linkcard', 'github'];
 
     var tabsUid = 0;
 
-    /**
-     * 渲染视频嵌入节点。attrs：type / id / url|src / poster / title / aspect。
-     */
+    /** 渲染视频嵌入节点。attrs：type / id / url|src / poster / title / aspect */
     function renderVideo(attrs) {
         var type = String(attrs.type || '').toLowerCase();
         var id = String(attrs.id || '').trim();
@@ -443,9 +324,7 @@
         if (!src) return '';
 
         if (isIframe) {
-            /* 点击加载门面（lite-youtube-embed 协议）：首屏零 iframe 请求 ——
-               不可达平台（如 GFW 下 YouTube）不会出现加载失败大空白，
-               点击后才注入真实播放器（autoplay=1）。 */
+            /* 点击加载门面（lite-youtube-embed 协议）：首屏零 iframe 请求，点击后才注入真实播放器（autoplay=1） */
             var provider = /player\.bilibili\.com/.test(src) ? 'bilibili' : 'youtube';
             var pIcon = provider === 'bilibili' ? 'ri-bilibili-line' : 'ri-youtube-line';
             var pLabel = provider === 'bilibili' ? 'bilibili' : 'YouTube';
@@ -468,10 +347,7 @@
             (title ? ' title="' + escapeHtml(title) + '"' : '') + '></video>';
     }
 
-    /**
-     * 渲染链接卡片外壳。图标 / 站内标题由 article.js 运行时填充
-     * （SEO 直出 HTML 同样经 article.js 增强，两路径行为一致）。
-     */
+    /** 渲染链接卡片外壳。图标 / 站内标题由 article.js 运行时填充（SEO 直出 HTML 同样经 article.js 增强，两路径行为一致） */
     function renderLinkcard(attrs) {
         var url = String(attrs.url || attrs.src || '').trim();
         var post = String(attrs.post || '').trim();
@@ -494,7 +370,6 @@
         var host = '';
         try { host = new URL(url).hostname; } catch (e) { host = url.replace(/^https?:\/\//, '').split('/')[0]; }
 
-        /* 图标槽预置首字回退：favicon 成功时由运行时替换，失败则保留 */
         var fallbackChar = (title || host).trim().charAt(0).toUpperCase() || '#';
         return '<a class="md-linkcard" data-linkcard data-url="' + escapeHtml(url) + '"' +
             ' href="' + escapeHtml(url) + '" target="_blank" rel="noopener noreferrer">' +
@@ -507,13 +382,10 @@
             '\n</a>';
     }
 
-    /**
-     * 渲染 GitHub 仓库卡片外壳（星标等数据运行时经 API 填充）。
-     */
+    /** 渲染 GitHub 仓库卡片外壳（星标等数据运行时经 API 填充） */
     function renderGithubCard(attrs) {
         var repo = String(attrs.repo || '').trim();
         if (!repo || !/^[\w.-]+\/[\w.-]+$/.test(repo)) return '';
-        /* 语言/星标/协议由运行时按可得性填充（缺省不显示，无占位符）；描述可为空 */
         return '<a class="md-github-card" data-github-card data-repo="' + escapeHtml(repo) + '"' +
             ' href="https://github.com/' + escapeHtml(repo) + '" target="_blank" rel="noopener noreferrer">' +
             '\n<span class="md-github-card-head">' +
@@ -555,10 +427,7 @@
 
     var FOLDING_CLOSE = '</div>\n</div>\n</div>';
 
-    /**
-     * 指令主变换：栈式解析容器围栏，递归处理帧体。
-     * 未闭合围栏 / 未知指令 / tab 脱离 tabs → 原文降级输出 + 告警。
-     */
+    /** 指令主变换：栈式解析容器围栏，递归处理帧体。未闭合围栏 / 未知指令 / tab 脱离 tabs → 原文降级输出 + 告警 */
     function transformDirectives(text, opts) {
         var lines = text.split('\n');
         var out = [];
@@ -579,8 +448,7 @@
         var emitBlock = function (html, indent) {
             var block = '\n\n' + indentBlock(html, indent) + '\n\n';
             if (stack.length > 0) {
-                /* 嵌套场景：内层容器闭合时，渲染结果写入父帧体（随父容器
-                   递归渲染包裹），而非直接落文档层 —— 否则嵌套折叠分裂渲染 */
+                /* 嵌套场景：内层容器闭合时，渲染结果写入父帧体（随父容器递归渲染包裹），而非直接落文档层 —— 否则嵌套折叠分裂渲染 */
                 stack[stack.length - 1].bodyLines.push(block);
             } else {
                 out.push(block);
@@ -661,9 +529,7 @@
                 var name = openMatch[3].toLowerCase();
                 var attrs = parseAttrs(openMatch[4] || '');
 
-                /* 叶子指令（恰好两个冒号）：单行自足。
-                   位于容器（折叠/选项卡）内时写入容器缓冲（压缩为单行，
-                   保证 marked HTML 块解析不跨空行），否则进入顶层输出。 */
+                /* 叶子指令（恰好两个冒号）：单行自足。位于容器（折叠/选项卡）内时写入容器缓冲（压缩为单行，保证 marked HTML 块解析不跨空行），否则进入顶层输出 */
                 if (fenceLen === 2) {
                     if (LEAF_DIRECTIVES.indexOf(name) !== -1) {
                         var leafHtml = renderLeafDirective(name, attrs);
@@ -681,8 +547,7 @@
                     continue;
                 }
 
-                /* 无正文指令（>= 3 冒号的 video/linkcard/github）：自足渲染，
-                   不入栈、不消费后续围栏 —— 其后的 ::: 属于外层容器 */
+                /* 无正文指令（>= 3 冒号的 video/linkcard/github）：自足渲染，不入栈、不消费后续围栏 —— 其后的 ::: 属于外层容器 */
                 if (BODYLESS_DIRECTIVES.indexOf(name) !== -1) {
                     var bodylessHtml = renderLeafDirective(name, attrs);
                     if (bodylessHtml) {
@@ -753,8 +618,7 @@
                     var frame = stack.pop();
                     if (frame.name === 'tab') {
                         var innerHtml = transformDirectives(frame.bodyLines.join('\n'), opts);
-                        /* 面板级 notoc 优先（true/false 显式值）；
-                           缺省继承组级 ::::tabs{notoc} 的整组排除 */
+                        /* 面板级 notoc 优先（true/false 显式值）；缺省继承组级 ::::tabs{notoc} 的整组排除 */
                         var panelNotoc = attrBool(frame.attrs.notoc);
                         frame.owner.panels.push({
                             title: frame.attrs.title != null && String(frame.attrs.title).trim() !== ''
@@ -800,13 +664,8 @@
         return out.join('\n').replace(/\n{4,}/g, '\n\n\n');
     }
 
-    /* ------------------------------------------------------------------
-     * ④b 数学公式摘离 / 归还
-     * ------------------------------------------------------------------
-     * marked 开启 breaks 后会把多行 $$ 公式块拆成多个文本节点（<br>），
-     * KaTeX auto-render 无法跨节点匹配定界符。摘离为占位符后，
-     * 公式在文本中始终是单一段落级整体，归还后由运行时统一渲染。
-     * ------------------------------------------------------------------ */
+    /* ④b 数学公式摘离 / 归还
+     * marked 开启 breaks 后会把多行 $$ 公式块拆成多个文本节点（<br>），KaTeX auto-render 无法跨节点匹配定界符。摘离为占位符后，公式在文本中始终是单一段落级整体，归还后由运行时统一渲染 */
 
     function extractMath(text, ctx) {
         if (!/\$|\\\(|\\\[/.test(text)) return text;
@@ -839,10 +698,7 @@
         return out;
     }
 
-    /* ------------------------------------------------------------------
-     * ⑤ 脚注收集与替换
-     * ------------------------------------------------------------------ */
-
+    /* ⑤ 脚注收集与替换 */
     var FOOTNOTE_DEF_RE = /^[ \t]{0,3}\[\^([^\s\]]+)\]:[ \t]*(.*)$/;
 
     function transformFootnotes(text, ctx) {
@@ -910,9 +766,7 @@
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
     }
 
-    /* ------------------------------------------------------------------
-     * ⑥ 行内防剧透 :spoiler[text]
-     * ------------------------------------------------------------------ */
+    /* ⑥ 行内防剧透 :spoiler[text] */
 
     function transformInlineSpoilers(text) {
         return text.replace(/:spoiler\[([^\]\n]*)\]/g, function (whole, inner) {
@@ -921,12 +775,9 @@
         });
     }
 
-    /* ------------------------------------------------------------------
-     * 对外 API
-     * ------------------------------------------------------------------ */
-
+    /* 对外 API */
     /**
-     * Markdown 正文前置变换。
+     * Markdown 正文前置变换
      * @param {string} bodyMd - 已剥离 frontmatter 的正文
      * @param {Object} [opts]
      * @param {Function} [opts.onWarn] - 告警回调（浏览器 console / Node stderr）
@@ -950,7 +801,7 @@
     }
 
     /**
-     * marked.parse 之后的后置处理。
+     * marked.parse 之后的后置处理
      * @param {string} html
      * @param {Object} ctx - preprocess 返回的 ctx
      * @param {Object} [api]
