@@ -1367,13 +1367,11 @@ main();
 </tr>
 </tbody></table>
 <p>引擎要点：容器指令<strong>栈式解析</strong>（<code>::::tabs</code> &gt; <code>:::tab</code> &gt; <code>:::folding</code> 逐层闭合）；提示框先于容器变换，内部容器每行加 <code>&gt;</code> 前缀；<code>::video</code> <code>::linkcard</code> <code>::github</code> 为叶子指令，容器内压缩为单行。</p>
-<h2>18. 代码块标题与行高亮</h2>
-<p>带标题（按文件名推断图标）与行号，<code>{行号}</code> 高亮指定行或区间（空行计入行号，支持所有语言）：</p>
-<pre data-title="src/config/site.ts" data-lines="3,6-8"><code class="language-ts">type ColorMode = &#39;light&#39; | &#39;dark&#39; | &#39;auto&#39;;
+<h2>18. 代码块标题</h2>
+<p><code>title=&quot;...&quot;</code> 给代码块加标题栏（按文件名推断图标，支持所有语言）：</p>
+<pre data-title="src/config/site.ts"><code class="language-ts">type ColorMode = &#39;light&#39; | &#39;dark&#39; | &#39;auto&#39;;
 
-// 高亮这一行
 export function setMode(mode: ColorMode) {
-  // 以下三行被高亮
   const isDark = mode === &#39;dark&#39;
     || (mode === &#39;auto&#39;
       &amp;&amp; window.matchMedia(&#39;(prefers-color-scheme: dark)&#39;).matches);
@@ -1384,19 +1382,12 @@ export function setMode(mode: ColorMode) {
 pnpm dev
 pnpm build</code></pre>
 
-<pre data-title="package.json" data-lines="2,4"><code class="language-json">{
+<pre data-title="package.json"><code class="language-json">{
   &quot;name&quot;: &quot;moara-blog&quot;,
   &quot;version&quot;: &quot;1.0.0&quot;,
   &quot;private&quot;: true,
   &quot;type&quot;: &quot;module&quot;
 }</code></pre>
-
-<p>仅行高亮（无标题）：</p>
-<pre data-lines="2,4-5"><code class="language-python">import os
-BASE = os.environ.get(&quot;BASE_DIR&quot;, &quot;/tmp&quot;)
-def build(target):
-    print(&quot;building&quot;, target)
-    return True</code></pre>
 
 
 <div class="details-box" data-fold>
@@ -1407,7 +1398,7 @@ def build(target):
 <div class="details-content-wrapper">
 <div class="details-inner">
 
-<pre data-title="utils/in-fold.js" data-lines="2"><code class="language-js">export const fold = (x) =&gt; x;
+<pre data-title="utils/in-fold.js"><code class="language-js">export const fold = (x) =&gt; x;
 export const twice = (x) =&gt; fold(x) * 2;</code></pre>
 
 </div>
