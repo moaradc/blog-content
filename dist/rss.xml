@@ -1,0 +1,2089 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="/xsl/rss.xsl"?>
+<rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>沫然Blog</title>
+    <link>https://blog.945426.xyz</link>
+    <description>极简博客</description>
+    <language>zh-CN</language>
+    <lastBuildDate>Thu, 08 Oct 2026 13:27:00 GMT</lastBuildDate>
+    <generator>generate-rss.js (PagesCMS)</generator>
+    <atom:link href="https://blog.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
+    <managingEditor>moara@foxmail.com (沫然)</managingEditor>
+    <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>123云盘&quot;公摊网盘&quot;事件调研</title>
+      <link>https://blog.945426.xyz/posts/test002</link>
+      <guid isPermaLink="false">test002</guid>
+      <pubDate>Thu, 08 Oct 2026 13:27:00 GMT</pubDate>
+      <description>9月24日双空间公告、大众舆论导向与独立判断</description>
+      <content:encoded><![CDATA[<p><strong>报告日期：2026年10月8日</strong> Qwen3.8-Flash</p>
+<h2>摘要</h2>
+<p>2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成&quot;标准空间&quot;与&quot;专业空间&quot;两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。调整后免费用户能自主上传的容量只有50GB，会员也只到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。舆论把这套规则压缩成一句&quot;全球首创有公摊的网盘&quot;，媒体按50GB与2TB的配置算出97%的&quot;公摊比例&quot;并广泛转载<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a>,<a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>；法律界人士认为对服务期内的付费用户大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖与QQ频道内部讨论均未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。</p>
+<h2>1. 公告本身：一次把&quot;共享池&quot;和&quot;独占池&quot;切开的空间重构</h2>
+<h3>1.1 9月24日公告的规则实质</h3>
+<p>123云盘于2026年9月24日14:30起正式实施双空间机制，把运行多年的单一存储空间一分为二<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。原空间更名为&quot;标准空间&quot;，沿用重复文件与回收站不计容量的机制，用于存放用户转存自他人的文件及其他非独占文件；新增的&quot;专业空间&quot;采用多副本分布式对象存储，用于存放用户独自存储的文件、大于10GB的超大文件、分卷压缩文件组，以及直链、图床、视频转码服务产生的文件，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。</p>
+<blockquote>
+<p>[!IMPORTANT] 公告真正的变化不在&quot;新增空间&quot;，而在&quot;额度不再通用&quot;
+拆分之前，用户看到的是一整块容量；拆分之后，同一块容量被划成两个互不通用的池子。规则上，只有专业空间能承载用户自己上传的文件，标准空间承载的是用户之间互相转存的文件<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。这意味着&quot;我买了多少TB&quot;这个问题，从9月24日起有了两个答案。</p>
+</blockquote>
+<p>从成本结构看，这两块空间的造价完全不同：标准空间依托去重技术，同一份热门资源在服务器上只存一份物理数据，平台边际成本极低；专业空间是多副本对象存储，每一份都要真实占用物理硬盘，成本显著更高<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。公告把&quot;是否独占&quot;作为分界线，本质上是用文件的物理成本重新给用户的额度定价。</p>
+<pre><code class="language-mermaid">flowchart TD
+    A[文件写入123云盘] --&gt; B{是否为用户独自持有}
+    B -- 是 --&gt; P[计入专业空间&lt;br&gt;多副本对象存储&lt;br&gt;每份独立计容量]
+    B -- 否，转存自他人 --&gt; S[计入标准空间&lt;br&gt;重复文件与回收站不计容量]
+    A --&gt; C{单文件是否大于10GB&lt;br&gt;或为分卷压缩组}
+    C -- 是 --&gt; P
+    A --&gt; D{是否由直链/图床/视频转码产生}
+    D -- 是 --&gt; P
+    P --&gt; X[额度耗尽即无法继续上传&lt;br&gt;标准空间剩余容量不可借用]
+</code></pre>
+<p>新老用户以2026年9月24日14:30:00为界区分，此前注册的是老用户，此后注册的是新用户<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。配额落地的实际结果如下表。</p>
+<p><strong>表1：双空间机制下的用户配额对照</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">用户类型</th>
+<th align="left">专业空间</th>
+<th align="left">标准空间</th>
+<th align="left">口径说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">老用户（免费）</td>
+<td align="left">50GB</td>
+<td align="left">2TB</td>
+<td align="left">原有空间不因升级减少<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup></td>
+</tr>
+<tr>
+<td align="left">新免费未实名用户</td>
+<td align="left">50GB</td>
+<td align="left">50GB</td>
+<td align="left">注册基础权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新免费已实名用户</td>
+<td align="left">50GB</td>
+<td align="left">2TB</td>
+<td align="left">完成实名认证后提升<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新VIP已实名用户</td>
+<td align="left">1TB</td>
+<td align="left">20TB</td>
+<td align="left">基础空间叠加会员权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">新SVIP已实名用户</td>
+<td align="left">2TB</td>
+<td align="left">100TB</td>
+<td align="left">基础空间叠加会员权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
+</tr>
+</tbody></table>
+<p>:::folding{title=&quot;点开补充：配额表之外的三条细则&quot;}</p>
+<ul>
+<li>历史文件兼容处理：升级上线时账号内已存在的文件，无论原始来源或属性，统一归类为标准文件并计入标准空间，不占用专业空间配额；此后这些文件再次发生操作时，系统按新规则重新判断属性，重新分类后若对应空间超额，按该空间容量管理规则执行<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a>,<a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。</li>
+<li>实名认证口径：老用户后续完成实名认证不重复增加标准空间，新用户首次实名后标准空间提升至2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。</li>
+<li>快科技与腾讯网在9月25日转述的公告截图中还列出未实名新会员档位：新VIP未实名用户为专业空间1TB加标准空间18TB+50GB，新SVIP未实名用户为专业空间2TB加标准空间98TB+50GB；同批报道指出，标准空间对转存文件同样设有单文件10GB的上限。</li>
+</ul>
+<p>:::</p>
+<h3>1.2 从上线到致歉的十二天</h3>
+<p>事件的第一处程序性缺陷在于时间顺序。公告的发布时刻是2026年9月24日15:41，而双空间机制的生效时刻是同日14:30<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>——规则已经落地，公告随后才发出。多家媒体在梳理用户不满时指出，本次重大规则调整几乎没有提前公示和提醒，这成为舆论集中攻击的点。</p>
+<blockquote>
+<p>[!WARNING] 生效在前、公告在后
+用户在9月24日下午打开云盘时看到的是已经改好的额度，而不是一份可供预留过渡期的预告。这一顺序问题，在后续致歉声明中被官方归入&quot;上线节奏&quot;与&quot;规则说明&quot;两项不足。</p>
+</blockquote>
+<p>舆论发酵四天后，123云盘于9月28日发布《关于近期&quot;专业空间&quot;升级调整的说明与致歉》<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。官方承认本次调整在上线节奏、产品设计、规则说明和存量权益衔接四方面存在不足，并提出五条优化方向：提高各等级用户赠送的专业空间容量并向老用户倾斜；优化空间归属规则，不再简单以文件大小区分；多人共有文件占用空间由各拥有人账户均摊；完善存量会员权益过渡方案；更清晰地展示规则变化<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。优化方案力争在2026年11月前上线，对无法继续正常使用的用户支持按原支付渠道退还剩余服务期对应费用，同时官方强调不会因规则调整擅自删除用户正常存储的文件<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<pre><code class="language-mermaid">timeline
+    title 事件十二天
+    2026-09-24 14:30 : 双空间机制生效
+    2026-09-24 15:41 : 升级公告发布
+    2026-09-25 : 媒体集中报道配额落差
+    2026-09-28 : 官方说明与致歉
+    2026-09-29 : 话题进入微博热搜
+    2026-09-30 : 社区复盘与成本解读
+    2026-11 前 : 优化方案目标上线节点
+</code></pre>
+<p>致歉之后又追加了一次程序回滚。因升级后出现程序缺陷，部分历史文件被误判为专业文件，修复程序执行24小时未处理完毕，官方最终把所有用户的已用专业容量列入标准容量<sup><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">腾讯网</a></sup>。对首次报告该缺陷并帮助定位问题的用户，官方表示将予以感谢和奖励<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。至9月28日，安卓客户端的更新说明中已把&quot;新增专业空间&quot;列为版本特性，用户可在文件列表中按所属空间筛选文件。</p>
+<p>:::folding{title=&quot;这里值得留意的一点：致歉改的是&#39;分法&#39;，不是&#39;分不开&#39;&quot;}</p>
+<p>五条优化方向里，第2条与第3条直接回应争议核心——不再简单以文件大小区分归属、共有文件由拥有人均摊。但官方同时明确，双空间制度本身不会被取消，能接受调整的继续用，不能接受的老会员可申请退款<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。换句话说，致歉修正的是分类规则的粗糙程度与告知方式，把&quot;独占文件要单独计账&quot;这一底层设计保留了下来。凤凰网与快科技在9月29日转载致歉声明全文时，同样把它概括为&quot;优化空间规则并支持退款&quot;，而非&quot;撤回调整&quot;。</p>
+<p>:::</p>
+<h2>2. 大众导向：情绪如何凝聚成&quot;公摊网盘&quot;这一个词</h2>
+<h3>2.1 标签的传播路径与杀伤力</h3>
+<p>&quot;全球首创有公摊的网盘&quot;是本次事件中传播效率最高的一句话，用户在吐槽时给123云盘贴上了这个标签<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a></sup>。它之所以能迅速跑开，靠的是一次跨领域类比：住房公摊是被广泛熟悉且长期被抱怨的制度，把&quot;标准空间不计入自主上传&quot;翻译成了&quot;买房面积里有97%是公摊&quot;。</p>
+<blockquote>
+<p>[!QUOTE] 传播链条
+微博话题以&quot;#123云盘被吐槽全球首创有公摊网盘#&quot;与&quot;#123云盘公开道歉#&quot;双标签形式在9月29日聚合发布；搜狐、网易、快科技、今日头条、百家号、AcFun、UC头条、什么值得买在9月25日至10月3日间接力同一表述，AcFun弹幕视频网也转载了&quot;网友吐槽全球首创有公摊网盘&quot;的相关内容<sup><a href="https://www.acfun.cn/a/ac48881070?_t=t">acfun.cn</a></sup>。</p>
+</blockquote>
+<p>媒体在计算这个类比时给出了具体比例：按免费用户50GB专业空间加2TB标准空间的配置，公摊比例高达97%<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。这一数字的杀伤力来自反差——被抱怨多年的住房公摊比例往往只在20%左右，而网盘给出的&quot;公摊&quot;接近其五倍。</p>
+<pre><code class="language-mermaid">pie showData
+    title 免费用户名义空间的构成（按双空间规则）
+    &quot;标准空间（不可自主上传，被类比为公摊）&quot; : 97
+    &quot;专业空间（可自主上传）&quot; : 3
+</code></pre>
+<p>标签的负面效果不止于比价。大众媒体普遍把本次事件解读为网盘行业在存储成本压力下主动&quot;赶客&quot;，有评论直言这次调整的本质是&quot;借机收回免费用户手里的存储空间&quot;，甚至被理解为&quot;免费用户请自觉卸载&quot;<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。从&quot;公摊&quot;到&quot;赶客&quot;，舆论完成了一次从产品规则到经营诚意的定性升级：用户不再讨论容量本身，而是讨论平台是否还想服务免费用户。</p>
+<h3>2.2 分渠道观察：B站、贴吧、QQ频道与其他社区</h3>
+<p>::::tabs</p>
+<p>:::tab{title=&quot;B站：拆解规则与动员维权&quot;}</p>
+<p>B站长文动态《123云盘这次，踩雷区了》把新旧配额落差逐条摊开：新免费用户可自行上传的空间从2TB缩减至50GB，新SVIP用户从102TB缩减至2TB，并给出结论&quot;不管是对老用户还是新用户，均是不利的&quot;<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。文中有会员晒出专业空间仅剩1TB的截图，也有用户提出不能简单退款了事，因为迁移所花的时间成本无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。</p>
+<p>视频区的情绪更直接：有UP主发布题为&quot;现在的123云盘【2025年9月起】&quot;的内容，以及&quot;严肃谴责123云盘违约&quot;&quot;避雷这个网站&quot;一类视频，反映的是对规则变更的正面拒绝<sup><a href="https://www.bilibili.com/video/BV1jA4KzfEpH/">哔哩哔哩</a></sup>。</p>
+<p>需要说明渠道对抗的历史。2026年4月30日，123云盘曾发布严正声明，称bili_13514709093、剑客泰菲123456、apngda三名B站用户恶意造谣诽谤，已对侵权内容与传播数据做公证保全并向公安机关报案，声明中提到相关不实内容累计播放数万次、单条最高播放量突破1.7万<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。也就是说，B站同时是本次舆情发酵的主阵地，也是123云盘历史上唯一公开点名维权的平台。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;百度贴吧：长期不满的沉淀池&quot;}</p>
+<p>经过多轮精准搜索（含&quot;123云盘吧 专业空间 吐槽&quot;、&quot;123云盘吧 公摊 9月&quot;、&quot;123云盘吧 双空间 搬家&quot;以及 site:tieba.baidu.com 定向检索），百度贴吧&quot;123云盘吧&quot;关于9月24日双空间事件的专项讨论帖未被搜索引擎公开索引。可检索到的贴吧内容呈现的是长期积累的不满：在&quot;各位免费用户开始准备搬家吧&quot;一帖中，有用户评论&quot;开了三年会员的我都不用了，何况免费的，简直狗屎一般，体验极差，早点换115吧&quot;；另有用户指出&quot;这个盘刚公测了四年，就由当初宣称的永不限速改成了现在这个德性，彻底堵死了非会员的路&quot;<sup><a href="https://tieba.baidu.com/p/10270118510">百度贴吧</a></sup>。资源社区相关帖子里还能看到&quot;离线成功率太低&quot;&quot;同步有bug&quot;这类功能性抱怨<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup>。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;QQ频道与QQ群：入口存在，内容不可见&quot;}</p>
+<p>同样经过多轮检索（含&quot;123云盘 QQ频道 专业空间 讨论&quot;、&quot;123云盘 官方QQ群 9月24日 双空间&quot;），未找到针对9月24日双空间事件的QQ频道或QQ群原始讨论内容。目前仅能确认123云盘资源社区网站置顶帖中提及存在&quot;123社区qq群组、tg频道&amp;群组&quot;<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>，其内部关于该事件的具体讨论未被公开搜索引擎索引。这部分舆论样本只能定性为不可获取，任何&quot;QQ群内一片叫好或一片声讨&quot;的判断都没有依据。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;其他社区：换盘与止损&quot;}</p>
+<p>卡饭论坛IT资讯区转载相关新闻后，用户&quot;风屿法师&quot;留言&quot;刚把我的旧版安装包合集放到123盘上面去分发，早知道不碰它了&quot;，用户&quot;DeepFormat&quot;回复&quot;我换天翼了&quot;，用户&quot;hardkin&quot;评论&quot;之前可以直接浏览器下载的，现在都要转存入自己网盘才能使用浏览器下载&quot;&quot;123在逐渐向全面收费过渡&quot;<sup><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">kafan.cn</a></sup>。</p>
+<p>:::</p>
+<p>::::</p>
+<p><strong>表2：各渠道信息可得性（截至2026年10月8日检索）</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">渠道</th>
+<th align="left">覆盖状态</th>
+<th align="left">关键发现</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">官方公告与致歉</td>
+<td align="left">完整</td>
+<td align="left">双空间规则、五条优化方向、退款政策、程序回滚说明<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup></td>
+</tr>
+<tr>
+<td align="left">B站</td>
+<td align="left">完整</td>
+<td align="left">长文拆解落差、UP主谴责违约、平台历史上曾点名维权<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+<tr>
+<td align="left">大众媒体与微博</td>
+<td align="left">完整</td>
+<td align="left">&quot;公摊&quot;标签、97%比例、违约分析、行业成本解读<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">卡饭论坛 / AcFun</td>
+<td align="left">完整</td>
+<td align="left">用户表达换盘意向，媒体转载&quot;公摊网盘&quot;吐槽<sup><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">kafan.cn</a></sup></td>
+</tr>
+<tr>
+<td align="left">百度贴吧</td>
+<td align="left">部分缺失</td>
+<td align="left">事件专项帖未被索引，仅可检索到长期不满与搬家讨论<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup></td>
+</tr>
+<tr>
+<td align="left">QQ频道与QQ群</td>
+<td align="left">未覆盖</td>
+<td align="left">仅确认存在官方社群入口，事件内部讨论未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup></td>
+</tr>
+</tbody></table>
+<p>:::folding{title=&quot;补充观察：检索不到的渠道，怎么处理才诚实&quot;}</p>
+<p>贴吧与QQ频道的缺口，是本次调研必须写进结论的一部分，而不是藏在脚注里。原因是这两个渠道恰好是网盘重度用户与资源分享者的聚集地，它们的沉默不代表情绪温和，只代表内容不公开可索引。因此在评估大众导向时，可公开验证的样本集中在B站、微博话题、媒体报道与卡饭论坛四处；把这几处的负面强度外推为&quot;全网一致反对&quot;是可行的，外推为&quot;所有用户都在搬家&quot;则超出证据范围。</p>
+<p>:::</p>
+<h2>3. 争议底层：权益账、成本账与合规账</h2>
+<h3>3.1 付费老用户的权益缩水与违约争议</h3>
+<p>用户真正被削减的不是容量数字，而是容量的用途。法律界人士在评估本次调整时给出的判断是：对仍在服务期内的付费用户，本次改动大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。依据是民法典的格式条款原则——平台协议中&quot;有权调整规则&quot;的条款，不能用来单方面削减用户已经付费购买的核心服务权益；用户购买的是完整存储空间，平台私自拆分并限制使用属于实质性减损权益，道歉与退款都是事后补救，不代表当初行为合法合规<sup><a href="https://www.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。</p>
+<p>落差的具体量级可以从自主上传容量的变化读出。</p>
+<p><strong>表3：用户可自行上传容量在调整前后的变化（数据出自B站长文《123云盘这次，踩雷区了》）</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">用户档位</th>
+<th align="left">调整前自主上传容量</th>
+<th align="left">调整后自主上传容量</th>
+<th align="left">溯源</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">新免费用户</td>
+<td align="left">2TB</td>
+<td align="left">50GB</td>
+<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+<tr>
+<td align="left">新VIP用户</td>
+<td align="left">22TB</td>
+<td align="left">1TB</td>
+<td align="left">该长文口径，本轮检索未获第二个独立来源交叉验证</td>
+</tr>
+<tr>
+<td align="left">新SVIP用户</td>
+<td align="left">102TB</td>
+<td align="left">2TB</td>
+<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
+</tr>
+</tbody></table>
+<p>退款为什么不足以平息争议，B站长文里那条评论给出了答案：多年会员的钱已经交了，文件也已经搬进来了，现在使用条件变了，即便能退款，整理和迁移花掉的时间也无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。这是一种典型的&quot;沉没成本加迁移成本&quot;结构——退给用户的只是剩余服务期的对价，用户付出的却是把数十TB文件重新分类、下载、再上传另一块盘的劳动与时间。<a href="%E8%BF%81%E7%A7%BB%E6%88%90%E6%9C%AC%E5%9C%A8%E6%9C%AC%E6%AC%A1%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%B9%B6%E9%9D%9E%E6%8A%BD%E8%B1%A1%E6%8B%85%E5%BF%A7%E3%80%82%E8%87%B4%E6%AD%89%E5%A3%B0%E6%98%8E%E6%8F%90%E5%88%B0%EF%BC%8C%E5%9B%A0%E7%A8%8B%E5%BA%8F%E7%BC%BA%E9%99%B7%E5%AF%BC%E8%87%B4%E9%83%A8%E5%88%86%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E8%A2%AB%E8%AF%AF%E5%88%A4%E4%B8%BA%E4%B8%93%E4%B8%9A%E6%96%87%E4%BB%B6%EF%BC%8C%E4%BF%AE%E5%A4%8D%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C24%E5%B0%8F%E6%97%B6%E6%9C%AA%E5%A4%84%E7%90%86%E5%AE%8C%E6%AF%95%EF%BC%8C%E5%AE%98%E6%96%B9%E6%9C%80%E7%BB%88%E5%B0%86%E8%A2%AB%E8%AF%AF%E5%88%A4%E7%94%A8%E6%88%B7%E7%9A%84%E5%B7%B2%E7%94%A8%E4%B8%93%E4%B8%9A%E5%AE%B9%E9%87%8F%E9%87%8D%E7%BD%AE%E4%B8%BA%E6%A0%87%E5%87%86%E6%96%87%E4%BB%B6%3Csup%3E%5B%E8%85%BE%E8%AE%AF%E7%BD%91%5D(https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap)%3C/sup%3E%EF%BC%9B%E8%A7%84%E5%88%99%E6%9C%AC%E8%BA%AB%E8%BF%98%E8%A6%81%E6%B1%82%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E5%9C%A8%E5%86%8D%E6%AC%A1%E5%8F%91%E7%94%9F%E6%93%8D%E4%BD%9C%E6%97%B6%E6%8C%89%E6%96%B0%E8%A7%84%E5%88%99%E9%87%8D%E6%96%B0%E5%88%A4%E6%96%AD%E5%B1%9E%E6%80%A7%3Csup%3E%5Bdonews.com%5D(https://www.donews.com/news/1/6724009.html)%3C/sup%3E%EF%BC%8C%E8%BF%99%E6%84%8F%E5%91%B3%E7%9D%80%E7%94%A8%E6%88%B7%E9%9C%80%E8%A6%81%E5%8F%8D%E5%A4%8D%E6%A0%B8%E5%AF%B9%E6%96%87%E4%BB%B6%E5%BD%92%E5%B1%9E%E3%80%82">^migrate</a></p>
+<blockquote>
+<p>[!FAILURE] 用户不满的层次结构
+检索到的反馈可以分成三层：较浅的一层是&quot;额度不够用&quot;，对应的是50GB专业空间与个人备份需求之间的缺口<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>；中间一层是&quot;事先没告诉我&quot;，对应的是生效在前、公告在后的顺序问题；较深的一层是&quot;我不再相信这个规则会稳定&quot;，它来自此前多轮权益收紧的累积，单靠一次退款无法修复。</p>
+</blockquote>
+<h3>3.2 平台的成本账与行业背景</h3>
+<p>平台的解释有事实基础。123云盘在致歉声明中把调整动因归为三项：AIGC与短视频等内容快速增长，独有文件、多版本文件与个性化文件不断增多，文件去重效率下降；存储硬件、带宽、机房和运维成本持续上升，网盘服务的长期运营压力增加；部分用户存在商业视频素材、直播录屏、监控录像这类共有率极低的存储需求，与面向个人日常存储和分享设计的标准空间存在差异<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。大众媒体在复盘时同样把存储芯片暴涨与运营商跨网流量结算成本上升，认定为123云盘调整的根本动因<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。</p>
+<p>:::folding{title=&quot;点开看：123云盘成本传导的两年时间线（媒体公开报道口径）&quot;}</p>
+<ul>
+<li>2025年11月26日：发布免费用户权益调整通知，免费提取流量由PC与网页端单日累计上限1GB，调整为全端单月累计上限10GB；在线播放音视频计入流量；取消游客下载100MB以内文件的免费权益。官方称打击对象是批量注册、破解接口、盗链建站的&quot;羊毛党&quot;，并用&quot;不是撑不住，是守得住&quot;作为说明标题。</li>
+<li>2025年12月12日：发布部分商品价格调整通知，理由是三网运营商实施跨网流量省间结算、跨网跨省流量结算成本显著上升，服务器硬盘与内存采购维护成本出现数倍增长，自2026年1月1日0时起调价；通知附带的结算规则显示跨网结算价拟按6000元/G执行。</li>
+<li>2026年4月30日：对三名B站用户发布严正声明并报案，指其恶意造谣诽谤<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。</li>
+<li>2026年5月31日：发布沉默用户服务冻结通知，连续一年以上未登录的免费账号数据转入冷存并冻结30天，逾期未激活将被清理，付费会员不受影响。</li>
+<li>2026年6月4日：开通&quot;账号使用权过户&quot;官方服务，过户服务费按合同成交价的20%计收、最低100元。</li>
+<li>2026年8月：博主&quot;6GHz&quot;公开称花2999元购买5年期1PB空间加会员，仅上传18TB摄影素材即以触发风控为由被停用账号，客服要求加钱升级商用版，当事人向市场监管部门投诉并获受理；同容量方案此后报价降至2699元10年。</li>
+<li>2026年9月21日：集邦咨询判断云端需求走强、企业级SSD第四季度价格预计继续上涨，B站长文引用该判断作为行业成本压力的佐证<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。</li>
+<li>2026年9月24日：双空间机制生效<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。</li>
+</ul>
+<p>:::</p>
+<p>把这条时间线排开之后，9月24日的调整就不再是孤立动作，而是一套连续的成本回收路径：先收流量、再涨价、再清沉默账号、再把独占文件单独计账。什么值得买在9月29日的复盘里给了一种更直白的读法——免费容量与促销容量一直是获客补贴，补贴退坡时规则必然被重新定义，&quot;公摊&quot;是给过去的超售补课：卖出去的容量从来是按转存热度复用的物理空间，现在干脆把复用部分明码标出。</p>
+<blockquote>
+<p>[!NOTE] 两条账不能互相抵
+成本上升解释的是&quot;为什么要改&quot;，不解释&quot;为什么可以不打招呼就改&quot;。存储芯片涨价是行业共同面对的约束，同期各家网盘的处理方式并不相同；把成本压力直接等同于调整程序的正当性，是平台侧叙事里最容易滑过去的一步。</p>
+</blockquote>
+<h2>4. 我的判断：这件事应该怎么读，用户该怎么办</h2>
+<h3>4.1 对公告与舆论双方的评估</h3>
+<p>就公告本身，我的判断分两层。商业逻辑层，这次调整站得住：去重技术决定的&quot;共享文件近乎免费、独占文件全额占用物理盘&quot;这一成本结构是客观事实，把两类文件分账管理，方向上与行业通行做法一致<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。产品程序层，这次调整站不住：生效时刻早于公告时刻、历史文件在用户不知情的情况下被重新归类、以文件大小作为一刀切的判定标尺，这三点合起来构成的是程序上的不合格，官方在9月28日的致歉里承认的四项不足也正是这四项<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。用一句更直白的话概括：把&quot;独占文件要单独算账&quot;这件事做成制度，是可以的；把它做成用户醒来才发现自己已经住进公摊房，是不可以的。</p>
+<p>就舆论，&quot;公摊&quot;标签精准但过于简化，它把合理的成本区分与不合理的告知方式一并否定掉了。97%这个数字在传播上是有效的，在技术上却偷换了单位——它比较的是&quot;名义面积&quot;与&quot;可使用面积&quot;，而标准空间本来就是被去重技术支持的共享池，用户过去实际也在共用它，并不是新出现的公摊。真正值得追问的不是&quot;公摊比例多高&quot;，而是下一次规则变更用户能否提前知道。UC头条在9月30日的评论里把这点写得很清楚：&quot;我关心的不是道歉，是下一次改规则谁先知道&quot;。这类反思比单纯的情绪声讨更有推动力，因为它指向可验证的机制改动，而不是要求平台撤销一项成本上必要的制度。</p>
+<p>:spoiler[把话说到底：这是一次把&quot;信息不对称红利&quot;公开化的定价改革，只是选错了执行顺序。]</p>
+<h3>4.2 给不同用户的选择建议与观察指标</h3>
+<p>判断去留的依据应当是个人的文件构成，而不是舆论声量。</p>
+<pre><code class="language-mermaid">quadrantChart
+    title 受损程度分布（本图为笔者基于事件规则的判断，非检索数据）
+    x-axis &quot;转存共享为主&quot; --&gt; &quot;独占原创为主&quot;
+    y-axis &quot;免费身份&quot; --&gt; &quot;服务期内付费&quot;
+    quadrant-1 &quot;受损最重，优先谈退款&quot;
+    quadrant-2 &quot;受损轻，可观望&quot;
+    quadrant-3 &quot;几乎不受影响&quot;
+    quadrant-4 &quot;受损重，需重算总账&quot;
+    &quot;摄影素材备份者&quot;: [0.85, 0.9]
+    &quot;监控与录播存储者&quot;: [0.9, 0.75]
+    &quot;资源党转存用户&quot;: [0.15, 0.2]
+    &quot;普通相册备份用户&quot;: [0.7, 0.35]
+</code></pre>
+<ul>
+<li><strong>以转存他人分享为主的免费用户</strong>：标准空间的机制没有变化，重复文件与回收站依旧不计容量，实际体验的变动有限<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。真正影响这类用户的是流量侧的收紧，与双空间属于两条线。</li>
+<li><strong>以相机原片、加密备份、商用素材为主的付费用户</strong>：这是受损最重的一群。自有文件几乎必然落入专业空间，而专业空间的免费额度只有50GB，会员也仅到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。</li>
+<li><strong>把123云盘当WebDAV与直链源的用户</strong>：直链、图床、视频转码服务产生的文件全部计入专业空间，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。这类用法的成本模型被规则直接改写，属于必须重算的一类。</li>
+</ul>
+<p>对还在观望的用户，我建议只盯三项验证指标，不必被每日的舆论噪音推着做决定：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 专业空间赠送容量是否真的提高，且对老用户的倾斜有明确数字，而不是&quot;适当倾斜&quot;这类表述</li>
+<li><input disabled="" type="checkbox"> 空间归属规则是否取消文件大小这条标尺，直链与图床场景是否被单独豁免</li>
+<li><input disabled="" type="checkbox"> 重大规则调整前是否建立了提前公示与灰度验证机制，官方在致歉里承诺&quot;完善重大规则调整前的用户沟通和灰度验证机制&quot;<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup></li>
+</ul>
+<p>这三项在2026年11月前落地，则本次事件可视为一次被舆论修正的产品事故；若落地内容仍停留在容量数字的微调，则用户需要接受一个新的基本前提：在123云盘里，名义容量与可用容量是两件事，任何后续文件都应按这一前提估值。退款窗口按原支付渠道退还剩余服务期对应费用，是当下唯一可以立刻执行的止损手段<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<h2>核心参考文献</h2>
+<p><a href="https://www.sohu.com/a/1082873644_184641">全球首创网盘公摊，123云盘突然开始“赶客”_用户_文件_空间</a></p>
+<p><a href="https://i.ifeng.com/c/8woLLQzD9gx">123云盘调整空间规则后引发用户不满，官方致歉并披露优化方向_凤凰网</a></p>
+<p><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">123云盘新增专业空间:原空间更名为标准空间,老用户免费配额为 50GB+2TB</a></p>
+<p><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">【#123云盘被吐槽全球首创有公摊网盘#】#123云盘公开道歉#9月29日消息，日前，123云盘对存储空间体系进行调整，将原有空间更名为“标准空间”，同时新增“专业空间”，用于分类管理不同类型文件。按照新规则，无论是用户自行上传还是转存文件，只要单个文件超过10GB，就会占用专业空间；10GB以下文件则计入标准空间。这一调整很快引发大量用户不满，有网友甚至吐槽其为“全球首创有公摊的网盘”。对此，123云盘日前发布公告，就专业空间调整进行说明并公开道歉。123云盘表示，在认真查看用户反馈、批评和建议后，公司意识到此次调整在上线节奏、产品设计、规则说明以及存量权益衔接等方面存在不足，并向受到影响的用户致歉。针对用户集中反馈的问题，123云盘已经形成初步优化方案，主要包括以下几个方向：1、提高各等级用户赠送的专业空间容量，并对老用户给予适当倾斜；2、优化空间归属规则，不再简单以文件大小区分文件所属空间；3、多人共有文件占用的存储空间，由各拥有人账户均摊分担；4、完善存量会员权益过渡方案，确保用户已购买的服务在有效期内得到合理保障;5、更清晰地展示空间占用、规则变化和文件管理方式，减少用户理解成本。123云盘表示，由于产品调研、设计策划等需要一定时间，相关优化方案力争在2026年11月前正式上线。对于因本次调整无法继续正常使用服务的用户，123云盘也明确支持退款。用户可联系在线客服登记，平台在核实订单信息及剩余权益后，将按照原支付渠道退还剩余服务期对应费用。此外，123云盘强调，除法律法规另有规定，或用户违反服务协议等情况外，不会因为此次规则调整擅自删除用户正常存储的文件，</a></p>
+<p><a href="https://www.toutiao.com/article/7691149615235695144/">123 云盘私自改存储规则惹众怒后致歉！对付费用户是否构成违约 - 今日头条</a></p>
+<p><a href="https://m.toutiao.com/article/7691149615235695144/">123云盘私自改存储规则惹众怒后致歉！对付费用户是否构成违约</a></p>
+<p><a href="https://www.donews.com/news/1/6724009.html">123云盘9月24日上线双空间机制：标准空间与专业空间</a></p>
+<p><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">123云盘这次，踩雷区了</a></p>
+<p><a href="https://www.bilibili.com/opus/1253671915455774738">123云盘这次，踩雷区了 - 哔哩哔哩</a></p>
+<p><a href="https://tieba.baidu.com/p/10270118510">各位免费用户开始准备搬家吧【123云盘吧】_百度贴吧</a></p>
+<p><a href="https://www.donews.com/news/1/6726888.html">123云盘调整空间规则引争议，承诺11月前优化并支持退款</a></p>
+<p><a href="https://www.toutiao.com/article/7691314738873123347/">全球首创网盘公摊，123云盘突然开始“赶客” - 今日头条</a></p>
+<p><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">123 云盘官宣大调整！免费白嫖大文件日子结束：自传空间仅剩 50GB_ZAKER新闻</a></p>
+<p><a href="https://www.bilibili.com/video/BV1jA4KzfEpH/">现在的123云盘【2025年9月起】</a></p>
+<p><a href="https://www.toutiao.com/article/7634474714823524891/">123云盘声明称3名B站用户恶意造谣诽谤，已向公安机关报案 - 今日头条</a></p>
+<p><a href="https://tieba.baidu.com/p/9371711126">萌新请教一下123云盘相关问题_123云盘吧_百度贴吧</a></p>
+<p><a href="https://tieba.baidu.com/p/9332852980">123云盘资源社区_123云盘吧_百度贴吧</a></p>
+<p><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">网友吐槽全球首创有公摊网盘！123云盘道歉：优化空间归属规则、支持退款_IT资讯区_资讯专区 卡饭论坛 - 互助分享 - 大气谦和!</a></p>
+<p><a href="https://i.ifeng.com/c/8whi6AdA4Gx">123云盘新增专业空间：原空间更名为标准空间，老用户免费配额为50GB + 2TB_凤凰网</a></p>
+<p><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款</a></p>
+<p><a href="https://www.bilibili.com/video/BV17avCeeEqc/">突发！123云盘被三大运营商标记为诈骗网站</a></p>
+<p><a href="https://news.qq.com/rain/a/20260430A06T8700">123 云盘声明称 3 名B站用户恶意造谣诽谤，已向公安机关报案_腾讯新闻</a></p>
+<p><a href="https://tieba.baidu.com/p/9321302158">123的离线下载功能怎么样呀【123云盘吧】_百度贴吧</a></p>
+<p><a href="http://t.cj.sina.com.cn/articles/view/5828676220/15b6a8a7c02001le5e">全球首创网盘公摊，123云盘突然开始“赶客”__财经头条__新浪财经</a></p>
+<p><a href="https://m.163.com/dy/article/L83KMIN10511BE1V.html?spss=adap_pc">全球首创网盘公摊，123云盘突然开始“赶客”|哈希值|服务器|腾讯版小龙虾|赶客_手机网易网</a></p>
+<p><a href="https://www.163.com/dy/article/KRORUV0605119K9O.html">又一良心网盘撑不住了，正式涨价！|云存储|运营商|满血版模型_网易订阅</a></p>
+<p><a href="https://www.163.com/dy/article/KGTU737J051288MF.html">不跑路但涨价！运营商新规+硬件暴涨“双杀”，云盘更难了？|云存储|流量包|蓝屏事件_网易订阅</a></p>
+<p><a href="https://www.acfun.cn/a/ac48881070?_t=t">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款 - AcFun弹幕视频网 - 认真你就输啦 (?ω?)ノ- ( ゜- ゜)つロ</a></p>
+<p><a href="https://www.123pan.com/Notice/?id=570152">关于近期“专业空间” 升级调整的说明与致歉</a></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>Markdown 组件语法全览</title>
+      <link>https://blog.945426.xyz/posts/test001</link>
+      <guid isPermaLink="false">test001</guid>
+      <pubDate>Sat, 03 Oct 2026 00:20:00 GMT</pubDate>
+      <description>沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。</description>
+      <content:encoded><![CDATA[<p>本文是博客 Markdown 扩展语法的<strong>完整演示</strong>：先逐一列举全部组件，再给出<strong>嵌套组合矩阵</strong>。所有组件由 <code>moara-md</code> 扩展层渲染（浏览器端与 <code>/posts/&lt;id&gt;</code> 直出共用同一实现，产物一致）。</p>
+<blockquote>
+<p>[!NOTE]
+提示框（Admonition）共 <strong>13 种类型</strong>：<code>NOTE</code> <code>ABSTRACT</code> <code>INFO</code> <code>TIP</code> <code>SUCCESS</code> <code>QUESTION</code> <code>WARNING</code> <code>FAILURE</code> <code>DANGER</code> <code>BUG</code> <code>EXAMPLE</code> <code>QUOTE</code> <code>IMPORTANT</code>。全部默认可折叠；同义别名（<code>TLDR</code> <code>CAUTION</code> <code>ERROR</code> 等）自动归并。</p>
+</blockquote>
+<blockquote>
+<p>[!TIP]+ 可折叠提示框
+尾缀 <code>+</code> 默认展开，<code>-</code> 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。</p>
+</blockquote>
+<blockquote>
+<p>[!WARNING]- 收起状态的警告
+这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。</p>
+</blockquote>
+<h2>1. 提示框 13 类型全览</h2>
+<blockquote>
+<p>[!NOTE]
+备注类型：用于补充说明与背景信息。</p>
+</blockquote>
+<blockquote>
+<p>[!ABSTRACT]
+摘要类型：文章概要、TLDR。</p>
+</blockquote>
+<blockquote>
+<p>[!INFO]
+信息类型：中性提示。</p>
+</blockquote>
+<blockquote>
+<p>[!TIP]
+提示类型：小技巧与最佳实践。</p>
+</blockquote>
+<blockquote>
+<p>[!SUCCESS]
+成功类型：完成状态确认。</p>
+</blockquote>
+<blockquote>
+<p>[!QUESTION]
+问题类型：常见疑问。</p>
+</blockquote>
+<blockquote>
+<p>[!WARNING]
+警告类型：需要注意的事项。</p>
+</blockquote>
+<blockquote>
+<p>[!FAILURE]
+失败类型：出错的场景。</p>
+</blockquote>
+<blockquote>
+<p>[!DANGER]
+危险类型：高风险操作警示。</p>
+</blockquote>
+<blockquote>
+<p>[!BUG]
+缺陷类型：已知问题记录。</p>
+</blockquote>
+<blockquote>
+<p>[!EXAMPLE]+ 示例类型（已展开）
+示例类型默认展开的样子：内部可以继续嵌套<strong>行内元素</strong> <mark>标记</mark>、<kbd>Ctrl</kbd> 按键、:spoiler[黑幕] 与<a href="https://example.com">链接</a>。</p>
+</blockquote>
+<blockquote>
+<p>[!QUOTE]
+引用类型：摘录他人观点。</p>
+</blockquote>
+<blockquote>
+<p>[!IMPORTANT]
+重要类型：关键结论。</p>
+</blockquote>
+<p>别名归一演示（<code>CAUTION</code> → 警告色、<code>TLDR</code> → 摘要色）：</p>
+<blockquote>
+<p>[!CAUTION]
+这是 <code>CAUTION</code> 别名，渲染为 warning 样式。</p>
+</blockquote>
+<blockquote>
+<p>[!TLDR]
+这是 <code>TLDR</code> 别名，渲染为 abstract 样式。</p>
+</blockquote>
+<h2>2. 折叠面板 :::folding</h2>
+<p>折叠面板取代了旧版手写 HTML。<strong>内部支持所有块级语法</strong>：列表、表格、代码块、甚至嵌套折叠。</p>
+<p>:::folding{title=&quot;点击展开 — 查看代码块与列表&quot;}</p>
+<ul>
+<li>列表项一</li>
+<li>列表项二</li>
+<li>列表项三</li>
+</ul>
+<pre><code class="language-ts">export interface Post {
+  id: string;
+  title: string;
+  html: string;
+}
+</code></pre>
+<p>:::</p>
+<p>:::folding{title=&quot;嵌套折叠：外层面板&quot; open}</p>
+<p>外层默认展开（<code>open</code> 属性）。内层默认收起，<strong>内层里面还有第三层</strong>：</p>
+<p>:::folding{title=&quot;内层折叠 — 双层嵌套&quot;}</p>
+<p>内层折叠内容：内层面板内部再嵌一层：</p>
+<p>:::folding{title=&quot;三层折叠 — 第三层&quot;}</p>
+<p>这里是在折叠内、折叠内的<strong>第三层折叠</strong>——外层、内层、第三层逐层缩进嵌套。</p>
+<p>:::</p>
+<p>:::</p>
+<p>:::</p>
+<h3>折叠面板内的组件全家桶</h3>
+<p>以下折叠面板<strong>默认展开</strong>，内部逐项演示每种组件的嵌套形态：</p>
+<p>:::folding{title=&quot;组件全家桶：折叠内嵌套一切&quot; open}</p>
+<p>普通段落：折叠面板内的正文文字，支持<strong>加粗</strong>、<em>斜体</em>、<code>行内代码</code>、<a href="https://example.com">链接</a>。</p>
+<p>无序列表与有序列表：</p>
+<ul>
+<li>无序项 A</li>
+<li>无序项 B</li>
+</ul>
+<ol>
+<li>有序项一</li>
+<li>有序项二</li>
+</ol>
+<p>任务列表（GFM）：</p>
+<ul>
+<li><input checked="" disabled="" type="checkbox"> 已完成的任务</li>
+<li><input disabled="" type="checkbox"> 待办任务</li>
+<li><input disabled="" type="checkbox"> 另一个待办</li>
+</ul>
+<p>表格：</p>
+<table>
+<thead>
+<tr>
+<th>组件</th>
+<th align="center">嵌套</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>折叠</td>
+<td align="center">✓</td>
+<td>任意层级</td>
+</tr>
+<tr>
+<td>选项卡</td>
+<td align="center">✓</td>
+<td>见 §3</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓</td>
+<td>下一项演示</td>
+</tr>
+</tbody></table>
+<p>代码块：</p>
+<pre><code class="language-js">console.log(&#39;折叠面板内的代码块&#39;);
+</code></pre>
+<p>提示框：</p>
+<blockquote>
+<p>[!TIP]
+折叠面板内的提示框：绿色左边条同样生效。</p>
+</blockquote>
+<p>Mermaid 图表：</p>
+<pre><code class="language-mermaid">flowchart LR
+    A[折叠内图表] --&gt; B[正常渲染]
+</code></pre>
+<p>数学公式：</p>
+<p>$$
+E = mc^2 \quad \text{（折叠内公式）}
+$$</p>
+<p>链接卡与仓库卡：</p>
+<p>::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;折叠内的链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>视频（叶子形式）：</p>
+<p>::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;折叠内的视频&quot;}</p>
+<p>图片与引用块：</p>
+<p><img src="https://picsum.photos/600/340" alt="折叠内图片"></p>
+<blockquote>
+<p>折叠面板内的引用块（普通 blockquote）。</p>
+</blockquote>
+<p>原生 <code>&lt;details&gt;</code>（HTML 直写在折叠内）：</p>
+<details>
+<summary>折叠内的原生 details</summary>
+
+<p>原生 details 嵌套在 :::folding 内部。</p>
+</details>
+
+<p>行内元素一排：<mark>荧光标记</mark>、<kbd>Ctrl</kbd>、:spoiler[黑幕]、H<sub>2</sub>O、x<sup>2</sup>。</p>
+<p>:::</p>
+<h2>3. 选项卡 ::::tabs</h2>
+<p>选项卡两种形态：<code>{open}</code> 默认展开；无属性默认折叠（仅标题栏可见）。</p>
+<p><code>notoc</code> 属性控制容器内标题是否进目录：提示框 <code>&gt; [!NOTE]{notoc}</code>、折叠面板
+<code>:::folding{notoc}</code>、选项卡面板 <code>:::tab{notoc}</code> 均可单点排除；组级
+<code>::::tabs{notoc}</code> 一键排除整组面板，面板级 <code>notoc=false</code> 可单独放开。</p>
+<p>::::tabs{notoc}</p>
+<p>:::tab{title=&quot;组级排除&quot;}</p>
+<pre><code class="language-bash">npm install moara-md
+</code></pre>
+<p>面板内小节（组级 <code>notoc</code> 排除，不进目录）：</p>
+<h3>组级排除的小节</h3>
+<p>:::</p>
+<p>:::tab{title=&quot;单独放开&quot; notoc=false}</p>
+<p>面板写 <code>notoc=false</code>：仅本面板标题回到目录。</p>
+<h3>面板级放开的小节</h3>
+<p>:::</p>
+<p>::::</p>
+<blockquote>
+<p>[!NOTE]{notoc} 提示框排除（标题自定义）
+<code>&gt; [!NOTE]{notoc}</code>：框内标题不进目录。</p>
+<h3>提示框排除的小节</h3>
+<p>此 H3 不出现在目录卡片中。</p>
+</blockquote>
+<p>:::folding{title=&quot;折叠面板 notoc 演示&quot; notoc open}</p>
+<p><code>:::folding{notoc}</code>：面板内标题不进目录。</p>
+<h3>折叠面板排除的小节</h3>
+<p>:::</p>
+<p>:::::tabs{open}</p>
+<p>:::tab{title=&quot;安装&quot; notoc}</p>
+<pre><code class="language-bash">npm install moara-md
+</code></pre>
+<p>面板内小节（<code>notoc</code> 属性使标题不进目录）：</p>
+<h3>面板内小节（不进目录）</h3>
+<p>此处 H3 不会出现在目录卡片中。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;配置与表格&quot;}</p>
+<p>选项卡内的表格：</p>
+<table>
+<thead>
+<tr>
+<th>项</th>
+<th>值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>主题</td>
+<td>oklch</td>
+</tr>
+<tr>
+<td>字体</td>
+<td>Space Grotesk</td>
+</tr>
+</tbody></table>
+<p>选项卡内的提示框：</p>
+<blockquote>
+<p>[!EXAMPLE]+ 选项卡内提示框
+提示框嵌在选项卡面板里，默认展开。</p>
+</blockquote>
+<p>:::</p>
+<p>:::tab{title=&quot;折叠与代码&quot;}</p>
+<p>选项卡内的折叠面板：</p>
+<p>:::folding{title=&quot;选项卡内的折叠&quot; open}</p>
+<p>折叠面板嵌在选项卡面板里，内部再有代码块：</p>
+<pre><code class="language-js">console.log(&#39;tabs &gt; folding &gt; code&#39;);
+</code></pre>
+<p>:::</p>
+<p>:::</p>
+<p>:::tab{title=&quot;图表与公式&quot;}</p>
+<p>选项卡内的 Mermaid：</p>
+<pre><code class="language-mermaid">pie showData
+    title 选项卡内饼图
+    &quot;A&quot; : 60
+    &quot;B&quot; : 40
+</code></pre>
+<p>选项卡内的数学：</p>
+<p>$$
+\int_0^1 x^2 , dx = \frac{1}{3}
+$$</p>
+<p>:::</p>
+<p>:::tab{title=&quot;嵌套选项卡&quot;}</p>
+<p>选项卡嵌套选项卡（内层五冒号围栏）：</p>
+<p>:::::tabs{open}</p>
+<p>:::tab{title=&quot;内层 A&quot;}</p>
+<p>内层选项卡面板 A。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;内层 B&quot;}</p>
+<p>内层选项卡面板 B：嵌套层级不受限制（栈式解析）。</p>
+<p>:::</p>
+<p>:::::</p>
+<p>:::</p>
+<p>:::tab{title=&quot;卡片与视频&quot;}</p>
+<p>选项卡内的叶子指令（单行压缩）：</p>
+<p>::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;选项卡内链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>::video{type=&quot;youtube&quot; id=&quot;aqz-KE-bpKQ&quot; title=&quot;选项卡内视频&quot;}</p>
+<p>:::</p>
+<p>:::::</p>
+<p>横向滑动演示（10 个选项卡，无属性默认折叠）：</p>
+<p>:::::tabs</p>
+<p>:::tab{title=&quot;第 1 步：安装&quot;}</p>
+<p>第 1 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 2 步：初始化&quot;}</p>
+<p>第 2 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 3 步：配置&quot;}</p>
+<p>第 3 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 4 步：迁移&quot;}</p>
+<p>第 4 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 5 步：构建&quot;}</p>
+<p>第 5 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 6 步：测试&quot;}</p>
+<p>第 6 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 7 步：联调&quot;}</p>
+<p>第 7 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 8 步：灰度&quot;}</p>
+<p>第 8 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 9 步：发布&quot;}</p>
+<p>第 9 步内容。</p>
+<p>:::</p>
+<p>:::tab{title=&quot;第 10 步：运维&quot;}</p>
+<p>第 10 步内容。</p>
+<p>:::</p>
+<p>:::::</p>
+<h2>4. 提示框内嵌套容器</h2>
+<p>提示框（引用块变换）内部同样支持容器指令——每行加 <code>&gt;</code> 前缀即可：</p>
+<blockquote>
+<p>[!INFO]+ 提示框内的折叠面板
+提示框内部直接嵌套 :::folding：</p>
+<p>:::folding{title=&quot;提示框内的折叠&quot; open}</p>
+<p>折叠面板渲染在提示框内部。</p>
+<p>:::</p>
+<p>提示框内也可以放<strong>普通嵌套引用</strong>：</p>
+<blockquote>
+<p>提示框内的一层引用。</p>
+<blockquote>
+<p>提示框内的两层引用。</p>
+</blockquote>
+</blockquote>
+</blockquote>
+<blockquote>
+<p>[!QUESTION]+ 提示框内的图表与公式</p>
+<pre><code class="language-mermaid">flowchart LR
+    Q[提示框内] --&gt; R[图表正常]
+</code></pre>
+<p>$$a^2 + b^2 = c^2$$</p>
+</blockquote>
+<blockquote>
+<p>[!NOTE]+ 提示框内的卡片与表格
+::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;提示框内链接卡&quot;}</p>
+<p>::github{repo=&quot;markedjs/marked&quot;}</p>
+<p>::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;提示框内的视频&quot;}</p>
+<table>
+<thead>
+<tr>
+<th>位置</th>
+<th>卡片</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>提示框内</td>
+<td>✓</td>
+</tr>
+</tbody></table>
+</blockquote>
+<h2>5. 视频嵌入 :::video</h2>
+<p>::::video{type=&quot;bilibili&quot; id=&quot;BV1GJ411x7h7&quot; title=&quot;演示：Bilibili 嵌入&quot;}</p>
+<p>::::video{type=&quot;youtube&quot; id=&quot;aqz-KE-bpKQ&quot; title=&quot;演示：YouTube 嵌入&quot;}</p>
+<p>直链视频（裸 <code>&lt;video&gt;</code> 标签，无外壳跟随原始比例）：</p>
+<p><video src="https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4" controls muted title="演示：直链原生视频"></video></p>
+<p>折叠块内既可用叶子形式 <code>::video</code>，也可用块形式（见 §2 全家桶）。</p>
+<h2>6. 链接卡片 :::linkcard</h2>
+<p>:::linkcard{url=&quot;<a href="https://github.com/moaradc/MOARA">https://github.com/moaradc/MOARA</a>&quot; title=&quot;MOARA 主仓库&quot;}</p>
+<p>:::linkcard{url=&quot;<a href="https://example.com/docs/guide.pdf">https://example.com/docs/guide.pdf</a>&quot; title=&quot;文件链接：按后缀显示文件图标&quot;}</p>
+<p>:::linkcard{post=&quot;103&quot; title=&quot;站内文章卡片（标题由目标文章 frontmatter 自动填充）&quot;}</p>
+<p>:::linkcard{url=&quot;<a href="https://www.baidu.com">https://www.baidu.com</a>&quot; title=&quot;直连 favicon 演示：取自 <a href="http://www.baidu.com/favicon.ico%22%7D">www.baidu.com/favicon.ico&quot;}</a></p>
+<h2>7. 仓库卡片 :::github</h2>
+<p>:::github{repo=&quot;markedjs/marked&quot;}</p>
+<h2>8. 数学公式（frontmatter <code>math: true</code>）</h2>
+<p>行内公式 $e^{i\pi} + 1 = 0$ 与块级公式：</p>
+<p>$$
+\begin{aligned}
+\nabla \cdot \mathbf{E} &amp;= \frac{\rho}{\varepsilon_0} \
+\nabla \cdot \mathbf{B} &amp;= 0
+\end{aligned}
+$$</p>
+<h2>9. 行内元素</h2>
+<ul>
+<li>高亮 <mark>荧光笔标记</mark>（酸绿色，双模式高对比）</li>
+<li>键盘按键 <kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>Del</kbd></li>
+<li>上下标：H<sub>2</sub>O 与 x<sup>2</sup> + y<sup>2</sup> = r<sup>2</sup></li>
+<li>行内黑幕（防剧透）：凶手是 :spoiler[黑衣人]，点击显示。</li>
+<li>行内代码 <code>const x = 42;</code></li>
+</ul>
+<h2>10. 链接包裹图片与裸图</h2>
+<p>链接包裹的图片：<strong>点击图片本身打开灯箱</strong>预览；跳转链接收在灯箱的 <em>i</em> 信息面板里：</p>
+<p><a href="https://unsplash.com"><img src="https://picsum.photos/800/450" alt="示例图片：点击开灯箱"></a></p>
+<p>裸图（无链接）点击同样打开灯箱预览：</p>
+<p><img src="https://picsum.photos/800/450" alt="裸图：点击打开灯箱"></p>
+<h2>11. 脚注</h2>
+<p>摩尔 Blog 的脚注语法与 GFM 一致[^gfm]，定义可以写在任意位置[^anywhere]，渲染时统一汇总到文末「注释」区。<strong>未写定义的引用</strong>（如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。</p>
+<p>[^gfm]: 参见 GitHub Flavored Markdown Spec 的脚注扩展。
+[^anywhere]: 引用处按首次出现顺序编号，支持<a href="https://github.github.com/gfm/"><strong>行内 Markdown</strong></a> 与多行定义。</p>
+<h2>12. 表格对齐</h2>
+<table>
+<thead>
+<tr>
+<th align="left">左对齐列</th>
+<th align="center">居中列</th>
+<th align="right">右对齐列</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">GitHub</td>
+<td align="center">1</td>
+<td align="right">100</td>
+</tr>
+<tr>
+<td align="left">掘金</td>
+<td align="center">2</td>
+<td align="right">200</td>
+</tr>
+<tr>
+<td align="left">知乎</td>
+<td align="center">3</td>
+<td align="right">300</td>
+</tr>
+<tr>
+<td align="left">b 站</td>
+<td align="center">1</td>
+<td align="right">1000</td>
+</tr>
+<tr>
+<td align="left">云盘</td>
+<td align="center">2</td>
+<td align="right">2000</td>
+</tr>
+<tr>
+<td align="left">邮箱</td>
+<td align="center">3</td>
+<td align="right">3000</td>
+</tr>
+</tbody></table>
+<h2>13. Mermaid 图表类型全集</h2>
+<p><code>moara-md</code> 不拦截 Mermaid——交给 <code>article.js</code> 加载的 Mermaid 10.9 渲染。常用 12 种图：</p>
+<pre><code class="language-mermaid">flowchart TD
+    A[开始] --&gt; B{条件?}
+    B -- 是 --&gt; C[执行]
+    B -- 否 --&gt; D[跳过]
+    C --&gt; E[结束]
+    D --&gt; E
+</code></pre>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant U as 用户
+    participant S as 服务器
+    U-&gt;&gt;S: 请求文章
+    S--&gt;&gt;U: 返回 HTML
+    U-&gt;&gt;S: 请求评论
+    S--&gt;&gt;U: 返回 JSON
+</code></pre>
+<pre><code class="language-mermaid">classDiagram
+    class Article {
+        +String title
+        +String html
+        +render()
+    }
+    class Comment {
+        +String body
+        +post()
+    }
+    Article &quot;1&quot; --&gt; &quot;n&quot; Comment : 拥有
+</code></pre>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; 草稿
+    草稿 --&gt; 发布: 审核通过
+    发布 --&gt; 修订: 更新
+    修订 --&gt; 发布
+    发布 --&gt; [*]
+</code></pre>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o{ POST : writes
+    POST ||--o{ COMMENT : has
+    USER ||--o{ COMMENT : leaves
+</code></pre>
+<pre><code class="language-mermaid">gantt
+    title 发版流程
+    dateFormat YYYY-MM-DD
+    section 开发
+    功能开发 :a1, 2026-10-01, 6d
+    section 测试
+    回归测试 :a2, after a1, 3d
+    section 上线
+    灰度发布 :a3, after a2, 2d
+</code></pre>
+<pre><code class="language-mermaid">pie showData
+    title 流量来源
+    &quot;搜索&quot; : 45
+    &quot;直接&quot; : 30
+    &quot;外链&quot; : 25
+</code></pre>
+<pre><code class="language-mermaid">journey
+    title 写博客的一天
+    section 上午
+      起床: 5: 我
+      喝咖啡: 4: 我
+    section 下午
+      写文章: 5: 我, 读者
+    section 晚上
+      发布: 5: 我, 读者
+</code></pre>
+<pre><code class="language-mermaid">mindmap
+  root((博客))
+    内容
+      文章
+      评论
+    技术
+      Astro
+      moara-md
+</code></pre>
+<pre><code class="language-mermaid">timeline
+    title 博客演进
+    2023 : 静态 HTML
+    2024 : Hexo 迁移
+    2025 : Astro 重构
+    2026 : moara-md 扩展层
+</code></pre>
+<pre><code class="language-mermaid">gitGraph
+    commit id: &quot;init&quot;
+    commit id: &quot;posts&quot;
+    branch feature
+    commit id: &quot;moara-md&quot;
+    checkout main
+    merge feature
+    commit id: &quot;release&quot;
+</code></pre>
+<pre><code class="language-mermaid">quadrantChart
+    title 任务优先级
+    x-axis &quot;低价值&quot; --&gt; &quot;高价值&quot;
+    y-axis &quot;低成本&quot; --&gt; &quot;高成本&quot;
+    quadrant-1 &quot;重点关注&quot;
+    quadrant-2 &quot;值得投入&quot;
+    quadrant-3 &quot;顺手处理&quot;
+    quadrant-4 &quot;果断放弃&quot;
+    &quot;写文章&quot;: [0.8, 0.7]
+    &quot;修样式&quot;: [0.5, 0.3]
+    &quot;加彩蛋&quot;: [0.2, 0.6]
+</code></pre>
+<h2>14. 原生 details 折叠</h2>
+<p>标准 HTML 折叠（与 <code>:::folding</code> 视觉风格统一）：</p>
+<details>
+<summary>原生 details 折叠示例</summary>
+
+<p>内部同样支持 Markdown 语法（约定 summary 与内容间<strong>保留空行</strong>）。</p>
+<ul>
+<li>项目 A</li>
+<li>项目 B</li>
+</ul>
+</details>
+
+<details>
+<summary>原生 details（HTML 直写）</summary>
+
+<p>与 <code>:::folding</code> 视觉统一，垂直节奏同 0.8rem——用于校验裸 <code>&lt;details&gt;</code> 标签的留白一致性。</p>
+</details>
+
+<details open>
+<summary>默认展开 + 内部嵌套</summary>
+
+<p>原生 details 内的提示框与代码：</p>
+<blockquote>
+<p>[!TIP]
+提示框嵌在原生 details 里。</p>
+</blockquote>
+<pre><code class="language-js">console.log(&#39;details &gt; code&#39;);
+</code></pre>
+</details>
+
+<h2>15. 图集标签（可选 links）</h2>
+<p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
+<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。</p>
+<h2>16. 长代码块自动折叠</h2>
+<p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
+<pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
+type Result&lt;T&gt; = { ok: true; value: T } | { ok: false; error: Error };
+
+async function fetchPost(id: string): Promise&lt;Result&lt;string&gt;&gt; {
+    const res = await fetch(`/posts/${id}.html`);
+    if (!res.ok) return { ok: false, error: new Error(String(res.status)) };
+    const html = await res.text();
+    return { ok: true, value: html };
+}
+
+function parseFrontmatter(md: string): { data: Record&lt;string, unknown&gt;; body: string } {
+    const m = md.match(/^---\n([\s\S]*?)\n---\n/);
+    if (!m) return { data: {}, body: md };
+    const data: Record&lt;string, unknown&gt; = {};
+    for (const line of m[1].split(&#39;\n&#39;)) {
+        const idx = line.indexOf(&#39;:&#39;);
+        if (idx &lt; 2) continue;
+        const key = line.slice(0, idx).trim();
+        const raw = line.slice(idx + 1).trim();
+        try { data[key] = JSON.parse(raw); } catch { data[key] = raw; }
+    }
+    return { data, body: md.slice(m[0].length) };
+}
+
+const DEMO_LINES = Array.from({ length: 20 }, (_, i) =&gt;
+    `console.log(&#39;line ${i + 1} of the long code demo&#39;);`);
+
+DEMO_LINES.forEach((l) =&gt; eval(l));
+
+async function main() {
+    const r = await fetchPost(&#39;test001&#39;);
+    if (r.ok) {
+        const { body } = parseFrontmatter(r.value);
+        console.log(body.slice(0, 80));
+    } else {
+        console.error(r.error);
+    }
+}
+
+main();
+</code></pre>
+<h2>17. 嵌套矩阵速查</h2>
+<p>下表汇总本文实际演示过的嵌套组合（✓ 均有对应段落）：</p>
+<table>
+<thead>
+<tr>
+<th>内层组件 \ 外层</th>
+<th align="center">顶层</th>
+<th align="center">折叠内</th>
+<th align="center">选项卡内</th>
+<th align="center">提示框内</th>
+<th align="center">原生 details 内</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>段落 / 列表 / 任务列表</td>
+<td align="center">✓</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>表格</td>
+<td align="center">✓ §12</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>代码块 / 长代码</td>
+<td align="center">✓ §16</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>提示框</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—（用嵌套引用 §4）</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>折叠面板（含三层）</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>选项卡（含嵌套选项卡）</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>Mermaid（12 类型）</td>
+<td align="center">✓ §13</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>视频（iframe / 直链）</td>
+<td align="center">✓ §5</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>链接卡 / 仓库卡</td>
+<td align="center">✓ §6-7</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>数学公式</td>
+<td align="center">✓ §8</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §4</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>原生 details</td>
+<td align="center">✓ §14</td>
+<td align="center">✓ §2</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+<tr>
+<td>行内元素（mark/kbd/spoiler 等）</td>
+<td align="center">✓ §9</td>
+<td align="center">✓ §2</td>
+<td align="center">✓ §3</td>
+<td align="center">✓ §1</td>
+<td align="center">✓ §14</td>
+</tr>
+<tr>
+<td>图集 gallery</td>
+<td align="center">✓ §15</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+<td align="center">—</td>
+</tr>
+</tbody></table>
+<p>引擎要点：容器指令<strong>栈式解析</strong>（<code>::::tabs</code> &gt; <code>:::tab</code> &gt; <code>:::folding</code> 逐层闭合）；提示框先于容器变换，内部容器每行加 <code>&gt;</code> 前缀；<code>::video</code> <code>::linkcard</code> <code>::github</code> 为叶子指令，容器内压缩为单行。</p>
+<h2>18. 代码块标题</h2>
+<p><code>title=&quot;...&quot;</code> 给代码块加标题栏（按文件名推断图标，支持所有语言）：</p>
+<pre><code class="language-ts">type ColorMode = &#39;light&#39; | &#39;dark&#39; | &#39;auto&#39;;
+
+export function setMode(mode: ColorMode) {
+  const isDark = mode === &#39;dark&#39;
+    || (mode === &#39;auto&#39;
+      &amp;&amp; window.matchMedia(&#39;(prefers-color-scheme: dark)&#39;).matches);
+  document.documentElement.classList.toggle(&#39;dark&#39;, isDark);
+}
+</code></pre>
+<pre><code class="language-bash">pnpm install
+pnpm dev
+pnpm build
+</code></pre>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;moara-blog&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;,
+  &quot;private&quot;: true,
+  &quot;type&quot;: &quot;module&quot;
+}
+</code></pre>
+<p>:::folding{title=&quot;折叠内的带标题代码块&quot;}</p>
+<pre><code class="language-js">export const fold = (x) =&gt; x;
+export const twice = (x) =&gt; fold(x) * 2;
+</code></pre>
+<p>:::</p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>测试</title>
+      <link>https://blog.945426.xyz/posts/test000</link>
+      <guid isPermaLink="false">test000</guid>
+      <pubDate>Sun, 27 Sep 2026 10:17:00 GMT</pubDate>
+      <content:encoded><![CDATA[<h1>国内主流云平台对象存储空间与价格调研报告</h1>
+<p><strong>阿里云、腾讯云、华为云、百度智能云、七牛云、火山引擎、金山云、天翼云、UCloud、京东云、移动云十一家平台标准存储容量规格与计费单价横向对比</strong></p>
+<p><strong>报告日期：2026年9月27日</strong></p>
+<h2>摘要</h2>
+<p>国内十一家云平台（阿里云、腾讯云、华为云、百度智能云、七牛云、火山引擎、金山云、天翼云、UCloud、京东云、移动云）的中国大陆地域标准存储按量单价，在统一折算为元/GB/月后落在 0.09 至 0.128 元的窄区间内，最高与最低仅相差 42.2%，按量价格战已趋于饱和。真正的成本分水岭出现在两处：一是预付费资源包，折算单价从腾讯云活动页 0.0189 元/GB/月到华为云 Flexus 100TB 的 0.0528 元/GB/月不等，相对自家按量价让利 7.5% 至 84%；二是冗余等级，多 AZ 与同城冗余相对单 AZ 溢价 25% 至 51.5%。容量档位公示最完整的是百度智能云（100GB 至 10PB 共 14 档）与移动云（50GB 至 2000TB 共 12 档），阿里云公开档位至 300TB、400TB 以上转入人工报价；火山引擎与 UCloud 的资源包逐档价格未在公开页面公示，需登录控制台或调用接口查询。定价路线分化为&quot;以周期换价格&quot;（百度、七牛容量阶梯不给折扣）与&quot;规模与周期双轨&quot;（阿里、华为）两类。综合来看，10GB 以内首选七牛免费额度或阿里 40GB 年付 9 元体验包，1TB 至 10TB 区间华为 Flexus 与阿里年付包单位成本最低，百 TB 级以上应以公开价为谈判基准转入人工议价，并将请求与出网流量纳入总成本复算。</p>
+<h2>1. 调研范围、统计口径与数据来源</h2>
+<h3>1.1 对象存储的计费模式与容量口径界定</h3>
+<p>本次调研覆盖国内十一家提供对象存储服务的云平台，包括阿里云 OSS、腾讯云 COS、华为云 OBS、百度智能云 BOS、七牛云 Kodo、火山引擎 TOS、金山云 KS3、天翼云 ZOS 与 OOS、UCloud US3、京东云 OSS 以及移动云 EOS，研究对象统一限定为中国大陆地域的标准存储类型。所有平台的报价体系均由两条平行轨道构成：一是按量付费（后付费），按实际占用容量与时长计费；二是预付费资源包（包年包月），以固定容量档位换取更低的折算单价。以阿里云为例，其标准存储本地冗余按量目录价为 0.12 元/GB/月，官网折扣价为 0.09 元/GB/月，且折扣价属于长期稳定有效价格而非限时活动<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>；同一存储类型在资源包轨道下的 1TB 包月价为 111 元、年价为 999 元<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。两条轨道同时存在，意味着任何单维度的比价都无法反映真实成本结构。</p>
+<p>容量与结算口径的不一致是横向比价最容易出错的地方。第一类差异来自容量单位：火山引擎 TOS 的公示单价为 0.099 元/GiB/月<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup>，而绝大多数厂商采用元/GB/月，1GiB 等于 1024MiB，两者在字面相同的情况下实际单价相差约 7%。第二类差异来自结算周期：腾讯云按日结算，日单价等于月单价除以 30；UCloud US3 与京东云 OSS 直接以日单价公示，分别为 0.004 元/GB/天与 0.00427 元/GB/天<sup><a href="https://www.ucloud.cn/site/product/ufile.html?ytag=%E5%9F%9F%E5%90%8D_%E7%8C%AB%E5%92%AA%E6%9C%80%E6%96%B0%E7%A0%B4%E5%9F%9F%E5%90%8D_tag_seo">ucloud.cn</a>,<a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=cnblogs_online_Developer_Community&utm_medium=Footer&utm_source=PMM_cnblogs&utm_term=object-storage-service">jdcloud.com</a></sup>；华为云 OBS 则以小时为单位整点结算；百度智能云特别说明其标价中的&quot;月&quot;指 30 天参考价，实际按自然月天数计算<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>。本报告在横向对比表中统一折算为元/GB/月口径，并在涉及原始标价处保留原单位，避免因换算造成精度损失。</p>
+<h3>1.2 数据来源分级与价格时效</h3>
+<p>本次调研按可得性将数据分为三级。第一级为厂商官网定价页与官方帮助文档的一手公示价，包括阿里云定价详情页与《购买 OSS 资源包》帮助文档、腾讯云定价中心与产品页、华为云 OBS 产品页与定价页、百度智能云计费页、七牛云计费详情页、火山引擎产品页与文档中心、金山云 KS3 产品页、UCloud 产品页与资源包文档、京东云产品页与资源包概述页、移动云帮助中心&quot;按量计费价格&quot;与&quot;资源包价格&quot;文档<sup><a href="https://help.aliyun.com/zh/oss/purchase-resource-plans">阿里云</a>,<a href="https://buy.cloud.tencent.com/price/cos">tencent.com</a>,<a href="https://www.volcengine.com/docs/6349/78455">volcengine.com</a>,<a href="https://www.volcengine.com/product/tos">volcengine.com</a></sup>。第二级为特定区域或特定活动的促销价，典型如华为云乌兰察布政务专区公告中的&quot;标准存储单 AZ 存储资源包 40GB 包年 4 年 57.6 元、5 年 72 元&quot;<sup><a href="https://www.huaweicloud.com/notice/2024/20241211100920826.html">huaweicloud.com</a></sup>，此类价格不具备通用性，仅作参照。第三级为第三方整理与搜索摘要数据，包括标注为&quot;参考京东云活动历史报价&quot;的小规格资源包价格<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup>，以及京东云标准存储约合 0.128 元/GB/月的二手汇总值<sup><a href="https://github.com/jig1560/jdcloud-oss-pricing">GitHub</a></sup>，此类数据在报告中一律降级为定性参考，不作为厂商当前标准定价引用。</p>
+<p>价格时效方面，各厂商文档的更新时间差异较大，构成本报告口径边界。阿里云《购买 OSS 资源包》帮助文档更新于 2026 年 9 月 20 日，《计费项概述》更新于 2026 年 8 月 12 日<sup><a href="https://help.aliyun.com/zh/oss/purchase-resource-plans">阿里云</a>,<a href="https://help.aliyun.com/zh/oss/billable-item-overview">阿里云</a></sup>；腾讯云《计费概述》更新于 2026 年 7 月 30 日，《流量费用》更新于 2026 年 8 月 26 日<sup><a href="https://cloud.tencent.com/document/product/436/16871">tencent.com</a>,<a href="https://cloud.tencent.com/document/product/436/53863">tencent.com</a></sup>；华为云存储费用说明页更新于 2026 年 6 月 15 日<sup><a href="https://support.huaweicloud.com/price-obs/obs_42_0003.html">huaweicloud.com</a></sup>；百度智能云存储价格文档更新于 2026 年 8 月 20 日<sup><a href="https://cloud.baidu.com/product/bos.html">百度</a></sup>；移动云&quot;按量计费价格&quot;页更新于 2025 年 11 月 14 日，&quot;资源包价格&quot;页更新于 2024 年 10 月 29 日，是本次调研中时效最弱的两份一手文件<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a>,<a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>。另有一类特殊情况需要交代：天翼云 ctyun.cn 域名与京东云 docs.jdcloud.com 域名下的部分页面在检索系统中被标记为不可信源，但其域名本身属于厂商官方站点，本报告按官方一手来源处理，并在涉及处保留该标记分歧的说明<sup><a href="https://www.ctyun.cn/document/10026735/10240507">ctyun.cn</a>,<a href="https://docs.jdcloud.com/cn/object-storage-service/price-overview">jdcloud.com</a></sup>。</p>
+<h2>2. 头部云厂商标准存储价格格局</h2>
+<h3>2.1 阿里云 OSS：目录价与官网折扣价双轨</h3>
+<p>阿里云 OSS 的价格结构呈现出清晰的&quot;目录价—折扣价&quot;双轨特征。中国大陆地域标准存储本地冗余（LRS）的目录价为 0.12 元/GB/月，官网折扣价为 0.09 元/GB/月；标准存储同城冗余（ZRS）目录价 0.15 元/GB/月，折扣价 0.12 元/GB/月<sup><a href="https://www.aliyun.com/price/detail/oss">阿里云</a>,<a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。折扣价即相当于在目录价基础上直接让渡 25%，且这一折扣为长期有效而非限时活动，意味着阿里云在头部厂商中已把名义高价与实质成交价分离，目录价更多承担价格锚点作用。</p>
+<p>资源包轨道上，阿里云的档位覆盖从 40GB 延伸至 300TB 以上，400TB 及以上需联系 95187 转 1 人工报价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。标准本地冗余存储包的包月价随容量线性放大，100GB 为 18 元、1TB 为 111 元、10TB 为 1110 元，而 50TB 档位跳升至 8960 元、100TB 为 17408 元、200TB 为 34816 元、300TB 为 49152 元<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。年价采用&quot;买 9 送 3&quot;规则，100GB 年价 162 元、1TB 年价 999 元、10TB 年价 9990 元，40GB 档位另有 9 元体验价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。</p>
+<p><strong>表1：阿里云 OSS 标准存储按量付费单价（中国大陆地域，元/GB/月）</strong></p>
+<table>
+<thead>
+<tr>
+<th>存储冗余类型</th>
+<th>目录价</th>
+<th>官网折扣价</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>标准存储（本地冗余 LRS）</td>
+<td>0.12<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>0.09<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>标准存储（同城冗余 ZRS）</td>
+<td>0.15<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>0.12<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+</tbody></table>
+<p><strong>表2：阿里云 OSS 标准-本地冗余存储包规格与价格（元）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>包月价</th>
+<th>年价（买 9 送 3）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>40GB</td>
+<td>—</td>
+<td>9（体验价）<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>100GB</td>
+<td>18<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>162<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>500GB</td>
+<td>54<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>486<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>1TB</td>
+<td>111<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>999<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>2TB</td>
+<td>222<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>1998<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>5TB</td>
+<td>555<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>4995<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>10TB</td>
+<td>1110<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>9990<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>50TB</td>
+<td>8960<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>80640<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>100TB</td>
+<td>17408<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>156672<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>200TB</td>
+<td>34816<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>313344<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>300TB</td>
+<td>49152<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>442368<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+</tbody></table>
+<p>同一份价格表内部隐藏着非线性折扣。1TB 包月 111 元折合约 0.108 元/GB/月，已低于按量目录价但高于按量折扣价；而 50TB 包月 8960 元折合约 0.175 元/GB/月，100TB 折合约 0.170 元/GB/月，看似反而更贵，实为大容量档按月报价与&quot;买 9 送 3&quot;年付优惠组合的结果——50TB 年价 80640 元折合约 0.134 元/GB/月，300TB 年价 442368 元折合约 0.123 元/GB/月<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。同城冗余存储包的定价另成体系，100GB 包月 14 元、500GB 包月 68 元、1TB 包月 138 元、100TB 包月 13824 元，年价同样按买 9 送 3 折算<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。这种档位间折算单价的波动说明，阿里云资源包的真实优惠集中在中小容量档与年付周期上，大容量采购则更依赖人工议价通道。</p>
+<h3>2.2 腾讯云 COS：地域差价与低折活动包</h3>
+<p>腾讯云 COS 是中国大陆地域中以地域差价形成低价格带的典型样本。其标准存储按量计费单价按地域分两档执行：成都、重庆地域为 0.099 元/GB/月，北京、上海、广州、南京地域为 0.118 元/GB/月<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a>,<a href="https://cloud.tencent.com/product/cos?from=20064&from_column=20064">tencent.com</a></sup>。0.099 元这一档位与华为云 OBS、火山引擎 TOS 处于同一水平线，明显低于阿里云 0.12 元的目录价，也低于阿里云 0.15 元的同城冗余目录价。腾讯云产品页以&quot;0.099 元起&quot;作为对外标价，说明低价地域承担的是引流与比价对标功能<sup><a href="https://cloud.tencent.com/product/cos?from=20064&from_column=20064">tencent.com</a></sup>。</p>
+<p>预付费侧，腾讯云标准存储容量包的可选规格是国内最广的一批：10GB、20GB、50GB、100GB、200GB、500GB、1TB、2TB、5TB、10TB、20TB、50TB、100TB、200TB、500TB、1PB<sup><a href="https://cloud.tencent.com/document/product/436/36523">tencent.com</a></sup>。已确认的具体标价包括 10GB 一个月的案例刊例价 0.85 元<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a></sup>，以及活动特惠页公示的 100GB 一年 22.66 元、日常价 141.6 元、500GB 与 1TB 与 5TB 一年均为 113.28 元，折扣力度标注为 1.6 折<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup>。</p>
+<p><strong>表3：腾讯云 COS 中国大陆通用地域标准存储容量包价格（元）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>有效时长</th>
+<th>价格</th>
+<th>折扣说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10GB</td>
+<td>1 个月</td>
+<td>0.85<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a></sup></td>
+<td>文档案例刊例价</td>
+</tr>
+<tr>
+<td>100GB</td>
+<td>1 年</td>
+<td>22.66<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup></td>
+<td>1.6 折，日常价 141.6 元</td>
+</tr>
+<tr>
+<td>500GB</td>
+<td>1 年</td>
+<td>113.28<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup></td>
+<td>1.6 折</td>
+</tr>
+<tr>
+<td>1TB</td>
+<td>1 年</td>
+<td>113.28<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup></td>
+<td>1.6 折</td>
+</tr>
+<tr>
+<td>5TB</td>
+<td>1 年</td>
+<td>113.28<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup></td>
+<td>1.6 折</td>
+</tr>
+</tbody></table>
+<p>腾讯云价格体系最值得注意的地方在于折扣的极端性与口径的不一致。100GB 一年 22.66 元折合约 0.019 元/GB/月，与 0.118 元的按量价相差六倍以上，这类价格只能在活动页特定入口获取<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup>。而 500GB、1TB、5TB 三档年价同为 113.28 元，说明该活动价并非按容量线性折算，而是同一优惠额度覆盖多档容量，实际生效范围需以购买页抵扣规则为准。腾讯云官方定价中心为动态渲染页面，20GB、50GB、200GB、2TB 等档位在公开页面中未能取到确切单价<sup><a href="https://buy.cloud.tencent.com/price/cos">tencent.com</a></sup>，这也意味着第三方汇总的腾讯云逐档价格普遍缺乏一手依据。</p>
+<h3>2.3 华为云 OBS：按需单价长期稳定与 Flexus 资源包</h3>
+<p>华为云 OBS 标准存储（单 AZ）按需计费单价为 0.0990 元/GB/月，这一价格自 2018 年 11 月起执行，此前单价为 0.12 元/GB/月，降价 17.5% 后维持长期不变<sup><a href="https://biz.ifeng.com/c/7hVSjmwtRhm">凤凰网</a></sup>。华为云按需计费不按容量分档，统一单价以小时为单位整点结算，官网未公开按需模式下的阶梯容量单价表<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>。第三方转载常写作&quot;标准存储约 0.10 元/GB/月&quot;，属于近似表述，应以官网 0.0990 元/GB/月为准<sup><a href="https://mp.weixin.qq.com/s?__biz=MzYzMzUzNDU4Mw==&idx=1&mid=2247485004&sn=fa3cfdda2f546fca33cb682fea82b320">腾讯网</a></sup>。</p>
+<p>公开报价主要体现在 Flexus OBS 标准单 AZ 存储包上。该产品提供 1TB、5TB、20TB、100TB 四档包年规格，价格分别为 706 元、3406 元、13382 元、64475 元，折算单价依次约为 0.0574、0.0554、0.0548、0.0528 元/GB/月，官方称综合降本约 20%<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>。</p>
+<p><strong>表4：华为云 Flexus OBS 标准存储单 AZ 资源包（包年）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>包年价格</th>
+<th>折算单价（元/GB/月）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1TB</td>
+<td>706.00<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>约 0.0574<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+</tr>
+<tr>
+<td>5TB</td>
+<td>3406.00<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>约 0.0554<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+</tr>
+<tr>
+<td>20TB</td>
+<td>13382.00<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>约 0.0548<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+</tr>
+<tr>
+<td>100TB</td>
+<td>64475.00<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>约 0.0528<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+</tr>
+</tbody></table>
+<p>Flexus OBS 资源包的约束条件同样明确：最低购买时长为 1 年，每位用户在所选区域内每种规格限购 1 个，可抵扣标准存储单 AZ 容量费用<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>。限购规则决定了它是拉新与小额长期锁定工具，无法作为企业级大容量的常规采购通道。至于普通的标准存储单 AZ 资源包，官网资源包说明页指出各规格价格需参见&quot;产品价格详情&quot;，未在页面中直接列出阶梯单价表<sup><a href="https://support.huaweicloud.com/price-obs/obs_42_0003.html">huaweicloud.com</a></sup>。检索中唯一可取的普通包价格是乌兰察布政务专区公告中的&quot;标准存储单 AZ 存储资源包 40GB 包年 4 年 57.6 元、5 年 72 元&quot;<sup><a href="https://www.huaweicloud.com/notice/2024/20241211100920826.html">huaweicloud.com</a></sup>，该价格为特定专区促销价，不具备通用参考意义。标准存储多 AZ 的按需单价高于单 AZ，但官网未在公开页面明确展示具体数值，需通过价格计算器获取。</p>
+<h2>3. 第二梯队与运营商云的价格分布</h2>
+<h3>3.1 百度智能云 BOS 与七牛云 Kodo</h3>
+<p>百度智能云 BOS 是本轮调研中资源包价格公示最完整的厂商。其标准存储按量单价为 0.119 元/GB/月，标准存储多 AZ 为 0.15 元/GB/月<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>。标准存储容量包在中国大陆地域以 1 个月有效期为基准，公示 14 档规格，从 100GB 一直到 10PB，折算单价稳定落在 0.1074 至 0.1076 元/GB/月区间<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>。</p>
+<p><strong>表5：百度智能云 BOS 标准存储容量包（1 个月期，中国大陆地域）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>1 个月总价</th>
+<th>折算单价（元/GB/月）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>100GB</td>
+<td>10.8<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1076<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>500GB</td>
+<td>54<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1076<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>1TB</td>
+<td>110<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>2TB</td>
+<td>220<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>10TB</td>
+<td>1100<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>30TB</td>
+<td>3300<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>50TB</td>
+<td>5500<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>100TB</td>
+<td>11000<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>200TB</td>
+<td>22000<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>500TB</td>
+<td>55000<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>1PB</td>
+<td>113246<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>3PB</td>
+<td>339739<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>5PB</td>
+<td>566231<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>10PB</td>
+<td>1132462<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.1074<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+</tbody></table>
+<p>百度 BOS 的价格策略因此显得相当直白：1 个月资源包相对按量价仅让利约 9.7%，真正的优惠藏在长周期里——6 个月包 8.3 折，折算约 0.0895 元/GB/月；1 年、2 年、3 年包统一 7.5 折，折算约 0.0807 元/GB/月<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>。以 1TB 为例，按月包与三年期包的单位成本差距约 25%，这意味着百度的定价模型鼓励的是承诺周期而非采购规模，容量阶梯几乎不产生折扣。其存储价格文档更新于 2026 年 8 月 20 日，价格页为一手官网公示<sup><a href="https://cloud.baidu.com/product/bos.html">百度</a></sup>。</p>
+<p>七牛云 Kodo 的问题恰恰相反，不在于档位缺失而在于标价版本并存。官网产品页显示 0.098 元/GB/月，旧版价格详情页显示 0 至 10GB 免费、10GB 以上 0.099 元/GB/月<sup><a href="https://www.qiniu.com/products/kodo">qiniu.com</a>,<a href="https://www.qiniu.com/en/prices">qiniu.com</a></sup>；当前官方计费详情页对华东浙江、华南广东、华北河北等中国大陆区域统一标注 0.115 元/GB/月，实名认证用户每月享有 10GB 标准存储免费空间，开发者文档中的计费案例仍沿用 0.099 元旧单价。四个版本同时存在，实际结算应以计费详情页的 0.115 元/GB/月为准，其余为历史遗留标价。资源包侧，中国大陆通用标准存储资源包按抵扣系数 1:1:1:1 适用上述四个区域，单价随时长递减：1 个月 0.115 元/GB、3 个月 0.1093 元/GB、6 个月 0.1035 元/GB、12 个月及以上 0.0886 元/GB。从 1 个月到 12 个月，单位成本下降约 23%，与百度 7.5 折长周期包的让利幅度接近，说明中立云与头部云在&quot;以周期换价格&quot;这一条上已形成共识。</p>
+<h3>3.2 火山引擎 TOS、金山云 KS3 与天翼云</h3>
+<p>火山引擎 TOS 把价格带下沿压到了与腾讯云低价地域同一水平：中国大陆地域标准存储单 AZ 按量付费 0.099 元/GiB/月，多 AZ 为 0.15 元/GiB/月<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup>。计费概述页与产品页均确认这一按量单价，资源包概述页则明确注明&quot;不同地域、不同规格的资源包价格不同，请以资源包购买页为准&quot;<sup><a href="https://www.volcengine.com/product/TOS">volcengine.com</a>,<a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup>。产品页对外标注标准存储资源包参考价 0.08 元/GiB/月起<sup><a href="https://www.volcengine.com/docs/6349/153060">volcengine.com</a></sup>。资源包规格档位可从抖音开放平台文档中识别出 16 档：10GiB、20GiB、50GiB、100GiB、200GiB、500GiB、1TiB、2TiB、5TiB、10TiB、20TiB、50TiB、100TiB、200TiB、500TiB、1PiB，有效期可选 1 个月、3 个月、6 个月、1 年、2 年、3 年、4 年、5 年<sup><a href="https://developer.open-douyin.com/docs/resource/zh-CN/developer/tools/cloud/guide/component/tos/tos">open-douyin.com</a></sup>。需要强调该来源并非火山引擎官网一手文件，且各规格对应的具体金额在官网公开文档与产品页中均未公示，资源包购买页需登录控制台才能查看<sup><a href="https://docs.volcengine.com/docs/6349/178341?lang=zh">volcengine.com</a></sup>。</p>
+<p>金山云 KS3 的标准存储按量单价为 0.108 元/GB/月，产品页直接以&quot;每月/每 G 单价 0.108 元&quot;标注<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup>。其资源包是中小厂商中少见的逐档明码公示样本：500GB 一个月 54 元、2TB 六个月 1105 元、10TB 一年 9954 元<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup>。三档折算单价分别约为 0.108、0.0726、0.0813 元/GB/月，六个月期的 2TB 档让利幅度最大，相对按量价下降约 33%。</p>
+<p>天翼云的情况需要区分两条产品线：ZOS 为新版对象存储，OOS（经典版）为旧版。ZOS 标准存储按量单价为单 AZ 0.09 元/GB/月、多 AZ 0.12 元/GB/月<sup><a href="https://www.ctyun.cn/qzdh/143444_15">ctyun.cn</a></sup>，0.09 元是本次调研十一家厂商中最低的单 AZ 标准存储按量价。OOS 经典版 I 型在中国大陆通用地域提供 14 档按月资源包，从 40GiB 到 2PiB 逐档定价<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup>。</p>
+<p><strong>表6：天翼云对象存储（经典版 I 型 OOS）标准存储资源包（中国大陆通用）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>包月价格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>40GiB</td>
+<td>4 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>100GiB</td>
+<td>10 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>500GiB</td>
+<td>50 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>1TiB</td>
+<td>102 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>2TiB</td>
+<td>204 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>5TiB</td>
+<td>510 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>10TiB</td>
+<td>1020 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>20TiB</td>
+<td>2040 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>50TiB</td>
+<td>5100 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>100TiB</td>
+<td>10200 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>200TiB</td>
+<td>20400 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>500TiB</td>
+<td>51000 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>1PiB</td>
+<td>104448 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>2PiB</td>
+<td>208896 元<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+</tbody></table>
+<p>天翼云 OOS 资源包的折算单价呈现明显的两段式：40GiB 档 0.10 元/GiB/月，100GiB 至 500TiB 各档稳定在 0.10 至 0.102 元/GiB/月，1PiB 与 2PiB 折合 0.102 元/GiB/月<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup>。换言之，其包月价几乎没有容量折扣，本质是&quot;预付费等于按量价&quot;的锁定方案，价值在于预算确定性与抵扣便利，而非降本。ZOS 的资源包逐档规格价格在已抓取的按需计费页面中未列出，这使天翼云 0.09 元的低价按量价与其包月定价体系之间存在明显的口径断层<sup><a href="https://www.ctyun.cn/document/10026735/10240507">ctyun.cn</a></sup>。</p>
+<h3>3.3 UCloud US3、京东云 OSS 与移动云 EOS</h3>
+<p>UCloud US3（原名 UFile）中国大陆地域标准存储按量后付费单价为 0.004 元/GB/天，折合约 0.12 元/GB/月<sup><a href="https://www.ucloud.cn/site/product/ufile.html?ytag=%E5%9F%9F%E5%90%8D_%E7%8C%AB%E5%92%AA%E6%9C%80%E6%96%B0%E7%A0%B4%E5%9F%9F%E5%90%8D_tag_seo">ucloud.cn</a></sup>。标准存储包共 8 档规格：100GB、300GB、500GB、1TB、10TB、50TB、300TB、500TB<sup><a href="https://docs.ucloud.cn/ufile/bill/resource_plan?id=%E4%BD%BF%E7%94%A8%E6%98%8E%E7%BB%86">ucloud.cn</a></sup>。各档预付费价格在官网静态文档与产品页中均未公示，文档仅说明&quot;购买折扣视当前活动折扣为准&quot;，资源包价格需登录控制台购买页或调用 GetUFilePkgPrice 接口动态获取<sup><a href="https://docs.ucloud.cn/ufile/bill/resource_plan">ucloud.cn</a>,<a href="https://docs.ucloud.cn/api/ufile-api/renew_ufile_pkg">ucloud.cn</a></sup>。此外其外网流出流量包规格包括 100GB、300GB、500GB、10TB、50TB、300TB、500TB 等档位，与存储包分列<sup><a href="https://docs.ucloud.cn/ufile/bill/resource_plan">ucloud.cn</a></sup>。</p>
+<p>京东云 OSS 标准存储按量单价为 0.00427 元/GB/天，折合约 0.128 元/GB/月，该数值同时见于官网产品页与英文价格总览页<sup><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=ReadMore&utm_medium=bottom&utm_source=PMM_itpub&utm_term=NA">jdcloud.com</a>,<a href="https://docs.jdcloud.com/en/object-storage-service/price-overview">jdcloud.com</a></sup>；其多 AZ 单价为 0.003945206 元/GB/天，折合月价低于单 AZ，属于本报告中的口径异常项，后文第 5 章单独讨论。资源包方面，官网&quot;资源包概述&quot;页公示了大规格档位定价。</p>
+<p><strong>表7：京东云 OSS 标准存储容量包（官网公示价，元）</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>1 个月</th>
+<th>6 个月</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2TB</td>
+<td>226.23<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>678.61<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>5TB</td>
+<td>563.22<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>1689.45<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>10TB</td>
+<td>1110.44<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>3330.93<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>20TB</td>
+<td>2200.70<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>6601.31<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>50TB</td>
+<td>5427.04<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>—</td>
+</tr>
+<tr>
+<td>100TB</td>
+<td>10589.31<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p>京东云官网表格中 50TB 与 100TB 两档在检索摘要中仅显示单列金额，未明确对应购买时长<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup>；1TB 档位在公开来源中缺失。小规格侧仅有第三方整理参考京东云活动历史报价的数据，20GB 一个月约 0.6 元、50GB 六个月约 8.1 元、100GB 六个月约 15.9 元、100GB 一年约 29.4 元、500GB 一年约 99 元，该组数据明确标注非官网直接公示价<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup>。官网资源包概述页与价格总览页的动态表格经多次抓取未获完整内容，购买入口为动态渲染页面<sup><a href="https://m-console-buy.jdcloud.com/init?product=Oss">jdcloud.com</a></sup>，因此本表的大规格价格与第三方小规格价格不可直接拼合为同一条价格曲线。</p>
+<p>移动云 EOS 是运营商云中公示最完整的一家。官网产品页标注标准存储单价 0.12 元/GB/月<sup><a href="https://ecloud.10086.cn/portal/product/eos">10086.cn</a></sup>，帮助中心&quot;按量计费价格&quot;文档确认中国大陆地域标准存储单 AZ 为 0.12 元/GB/月、标准存储同城冗余为 0.15 元/GB/月，该文档更新于 2025 年 11 月 14 日<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a></sup>。&quot;资源包价格&quot;文档给出 12 档标准存储容量包，最小 50GB、最大 2000TB，并规定包年价格等于包月价格乘以 12<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>。</p>
+<p><strong>表8：移动云 EOS 标准存储容量包资源包规格与价格</strong></p>
+<table>
+<thead>
+<tr>
+<th>容量规格</th>
+<th>包月价格</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>50GB</td>
+<td>5 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>100GB</td>
+<td>11 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>500GB</td>
+<td>54 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>1TB</td>
+<td>111 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>5TB</td>
+<td>553 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>10TB</td>
+<td>1106 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>50TB</td>
+<td>5530 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>100TB</td>
+<td>11059 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>500TB</td>
+<td>55296 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>1000TB</td>
+<td>110590 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>1500TB</td>
+<td>165885 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+<tr>
+<td>2000TB</td>
+<td>221180 元<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+</tbody></table>
+<p>移动云的定价结构与天翼云 OOS 类似，折算单价长期锁定在 0.108 至 0.111 元/GB/月，容量折扣极小，50TB 以上档位折合 0.108 至 0.110 元/GB/月，与 0.12 元的按量价相比让利不足 10%，而包年规则并未提供任何跨年折扣<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>。检索过程中曾出现 40GB 一个月 1.5 元、100GB 一个月 11.4 元、1TB 一个月 116.8 元的一组数据，与官网一手页面的 100GB 11 元、1TB 111 元不一致，按官网一手来源为准<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>。其他规格官网指引通过价格计算器查询。</p>
+<h2>4. 存储空间规格档位与价格横向对比</h2>
+<h3>4.1 全厂商标准存储按量单价对比</h3>
+<p>把十一家平台的标准存储按量单价统一折算为元/GB/月后，价格离散区间落在 0.09 至 0.128 元之间，最高价与最低价相差 42.2%（0.128÷0.09）。这一价差远小于外界对云存储&quot;价格战激烈&quot;的直觉预期，说明按量单价在 2018 年华为云从 0.12 元下调至 0.0990 元之后<sup><a href="https://biz.ifeng.com/c/7hVSjmwtRhm">凤凰网</a></sup>，国内标准存储的按量报价已进入相对固化的窄幅区间。</p>
+<p><strong>表9：国内十一家平台对象存储标准存储按量单价（中国大陆地域，折算元/GB/月）</strong></p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>单 AZ/本地冗余</th>
+<th>多 AZ/同城冗余</th>
+<th>原始标价口径</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>天翼云 ZOS</td>
+<td>0.09<sup><a href="https://www.ctyun.cn/qzdh/143444_15">ctyun.cn</a></sup></td>
+<td>0.12<sup><a href="https://www.ctyun.cn/qzdh/143444_15">ctyun.cn</a></sup></td>
+<td>元/GB/月</td>
+</tr>
+<tr>
+<td>腾讯云 COS（成都、重庆）</td>
+<td>0.099<sup><a href="https://cloud.tencent.com/product/cos?from=20064&from_column=20064">tencent.com</a></sup></td>
+<td>—</td>
+<td>元/GB/月，按日结算</td>
+</tr>
+<tr>
+<td>华为云 OBS</td>
+<td>0.0990<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>—</td>
+<td>元/GB/月，按小时结算</td>
+</tr>
+<tr>
+<td>火山引擎 TOS</td>
+<td>0.099<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup></td>
+<td>0.15<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup></td>
+<td>元/GiB/月</td>
+</tr>
+<tr>
+<td>七牛云 Kodo</td>
+<td>0.115</td>
+<td>—</td>
+<td>元/GB/月，10GB 内免费</td>
+</tr>
+<tr>
+<td>腾讯云 COS（北京、上海、广州、南京）</td>
+<td>0.118<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a></sup></td>
+<td>—</td>
+<td>元/GB/月，按日结算</td>
+</tr>
+<tr>
+<td>百度智能云 BOS</td>
+<td>0.119<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.15<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>元/GB/月，月按 30 天参考</td>
+</tr>
+<tr>
+<td>UCloud US3</td>
+<td>0.12（由 0.004 元/GB/天折算）<sup><a href="https://www.ucloud.cn/site/product/ufile.html?ytag=%E5%9F%9F%E5%90%8D_%E7%8C%AB%E5%92%AA%E6%9C%80%E6%96%B0%E7%A0%B4%E5%9F%9F%E5%90%8D_tag_seo">ucloud.cn</a></sup></td>
+<td>—</td>
+<td>元/GB/天</td>
+</tr>
+<tr>
+<td>移动云 EOS</td>
+<td>0.12<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a></sup></td>
+<td>0.15<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a></sup></td>
+<td>元/GB/月</td>
+</tr>
+<tr>
+<td>阿里云 OSS</td>
+<td>0.12 目录价、0.09 折扣价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>0.15 目录价、0.12 折扣价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>元/GB/月</td>
+</tr>
+<tr>
+<td>金山云 KS3</td>
+<td>0.108<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup></td>
+<td>—</td>
+<td>元/GB/月</td>
+</tr>
+<tr>
+<td>京东云 OSS</td>
+<td>0.128（由 0.00427 元/GB/天折算）<sup><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=cnblogs_online_Developer_Community&utm_medium=Footer&utm_source=PMM_cnblogs&utm_term=object-storage-service">jdcloud.com</a></sup></td>
+<td>0.118（由 0.003945206 元/GB/天折算）</td>
+<td>元/GB/天</td>
+</tr>
+</tbody></table>
+<p>价格带的分布结构本身具有信息量。最低的一批集中在 0.09 至 0.099 元，由天翼云 ZOS、腾讯云低价地域、华为云 OBS 与火山引擎 TOS 占据，前三者分别代表运营商云、头部综合云的区域让利策略与新势力云的对标定价，四家共同把单 AZ 标准存储的心理价位锚定在 0.1 元以内。中间 0.108 至 0.12 元一档由金山云、UCloud、移动云、阿里云目录价与腾讯云主力地域构成，其中阿里云 0.12 元目录价同时存在 0.09 元长期折扣价，实际成交水平已回落到价格带下沿<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。最高一档是京东云与百度智能云，京东云 0.128 元的折算价来自其 0.00427 元/GB/天的日单价<sup><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=cnblogs_online_Developer_Community&utm_medium=Footer&utm_source=PMM_cnblogs&utm_term=object-storage-service">jdcloud.com</a></sup>，百度 0.119 元则接近头部云目录价水平<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>。UCloud 与京东云都采用日单价公示，这类标价在字面上容易被误读为低价，但按 30 天折算后反而位于价格带上沿，是本次对比中最需要口径换算的两例。</p>
+<h3>4.2 资源包容量档位覆盖与折算单价对比</h3>
+<p>资源包维度的差异比按量单价大得多，差异首先体现在档位覆盖范围与公示方式上。</p>
+<p><strong>表10：各平台标准存储资源包档位覆盖与公示形态</strong></p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>公示档位范围</th>
+<th>公示形态</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>阿里云 OSS</td>
+<td>40GB 至 300TB，400TB 以上需人工报价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>逐档包月价与年价完整公示<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>腾讯云 COS</td>
+<td>10GB 至 1PB，共 16 档<sup><a href="https://cloud.tencent.com/document/product/436/36523">tencent.com</a></sup></td>
+<td>档位清单公示，逐档价格在动态页未完整呈现<sup><a href="https://buy.cloud.tencent.com/price/cos">tencent.com</a></sup></td>
+</tr>
+<tr>
+<td>华为云 OBS</td>
+<td>Flexus 1TB 至 100TB 四档<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup></td>
+<td>普通标准包价格需参见产品价格详情<sup><a href="https://support.huaweicloud.com/price-obs/obs_42_0003.html">huaweicloud.com</a></sup></td>
+</tr>
+<tr>
+<td>百度智能云 BOS</td>
+<td>100GB 至 10PB，共 14 档<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>逐档总价与折算单价公示<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+</tr>
+<tr>
+<td>七牛云 Kodo</td>
+<td>未按容量分档，按时长统一定价</td>
+<td>1 至 12 个月及以上单价递减</td>
+</tr>
+<tr>
+<td>火山引擎 TOS</td>
+<td>10GiB 至 1PiB，共 16 档<sup><a href="https://developer.open-douyin.com/docs/resource/zh-CN/developer/tools/cloud/guide/component/tos/tos">open-douyin.com</a></sup></td>
+<td>档位可见，逐档价格以购买页为准<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup></td>
+</tr>
+<tr>
+<td>金山云 KS3</td>
+<td>500GB、2TB、10TB 三档样本<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup></td>
+<td>逐档价格公示<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup></td>
+</tr>
+<tr>
+<td>天翼云 OOS 经典版</td>
+<td>40GiB 至 2PiB，共 14 档<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+<td>逐档包月价公示<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>UCloud US3</td>
+<td>100GB 至 500TB，共 8 档<sup><a href="https://docs.ucloud.cn/ufile/bill/resource_plan?id=%E4%BD%BF%E7%94%A8%E6%98%8E%E7%BB%86">ucloud.cn</a></sup></td>
+<td>折扣视活动而定，需接口或控制台查询<sup><a href="https://docs.ucloud.cn/api/ufile-api/renew_ufile_pkg">ucloud.cn</a></sup></td>
+</tr>
+<tr>
+<td>京东云 OSS</td>
+<td>2TB 至 100TB 官网片段<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup></td>
+<td>中间档位缺失，小规格仅有第三方价<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup></td>
+</tr>
+<tr>
+<td>移动云 EOS</td>
+<td>50GB 至 2000TB，共 12 档<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+<td>逐档包月价公示，包年等于包月乘 12<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+</tbody></table>
+<p>折算单价层面，各平台资源包相对自家按量价的让利幅度差异极大。华为云 Flexus 100TB 包年 64475 元折合 0.0528 元/GB/月，相对其 0.0990 元的按量价下降 46.7%<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>；金山云 2TB 六个月 1105 元折合 0.0726 元/GB/月，相对 0.108 元下降 32.8%<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup>；百度智能云三年期包 7.5 折后约 0.0807 元/GB/月<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>；阿里云 1TB 年价 999 元折合 0.0832 元/GB/月，相对按量折扣价 0.09 元再降约 7.5%<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>；腾讯云活动页 100GB 一年 22.66 元折合 0.0189 元/GB/月，相对 0.118 元的按量价下降 84%，是全部样本中让利幅度最大的一例<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup>。与之形成对照的是天翼云与移动云：OOS 经典版 1TiB 包月 102 元折合 0.0996 元/GiB/月<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup>，移动云 1TB 包月 111 元折合 0.108 元/GB/月<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>，两者相对自家按量价几乎没有下降，预付费的价值在于预算锁定而非成本削减。</p>
+<p>由此可以识别出两条完全不同的资源包定价路线。一条是&quot;周期换价格&quot;，以百度智能云与七牛云为代表，容量阶梯几乎不给折扣，100GB 与 10PB 的折算单价同为 0.1074 元/GB/月<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>，让利全部交给时长；另一条是&quot;规模与周期双轨&quot;，以阿里云与华为云 Flexus 为代表，阿里云 300TB 年价折合 0.123 元/GB/月反而高于 1TB 年价的 0.0832 元/GB/月<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>，说明大容量档的真实价格已脱离公开列表、转入人工议价，而华为云 1TB 与 100TB 的折算单价仅相差 8%<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>，属于规模效应微弱的类型。对企业采购而言，公开价格表的约束力正在随容量上升而下降，这一点在头部云上表现得尤为明显。</p>
+<h2>5. 冗余方式与计价口径造成的价格分层</h2>
+<h3>5.1 本地冗余与同城/多可用区冗余价差</h3>
+<p>在标准存储之下，冗余方式构成第二定价维度。已公示双档价格的五家平台中，多 AZ 或同城冗余相对单 AZ 的溢价区间为 25% 至 51.5%。</p>
+<p><strong>表11：单 AZ 与多 AZ/同城冗余溢价幅度（按量目录价口径）</strong></p>
+<table>
+<thead>
+<tr>
+<th>平台</th>
+<th>单 AZ/本地冗余</th>
+<th>多 AZ/同城冗余</th>
+<th>溢价幅度</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>阿里云 OSS（目录价）</td>
+<td>0.12<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>0.15<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>25%</td>
+</tr>
+<tr>
+<td>移动云 EOS</td>
+<td>0.12<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a></sup></td>
+<td>0.15<sup><a href="https://cloud.tencent.com/product/cos">tencent.com</a></sup></td>
+<td>25%</td>
+</tr>
+<tr>
+<td>天翼云 ZOS</td>
+<td>0.09<sup><a href="https://www.ctyun.cn/qzdh/143444_15">ctyun.cn</a></sup></td>
+<td>0.12<sup><a href="https://www.ctyun.cn/qzdh/143444_15">ctyun.cn</a></sup></td>
+<td>33.3%</td>
+</tr>
+<tr>
+<td>阿里云 OSS（折扣价）</td>
+<td>0.09<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>0.12<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>33.3%</td>
+</tr>
+<tr>
+<td>百度智能云 BOS</td>
+<td>0.119<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>0.15<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup></td>
+<td>26.1%</td>
+</tr>
+<tr>
+<td>火山引擎 TOS</td>
+<td>0.099<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup></td>
+<td>0.15<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup></td>
+<td>51.5%</td>
+</tr>
+</tbody></table>
+<p>阿里云同城冗余存储包的独立定价进一步印证了这一分层：其标准同城冗余包 100GB 包月 14 元、500GB 包月 68 元、1TB 包月 138 元、100TB 包月 13824 元<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。以 1TB 计，同城冗余包月折合 0.135 元/GB/月，本地冗余包月 111 元折合 0.108 元/GB/月，两者相差约 25%，与按量目录价的冗余溢价完全一致，说明阿里云把冗余价差贯穿了按量与资源包两套体系。</p>
+<p>华为云与腾讯云的多 AZ 具体单价未在官网公开页面展示，前者需通过价格计算器获取，后者在检索中出现的 0.136 元/GB/月经核实为中国香港等地域价格而非多 AZ 溢价<sup><a href="https://cloud.tencent.com/document/product/436/53863">tencent.com</a></sup>，属于典型的口径混淆风险点。京东云则出现了本次调研中唯一的反向价差：其标准存储多 AZ 单价为 0.003945206 元/GB/天，按 30 天折算约 0.118 元/GB/月，反而低于单 AZ 的 0.00427 元/GB/天折合 0.128 元/GB/月<sup><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=cnblogs_online_Developer_Community&utm_medium=Footer&utm_source=PMM_cnblogs&utm_term=object-storage-service">jdcloud.com</a></sup>。多 AZ 可用性更高而标价更低，在成本逻辑上不成立，最可能的解释是两项日单价处于不同时点或不同促销口径下，采购前必须以价格总览页同一时点的标价复核<sup><a href="https://docs.jdcloud.com/en/object-storage-service/price-overview">jdcloud.com</a></sup>。这一异常也提醒：跨冗余等级比价的前提是同源同时点，否则会出现&quot;买更贵的服务反而更划算&quot;的错误结论。</p>
+<h3>5.2 免费额度、体验价与起步门槛</h3>
+<p>小额容量的入口价格与标准档位之间存在显著跳升，这部分构成了个人开发者与小团队的实际决策依据。</p>
+<p><strong>表12：已公示的免费额度与体验价入口</strong></p>
+<table>
+<thead>
+<tr>
+<th>平台与规格</th>
+<th>标价</th>
+<th>折合元/GB/月</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>七牛云 Kodo 实名认证用户标准存储</td>
+<td>每月 10GB 免费</td>
+<td>0</td>
+</tr>
+<tr>
+<td>阿里云 OSS 标准本地冗余包 40GB（体验价）</td>
+<td>9 元/年<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+<td>约 0.0188<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup></td>
+</tr>
+<tr>
+<td>华为云政务专区 标准单 AZ 包 40GB</td>
+<td>57.6 元/4 年<sup><a href="https://www.huaweicloud.com/notice/2024/20241211100920826.html">huaweicloud.com</a></sup></td>
+<td>约 0.030<sup><a href="https://www.huaweicloud.com/notice/2024/20241211100920826.html">huaweicloud.com</a></sup></td>
+</tr>
+<tr>
+<td>腾讯云 COS 标准容量包 10GB</td>
+<td>0.85 元/月<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a></sup></td>
+<td>0.085<sup><a href="https://cloud.tencent.com/document/product/436/53482">tencent.com</a></sup></td>
+</tr>
+<tr>
+<td>京东云 OSS 20GB（第三方整理活动历史报价）</td>
+<td>约 0.6 元/月<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup></td>
+<td>约 0.030<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup></td>
+</tr>
+<tr>
+<td>天翼云 OOS 经典版 40GiB</td>
+<td>4 元/月<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+<td>约 0.1<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup></td>
+</tr>
+<tr>
+<td>移动云 EOS 50GB</td>
+<td>5 元/月<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+<td>0.1<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup></td>
+</tr>
+</tbody></table>
+<p>入口价与标准档之间的落差相当剧烈。阿里云 40GB 体验价年付 9 元折合 0.0188 元/GB/月，而 100GB 档年价 162 元折合 0.135 元/GB/月，单位成本在跨越体验档后上升约 6.2 倍（0.135÷0.021）<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>。七牛云的免费额度则是全行业最彻底的前置让利，10GB 以内不产生存储费用，超出部分按当前 0.115 元/GB/月结算，这一门槛设计直接指向个人开发者与小规模静态资源场景。天翼云与移动云的小档位折合单价均为 0.1 元附近<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a>,<a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>，几乎不提供入口让利，反映出运营商云的定价面向预算申报与合规采购，而非个人用户的低价获客。京东云 20GB 一个月约 0.6 元的超低门槛出自第三方整理的活动历史报价，官网并未公示该档位现价<sup><a href="https://github.com/oadbn08/jdcloud-oss-pricing">GitHub</a></sup>，其可持续性存在明显不确定性。</p>
+<h2>6. 定价透明度评估与选型结论</h2>
+<h3>6.1 价格公示完整度与人工询价依赖</h3>
+<p>以&quot;能否仅凭公开页面完成逐档比价&quot;为标准，十一家平台的公示完整度分为三档。第一档是价格表完整可查，包括阿里云、百度智能云、天翼云 OOS 经典版、金山云与移动云：阿里云 40GB 至 300TB 的包月与年价全部列出<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>，百度 14 档总价与折算单价全部列出<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>，天翼云 OOS 14 档包月价全部列出<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup>，移动云 12 档包月价与包年规则全部列出<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>，金山云产品页直接标注 0.108 元/GB/月与三档包价<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup>。第二档是档位可查但价格缺失，包括火山引擎与 UCloud：火山资源包概述页明确&quot;请以资源包购买页为准&quot;<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup>，UCloud 文档写明&quot;购买折扣视当前活动折扣为准&quot;，实际价格需登录控制台或调用 GetUFilePkgPrice 接口<sup><a href="https://docs.ucloud.cn/api/ufile-api/renew_ufile_pkg">ucloud.cn</a></sup>。第三档介于两者之间，腾讯云定价中心与京东云资源包概述页均为动态渲染，公开抓取仅能获得部分档位<sup><a href="https://buy.cloud.tencent.com/price/cos">tencent.com</a>,<a href="https://m-console-buy.jdcloud.com/init?product=Oss">jdcloud.com</a></sup>，华为云普通标准包则把逐档价格指向&quot;产品价格详情&quot;而未直接展示在说明页<sup><a href="https://support.huaweicloud.com/price-obs/obs_42_0003.html">huaweicloud.com</a></sup>。</p>
+<p>透明度差异还会体现在文档时效上。阿里云《购买 OSS 资源包》文档更新于 2026 年 9 月 20 日<sup><a href="https://help.aliyun.com/zh/oss/purchase-resource-plans">阿里云</a></sup>，腾讯云《计费概述》与《流量费用》分别更新于 2026 年 7 月 30 日与 8 月 26 日<sup><a href="https://cloud.tencent.com/document/product/436/16871">tencent.com</a>,<a href="https://cloud.tencent.com/document/product/436/53863">tencent.com</a></sup>，百度存储价格文档更新于 2026 年 8 月 20 日<sup><a href="https://cloud.baidu.com/product/bos.html">百度</a></sup>，属于近三个月内维护；移动云&quot;资源包价格&quot;文档停留在 2024 年 10 月 29 日<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>，虽然其内容为一手公示，但两年未更新意味着实际成交价可能与列表存在偏差。检索过程中还发现二手汇总与官网一手数据不一致的情况：移动云曾出现 100GB 11.4 元/月、1TB 116.8 元/月的流传数据，与官网一手页面的 11 元、111 元不符<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>。这类偏差的成因通常是过期活动价被反复转载，采购决策前应当以官网计费文档为唯一准绳。</p>
+<h3>6.2 分场景选型结论与成本优化路径</h3>
+<p>把容量、访问频次、可用性等级三个变量代入本轮价格数据，可以给出三类场景的选型判断。个人开发者与 10GB 以内的轻量场景，成本最优解是七牛云每月 10GB 免费标准存储，其次是阿里云 40GB 年付 9 元的体验包<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>；该场景的关键不是单价而是入口门槛，超出 40GB 后单位成本会跳升至 0.135 元/GB/月量级，需要提前估算增长。成长型业务在 1TB 至 10TB 区间，可选路径最多：阿里云 1TB 年价 999 元折合 0.0832 元/GB/月<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>、华为云 Flexus 1TB 年价 706 元折合 0.0574 元/GB/月<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>、金山云 2TB 六个月 1105 元折合 0.0726 元/GB/月<sup><a href="https://www.ksyun.com/nv/product/KS3.html">ksyun.com</a></sup>、百度三年期包约 0.0807 元/GB/月<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>，其中华为 Flexus 的折算单价最低但受&quot;每种规格限购 1 个&quot;约束<sup><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">huaweicloud.com</a></sup>，适合作为单一业务线的长期锁定；腾讯云 100GB 一年 22.66 元的活动价属于限时入口，不宜作为三年期预算基础<sup><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">tencent.com</a></sup>。大型企业与 PB 级场景，可承载上限从高到低依次为京东云 1PB、天翼云 OOS 2PiB<sup><a href="https://www.ctyun.cn/document/10026693/10026740">ctyun.cn</a></sup>、百度 10PB<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>、移动云 2000TB<sup><a href="https://www.tencentcloud.com/pricing/cos">tencentcloud.com</a></sup>、阿里云与腾讯云的公开档位需在数百 TB 以上转入人工报价<sup><a href="https://help.aliyun.com/zh/oss/traffic-fees">阿里云</a></sup>，实际议价空间集中在这一区间，公开价只能作为谈判基准而非成交价。</p>
+<p>成本优化路径有三条。第一是冗余等级分层：多 AZ 与同城冗余的溢价在 25% 至 51.5% 之间，把非核心数据放在单 AZ 或本地冗余、仅对核心桶启用同城冗余，比全量升级冗余的总成本更低；火山引擎 51.5% 的冗余溢价<sup><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">volcengine.com</a></sup>尤其需要按数据重要性区分。第二是周期与容量匹配：百度与七牛均不提供容量折扣而只提供时长折扣<sup><a href="https://cloud.baidu.com/product-price/bos.html">百度</a></sup>，对容量稳定、可预测三年用量的业务应直接选择 7.5 折的三年包；阿里云与华为云的大容量公开折算单价并不优于中小容量，容量进入百 TB 级后应从官网价格表转向人工报价通道。第三是必须把请求与流量纳入总成本：阿里云与京东云的计费体系均将存储包与请求包、流量包分列<sup><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">jdcloud.com</a></sup>，UCloud 的外网流出流量包单列 100GB 至 500TB 规格<sup><a href="https://docs.ucloud.cn/ufile/bill/resource_plan">ucloud.cn</a></sup>，本次调研聚焦存储容量与存储单价，流量与请求两项在同一总容量假设下往往决定实际账单量级，选型时应当以价格计算器按真实读写与出网量复算，不能仅以每 GB 存储单价定论。</p>
+<h2>核心参考文献</h2>
+<p><a href="https://github.com/oadbn08/jdcloud-oss-pricing">oadbn08/jdcloud-oss-pricing: 京东云对象存储资源包优惠 ...</a></p>
+<p><a href="https://github.com/ctpnjvmn/jdcloud-oss-pricing">京东云对象存储OSS价格详解：标准/低频/归档三大类型怎么 ...</a></p>
+<p><a href="https://github.com/jig1560/jdcloud-oss-pricing">京东云对象存储OSS价格全解析：按量计费怎么算？资源包 ...</a></p>
+<p><a href="https://www.ksyun.com/nv/product/KS3.html">对象存储KS3_购买价格_功能优势_场景案例-金山云</a></p>
+<p><a href="https://www.volcengine.com/docs/TorchObjectStorage/Billingoverview-2">计费概述--对象存储</a></p>
+<p><a href="https://docs.jdcloud.com/cn/object-storage-service/resourcepkg-overview">资源包概述--对象存储-帮助文档</a></p>
+<p><a href="https://www.ucloud.cn/site/product/ufile.html?ytag=%E5%9F%9F%E5%90%8D_%E7%8C%AB%E5%92%AA%E6%9C%80%E6%96%B0%E7%A0%B4%E5%9F%9F%E5%90%8D_tag_seo">对象存储US3 - UCloud中立云计算服务商</a></p>
+<p><a href="https://cloud.baidu.com/product-price/bos.html">对象存储BOS</a></p>
+<p><a href="https://docs.ucloud.cn/ufile/bill/resource_plan">资源包 对象存储 US3_文档中心_UCloud中立云计算服务商</a></p>
+<p><a href="https://www.volcengine.com/docs/6349/153060">智能分层概述--对象存储</a></p>
+<p><a href="https://www.huaweicloud.com/product/obs.html?utm_source=yuntushuocsdn">对象存储服务OBS_官网_云存储服务_数据云存储解决方案-华为云</a></p>
+<p><a href="https://www.ctyun.cn/document/10026693/10026740">资源包计费-对象存储（经典版）I型</a></p>
+<p><a href="https://www.volcengine.com/product/TOS">对象存储</a></p>
+<p><a href="https://developer.open-douyin.com/docs/resource/zh-CN/developer/tools/cloud/guide/component/tos/tos">对象存储_开发者平台_抖音开放平台</a></p>
+<p><a href="https://www.volcengine.com/product/TOS?utm_campaign=zxj_cf3_duanlian4&utm_content=duixiangcunchu&utm_medium=sem_bing&utm_source=5&utm_term=sem_bing_pinzhuan_zxj_cf3_dl4">对象存储-火山引擎</a></p>
+<p><a href="https://docs.ucloud.cn/ufile/bill/resource_plan?id=%E4%BD%BF%E7%94%A8%E6%98%8E%E7%BB%86">资源包 对象存储 US3_文档中心_UCloud中立云计算服务商</a></p>
+<p><a href="https://docs.jdcloud.com/en/object-storage-service/price-overview">Price Overview---Documentation-JD Cloud</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/53482">对象存储 存储容量费用_腾讯云</a></p>
+<p><a href="https://www.ctyun.cn/qzdh/143444_15">对象存储（经典版）I型</a></p>
+<p><a href="https://www.ucloud.cn/site/product/ufile.html?ytag=%E4%BA%91%E5%AD%98%E5%82%A8_mac%E7%A7%BB%E5%8A%A8%E7%A1%AC%E7%9B%98_tag_seo">对象存储US3 - UCloud中立云计算服务商</a></p>
+<p><a href="https://ecloud.10086.cn/portal/product/eos">移动云官网-智能新空间</a></p>
+<p><a href="https://help.aliyun.com/zh/oss/traffic-fees">流量费用-对象存储(OSS) - 阿里云文档</a></p>
+<p><a href="https://cloud.tencent.com.cn/document/practice/436/50201">对象存储 COS 成本优化解决方案_腾讯云</a></p>
+<p><a href="https://cloud.tencent.com/act/pro/cos?ad_trace=0116e678de5142e788dfaebfef128f98&from=24826&from_column=24826">对象存储特惠活动_对象存储购买_对象存储选购- 腾讯云</a></p>
+<p><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=cnblogs_online_Developer_Community&utm_medium=Footer&utm_source=PMM_cnblogs&utm_term=object-storage-service">对象存储OSS-文件存储-云对象存储服务-京东云</a></p>
+<p><a href="https://www.jdcloud.com/cn/products/object-storage-service?utm_campaign=ReadMore&utm_medium=bottom&utm_source=PMM_itpub&utm_term=NA">对象存储OSS-文件存储-云对象存储服务-京东云</a></p>
+<p><a href="https://cloud.tencent.com/product/cos">对象存储COS</a></p>
+<p><a href="https://www.tencentcloud.com/pricing/cos">定价对象存储</a></p>
+<p><a href="https://help.aliyun.com/zh/oss/purchase-resource-plans">购买OSS资源包 - 阿里云文档</a></p>
+<p><a href="https://buy.cloud.tencent.com/price/cos">对象存储定价 _ 对象存储价格 _ 对象存储计费模式 - 腾讯云</a></p>
+<p><a href="https://cloud.tencent.com.cn/act/pro/cos?ad_trace=3013b66363074182a0af4643c3b3fe3f&from=24826&from_column=24826">对象存储特惠活动_对象存储购买_对象存储选购- 腾讯云</a></p>
+<p><a href="https://www.qiniu.com/products/kodo">对象存储 Kodo_云存储_海量安全高可靠云存储_oss - 七牛云</a></p>
+<p><a href="https://www.qiniu.com/products/kodo?code=1h471on554ymq">对象存储 Kodo_云存储_海量安全高可靠云存储_oss - 七牛云</a></p>
+<p><a href="https://www.qiniu.com/en/prices">价格详情 - 七牛云</a></p>
+<p><a href="https://docs.volcengine.com/docs/6349/178341?lang=zh">对象存储- 资源包概述</a></p>
+<p><a href="https://www.ctyun.cn/document/10026735/10240507">按需计费-对象存储ZOS-计费说明</a></p>
+<p><a href="https://www.aliyun.com/price/detail/oss">阿里云定价_oss价格详情_对象存储</a></p>
+<p><a href="https://help.aliyun.com/zh/oss/billable-item-overview">计费项概述 - 阿里云文档</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/36522">对象存储 按量计费（后付费）_腾讯云</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/36523">资源包介绍- 对象存储 - 腾讯云</a></p>
+<p><a href="https://cloud.tencent.com/product/cos?from=20064&from_column=20064">对象存储数据处理_COS数据处理_数据处理方案-腾讯云</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/16871">对象存储 计费概述_腾讯云</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/53863">流量费用- 对象存储 - 腾讯云</a></p>
+<p><a href="https://www.huaweicloud.com/product/obs.html?utm_adplace=AdPlace097752&utm_source=huawei&utm_term=">对象存储服务OBS_官网_云存储服务_数据云存储解决方案-华为云</a></p>
+<p><a href="https://support.huaweicloud.com/price-obs/obs_42_0003.html">存储费用_计费项_计费说明_对象存储服务 OBS-华为云</a></p>
+<p><a href="https://i.ifeng.com/c/8qJKHNAGaMn">华为云Flexus OBS：中小企业数据上云的“更优解”_凤凰网</a></p>
+<p><a href="https://www.huaweicloud.com/notice/2024/20241211100920826.html">华为云【对象存储服务】中国站乌兰察布政务专区按需套餐包于 ...</a></p>
+<p><a href="https://biz.ifeng.com/c/7hVSjmwtRhm">华为云对象存储服务新一轮降价，Multi-AZ正式商用上线 - 商业</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzYzMzUzNDU4Mw==&idx=1&mid=2247485004&sn=fa3cfdda2f546fca33cb682fea82b320">对象云存储：从入门到通透，一次性把所有概念、参数、原理和场景给你讲明白。</a></p>
+<p><a href="https://cloud.baidu.com/product/bos.html">对象存储BOS_云存储_分布式存储_数据湖存储</a></p>
+<p><a href="https://www.volcengine.com/docs/6349/78455">计费概述--对象存储</a></p>
+<p><a href="https://www.volcengine.com/product/tos">对象存储（TOS）</a></p>
+<p><a href="https://docs.jdcloud.com/cn/object-storage-service/buy-resourcepkg">资源包购买--对象存储-帮助文档</a></p>
+<p><a href="https://docs.jdcloud.com/cn/object-storage-service/price-overview">价格总览--对象存储-帮助文档</a></p>
+<p><a href="https://docs.ucloud.cn/ufile/bill/resource_plan?id=%E5%8D%87%E7%BA%A7">资源包 对象存储 US3_文档中心_UCloud中立云计算服务商</a></p>
+<p><a href="https://docs.ucloud.cn/api/ufile-api/renew_ufile_pkg">资源包续费- RenewUFilePkg 对象存储US3_文档中心</a></p>
+<p><a href="https://m-console-buy.jdcloud.com/init?product=Oss">价格计算器- 对象存储</a></p>
+<p><a href="https://cloud.tencent.com/document/product/436/6240">对象存储免费额度 - 腾讯云</a></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>Markdown写作指南</title>
+      <link>https://blog.945426.xyz/posts/107</link>
+      <guid isPermaLink="false">107</guid>
+      <pubDate>Tue, 09 Jun 2026 02:00:00 GMT</pubDate>
+      <description>一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。</description>
+      <content:encoded><![CDATA[<h2>什么是Markdown？</h2>
+<p>Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。</p>
+<h2>基本语法</h2>
+<h3>文本格式</h3>
+<ul>
+<li><strong>粗体文本</strong>使用双星号</li>
+<li><em>斜体文本</em>使用单星号</li>
+<li><del>删除线</del>使用双波浪号</li>
+</ul>
+<h3>代码</h3>
+<p>行内代码：<code>console.log(&#39;Hello&#39;)</code></p>
+<p>代码块：</p>
+<pre><code class="language-javascript">function greet(name) {
+    return `Hello, ${name}!`;
+}
+</code></pre>
+<h3>列表</h3>
+<ol>
+<li>第一项</li>
+<li>第二项</li>
+<li>第三项</li>
+</ol>
+<h3>引用</h3>
+<blockquote>
+<p>Markdown让写作回归本质，专注于内容而非排版。</p>
+</blockquote>
+<h3>链接与图片</h3>
+<p><a href="https://github.com">访问GitHub</a></p>
+<p><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop" alt="示例图片"></p>
+]]></content:encoded>
+      <category>技术</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>Hello world!</title>
+      <link>https://blog.945426.xyz/posts/106</link>
+      <guid isPermaLink="false">106</guid>
+      <pubDate>Mon, 29 Dec 2025 09:55:00 GMT</pubDate>
+      <description>Hello world!</description>
+      <content:encoded><![CDATA[<p>Hello world!</p>
+<p><music id="cry"></music></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>pixiv</title>
+      <link>https://blog.945426.xyz/posts/104</link>
+      <guid isPermaLink="false">104</guid>
+      <pubDate>Fri, 26 Dec 2025 00:59:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0l000d7w32xne4num52gzj2DIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
+<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0m000d7w32y3ocobrkotd34DIYPAdYOAdeyDpxPDqJy.jpg" alt=""></p>
+<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0l000d7w33g3oqn4u6j5t0eDIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
+<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0m000d7w33gwac32qm5i6zkDIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
+<p><img src="https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0n000d7w33hoq5x5d1rvsr6DIYPAdYOAdeyDpxPDqJy.webp" alt=""></p>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>Lamb</dc:creator>
+    </item>
+    <item>
+      <title>代码高亮与排版组件演示</title>
+      <link>https://blog.945426.xyz/posts/103</link>
+      <guid isPermaLink="false">103</guid>
+      <pubDate>Fri, 12 Dec 2025 05:09:00 GMT</pubDate>
+      <description>代码高亮与排版组件演示</description>
+      <content:encoded><![CDATA[<p>本文用于测试博客的代码块渲染逻辑、复制功能以及折叠/展开功能。</p>
+<h3>1. JavaScript 基础示例</h3>
+<p>这是最基础的 JS 代码块，使用 <code>language-js</code>。</p>
+<pre><code class="language-js">// 欢迎来到控制台
+console.log(&#39;Hello, Moara Blog!&#39;);
+
+const add = (a, b) =&gt; {
+    return a + b;
+}
+
+alert(add(10, 20));
+</code></pre>
+<h3>2. HTML 结构示例</h3>
+<p>测试 HTML 高亮显示。</p>
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;测试页面&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div class=&#39;container&#39;&gt;
+      &lt;h1&gt;Hello World&lt;/h1&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+<h3>3. 长代码测试 (测试展开功能)</h3>
+<p>当代码较长时，应显示滚动条或通过 CSS 限制高度（配合 <code>expand-btn</code> 逻辑）。</p>
+<pre><code class="language-css">/* 全局重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f5f5f5;
+    font-family: &#39;Noto Sans SC&#39;, sans-serif;
+    line-height: 1.6;
+    color: #333;
+}
+
+.header {
+    background: #222;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+}
+
+.nav-link {
+    color: #fff;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.nav-link:hover {
+    color: #00adb5;
+}
+
+/* 底部样式 */
+footer {
+    margin-top: 50px;
+    padding: 20px;
+    border-top: 1px solid #ddd;
+    text-align: center;
+    font-size: 0.9rem;
+}
+</code></pre>
+<h3>4. 无语言标记 (Plaintext)</h3>
+<p>没有指定 class 的情况，将回退到 <code>language-plaintext</code>。</p>
+<pre><code>这是一段纯文本。
+没有高亮颜色。
+只是单纯的文字展示。
+</code></pre>
+<h3>5. 其他组件测试</h3>
+<p>根据你的 JS，这里还有防剧透和折叠块功能：</p>
+<p>点击查看隐藏内容：<span class='spoiler'>这是被剧透隐藏的文字内容！</span></p>
+<p>:::folding{title=&quot;👉 点击展开详细说明&quot;}</p>
+<p>这里是折叠区域的内容。</p>
+<p>可以包含文字、图片甚至另一个代码块 —— 现在直接使用<strong>标准围栏代码块</strong>（内部代码会被正常高亮）：</p>
+<pre><code class="language-python">print(&#39;Inside Details&#39;)
+</code></pre>
+<p>:::</p>
+<p><gallery src="https://ts1.tc.mm.bing.net/th/id/OIP-C.mH9YLFEL5YdVxJM82mjVJQHaEo?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.e7588db8cf1d3592f05c59354c7d7f34?rik=rVGbZ1IKYj3dSg&riu=http%3a%2f%2fseopic.699pic.com%2fphoto%2f50073%2f0161.jpg_wh1200.jpg&ehk=ugyPJtY83rc68SfHXsUbzdSMvslDJR7BzyoTGXDUPew%3d&risl=&pid=ImgRaw&r=0,https://ts2.tc.mm.bing.net/th/id/OIP-C.kLs3tJ8EFQKVT5Z1VdC5EgHaE7?ucfimg=1&dpr=2&pid=ImgDetMain&o=7&rm=3,https://ts1.tc.mm.bing.net/th/id/R-C.f5ae2e9a9976bee71d118dd402d80658?rik=nJChOY5iJSFRhQ&riu=http%3a%2f%2fimg3.redocn.com%2f20140308%2fRedocn_2014030311195180.jpg&ehk=9QqSiDRFgnBUaxV3u38ZMjQcWmYatan1pQzsCfbLFao%3d&risl=&pid=ImgRaw&r=0"></gallery></p>
+<p>音乐卡片</p>
+<p><music id="1"></music>
+<music id="cry"></music></p>
+<p>视频</p>
+<p><video src='https://vdse.bdstatic.com//192d9a98d782d9c74c96f09db9378d93.mp4'></video></p>
+<p>下面是一个表格示例：</p>
+<table>
+<thead>
+<tr>
+<th>参数名称</th>
+<th>类型</th>
+<th>默认值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>width</td>
+<td>String</td>
+<td>100%</td>
+<td>设置表格宽度</td>
+</tr>
+<tr>
+<td>border</td>
+<td>px</td>
+<td>1px</td>
+<td>边框大小</td>
+</tr>
+<tr>
+<td>color</td>
+<td>Hex</td>
+<td>#333</td>
+<td>字体颜色</td>
+</tr>
+</tbody></table>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
+    <item>
+      <title>周五的公园与猫</title>
+      <link>https://blog.945426.xyz/posts/102</link>
+      <guid isPermaLink="false">102</guid>
+      <pubDate>Sat, 22 Nov 2025 02:30:00 GMT</pubDate>
+      <content:encoded><![CDATA[<p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
+<p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫"></p>
+<p>拍完照它就跑了，哈哈。</p>
+<p><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop" alt="猫2"></p>
+<p>晚上准备去吃顿火锅庆祝一下周五！</p>
+]]></content:encoded>
+      <category>说说</category>
+      <category>生活</category>
+      <dc:creator>Anonymous</dc:creator>
+    </item>
+    <item>
+      <title>月下独酌：李白诗中的孤独与自由</title>
+      <link>https://blog.945426.xyz/posts/101</link>
+      <guid isPermaLink="false">101</guid>
+      <pubDate>Fri, 21 Nov 2025 05:09:00 GMT</pubDate>
+      <description>品读李白《月下独酌》，探寻诗仙在孤独中寻得的自由境界。</description>
+      <content:encoded><![CDATA[<p><img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" alt="月下独酌：李白诗中的孤独与自由" /></p><p>夜色如水，明月当空。读李白的《月下独酌》，总能在字里行间感受到一种独特的孤独之美。</p>
+<h2>一、诗中的画面</h2>
+<p>“花间一壶酒，独酌无相亲。举杯邀明月，对影成三人。”开篇四句，便勾勒出一幅绝美的月夜独饮图。花丛之中，一人独坐，看似寂寞，却因邀月对影而瞬间热闹起来。</p>
+<blockquote>
+<p>“我歌月徘徊，我舞影零乱。醒时同交欢，醉后各分散。”</p>
+</blockquote>
+<p>这四句尤为动人。诗人与月共歌，与影共舞，在醉意朦胧中达到了物我两忘的境界。这种孤独，不是凄凉，而是自在；不是寂寞，而是充实。</p>
+<h2>二、孤独的辩证法</h2>
+<p>李白的高明之处在于，他将孤独转化为了另一种形式的陪伴。当现实世界中无人相伴时，他便在精神世界中与天地万物为友。</p>
+<p>月本无情，影本无意，但在诗人的笔下，它们都成了有情的伴侣。这种想象力的飞跃，正是诗人超越现实困境的精神力量。</p>
+<h2>三、现代启示</h2>
+<p>在快节奏的现代社会，我们常常害怕独处，用各种娱乐填满每一刻空闲。然而李白的诗提醒我们：独处也可以是一种滋养。</p>
+<p>学会与自己相处，在孤独中寻找内心的丰盈，这或许是古代诗人留给我们的珍贵智慧。</p>
+<h2>四、诗的艺术特色</h2>
+<ul>
+<li><p><strong>想象奇特：</strong> 邀月对影，化孤独为热闹</p>
+</li>
+<li><p><strong>情感真挚：</strong> 从孤独到狂放，情感起伏自然</p>
+</li>
+<li><p><strong>意境深远：</strong> 个人情感与宇宙意识交融</p>
+</li>
+</ul>
+<p>李白的这首诗，让我们看到：真正的自由，是在任何境遇中都能保持心灵的独立与丰盈。月下的独酌者，其实是最不孤独的人。</p>
+<blockquote>
+<p>“永结无情游，相期邈云汉。”——这最后的相约，将短暂的欢饮升华为永恒的陪伴。</p>
+</blockquote>
+<p>读罢全诗，不禁沉思：在我们的人生旅途中，是否也能像李白一样，在孤独中寻得自由，在寂寞中遇见美好？</p>
+]]></content:encoded>
+      <media:content url="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" type="image/jpeg" medium="image" />
+      <media:thumbnail url="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&amp;w=1000&amp;auto=format&amp;fit=crop" />
+      <category>闲谈</category>
+      <dc:creator>Anonymous</dc:creator>
+    </item>
+  </channel>
+</rss>
