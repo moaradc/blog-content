@@ -1,7 +1,7 @@
 {
   "page": 0,
   "perPage": 16,
-  "total": 9,
+  "total": 10,
   "pageCount": 1,
   "posts": [
     {
@@ -12,6 +12,16 @@
       "author": "moara",
       "category": ["Demo"],
       "pinned": true
+    },
+    {
+      "id": "test003",
+      "title": "图表复杂度压力测试矩阵",
+      "date": "2026-10-09 08:20",
+      "last_modified": "2026-10-09 08:20",
+      "author": "moara",
+      "category": ["Demo"],
+      "tags": ["Demo","Mermaid"],
+      "desc": "各类 mermaid 图表在不同信息复杂程度（简单/中等/超复杂）下的显示效果压力测试矩阵：甘特长周期、宽流程图、多方时序、长名字标签等边界场景。"
     },
     {
       "id": "test002",
