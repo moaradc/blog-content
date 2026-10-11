@@ -799,6 +799,18 @@ console.log('details > code');
 ![这是一段非常长的说明文字用来演示说明浮层的自动截断行为超过两行后应当以省略号收尾不再继续向下扩张](https://picsum.photos/seed/long-m/600/400)
 :::
 
+属性可任意组合（空格分隔，写在同一个 `{}` 内）；`notitle` 与 `title` 同用时 notitle 优先；浮层关闭时 `caption-color` 自然无效：
+
+:::gallery{notitle caption-color="#7CFCB0"}
+![组合 · 无标题且青色浮层 1](https://picsum.photos/seed/cb1-m/600/600)
+![组合 · 无标题且青色浮层 2](https://picsum.photos/seed/cb2-m/600/800)
+:::
+
+:::gallery{title="链接 + 颜色组合" caption-color="#ffd54f"}
+[![组合 · 点击跳 Unsplash](https://picsum.photos/seed/cb3-m/600/400)](https://unsplash.com)
+![组合 · 金色浮层普通格](https://picsum.photos/seed/cb4-m/600/750)
+:::
+
 ### 15.8 旧语法兜底（兼容旧文章）
 
 <gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery>

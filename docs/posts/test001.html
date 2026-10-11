@@ -1562,6 +1562,36 @@ $</p>
 </div>
 
 
+<p>属性可任意组合（空格分隔，写在同一个 <code>{}</code> 内）；<code>notitle</code> 与 <code>title</code> 同用时 notitle 优先；浮层关闭时 <code>caption-color</code> 自然无效：</p>
+<div class="article-gallery">
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/cb1-m/600/600" alt="组合 · 无标题且青色浮层 1" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#7CFCB0">组合 · 无标题且青色浮层 1</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/cb2-m/600/800" alt="组合 · 无标题且青色浮层 2" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#7CFCB0">组合 · 无标题且青色浮层 2</figcaption>
+</figure>
+</div>
+</div>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 链接 + 颜色组合</div>
+<div class="gallery-post-grid">
+<a class="gallery-post-item" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="组合 · 点击跳 Unsplash">
+<img src="https://picsum.photos/seed/cb3-m/600/400" alt="组合 · 点击跳 Unsplash" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#ffd54f">组合 · 点击跳 Unsplash</figcaption>
+</a>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/cb4-m/600/750" alt="组合 · 金色浮层普通格" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#ffd54f">组合 · 金色浮层普通格</figcaption>
+</figure>
+</div>
+</div>
+
+
 <h3>15.8 旧语法兜底（兼容旧文章）</h3>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
 <p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
