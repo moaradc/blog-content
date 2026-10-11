@@ -776,7 +776,7 @@ console.log('details > code');
 
 ### 15.7 属性控制与链接包裹（v1.2.0）
 
-`notitle`（或 `title=""`）隐藏标题栏；`caption="false"` / `nocaption` 关闭说明浮层；`caption-color="…"` 调整说明文字颜色（图与文字撞色时用）；`[![说明](图)](链接)` 渲染为整格锚点（新标签页打开）；长说明自动两行截断加省略号：
+`notitle`（或 `title=""`）隐藏标题栏；`caption="false"` / `nocaption` 关闭说明浮层；`caption-color="…"` 调整说明文字颜色（图与文字撞色时用）；`[![说明](图)](链接)` 渲染为整格锚点（协议 v4：点击图片开灯箱，跳转链接显示在灯箱「i」信息面板）；长说明自动两行截断加省略号：
 
 :::gallery{notitle}
 ![无标题栏 · 湖](https://picsum.photos/seed/nt1-m/600/600)
@@ -815,7 +815,7 @@ console.log('details > code');
 
 <gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery>
 
-旧 `<gallery src="…">` 语法仍兼容渲染（无说明文字）。`links` 属性与 `src` 逐项对应：**有链接的项**跳转外链，**空项**维持灯箱预览。新文章请使用 15.1 的容器语法。
+旧 `<gallery src="…">` 语法仍兼容渲染（无说明文字）。`links` 属性与 `src` 逐项位置对应：**有链接的项**点击开灯箱后于「i」面板显示跳转链接，**空项**维持灯箱预览。新文章请使用 15.1 的容器语法。
 
 ## 16. 长代码块自动折叠
 

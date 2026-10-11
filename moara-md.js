@@ -8,6 +8,7 @@
  *         与 folding/tabs 同套栈式容器解析，支持嵌套（提示框/折叠/选项卡）。
  *         旧 <gallery src="…"> 语法保留兜底（浏览器端由 article.js 增强）。
  * v1.2.0：图集属性扩展 notitle / caption="false" / nocaption / caption-color；
+ * v1.2.2：链接包裹格对齐站点协议（补 img-link-wrap 类；点击开灯箱、链接在 i 面板）；
  *         支持 [![说明](图)](链接) 整格锚点跳转；说明浮层 CSS 两行截断。 */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
@@ -18,7 +19,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
     'use strict';
 
-    var VERSION = '1.2.0';
+    var VERSION = '1.2.2';
 
     /* 基础工具 */
 
@@ -480,7 +481,8 @@
                 : '';
             var img = '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">';
             if (it.link) {
-                return '<a class="gallery-post-item" href="' + escapeHtml(it.link) + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(it.alt) + '">' +
+                // img-link-wrap：与站点协议同构（点击由 setupImages 接管开灯箱；跳转链接在灯箱 i 面板）
+                return '<a class="gallery-post-item img-link-wrap" href="' + escapeHtml(it.link) + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(it.alt) + '">' +
                     img + cap +
                     '\n</a>';
             }

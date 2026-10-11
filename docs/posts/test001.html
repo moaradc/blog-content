@@ -1500,7 +1500,7 @@ $</p>
 
 
 <h3>15.7 属性控制与链接包裹（v1.2.0）</h3>
-<p><code>notitle</code>（或 <code>title=&quot;&quot;</code>）隐藏标题栏；<code>caption=&quot;false&quot;</code> / <code>nocaption</code> 关闭说明浮层；<code>caption-color=&quot;…&quot;</code> 调整说明文字颜色（图与文字撞色时用）；<code>[![说明](图)](链接)</code> 渲染为整格锚点（新标签页打开）；长说明自动两行截断加省略号：</p>
+<p><code>notitle</code>（或 <code>title=&quot;&quot;</code>）隐藏标题栏；<code>caption=&quot;false&quot;</code> / <code>nocaption</code> 关闭说明浮层；<code>caption-color=&quot;…&quot;</code> 调整说明文字颜色（图与文字撞色时用）；<code>[![说明](图)](链接)</code> 渲染为整格锚点（协议 v4：点击图片开灯箱，跳转链接显示在灯箱「i」信息面板）；长说明自动两行截断加省略号：</p>
 <div class="article-gallery">
 <div class="gallery-post-grid">
 <figure class="gallery-post-item">
@@ -1546,11 +1546,11 @@ $</p>
 <div class="article-gallery">
 <div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 链接包裹与超长说明截断</div>
 <div class="gallery-post-grid">
-<a class="gallery-post-item" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="点击跳转 Unsplash">
+<a class="gallery-post-item img-link-wrap" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="点击跳转 Unsplash">
 <img src="https://picsum.photos/seed/lw1-m/600/600" alt="点击跳转 Unsplash" loading="lazy">
 <figcaption class="gallery-post-caption">点击跳转 Unsplash</figcaption>
 </a>
-<a class="gallery-post-item" href="https://github.com" target="_blank" rel="noopener noreferrer" title="点击跳转 GitHub">
+<a class="gallery-post-item img-link-wrap" href="https://github.com" target="_blank" rel="noopener noreferrer" title="点击跳转 GitHub">
 <img src="https://picsum.photos/seed/lw2-m/600/800" alt="点击跳转 GitHub" loading="lazy">
 <figcaption class="gallery-post-caption">点击跳转 GitHub</figcaption>
 </a>
@@ -1580,7 +1580,7 @@ $</p>
 <div class="article-gallery">
 <div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 链接 + 颜色组合</div>
 <div class="gallery-post-grid">
-<a class="gallery-post-item" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="组合 · 点击跳 Unsplash">
+<a class="gallery-post-item img-link-wrap" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="组合 · 点击跳 Unsplash">
 <img src="https://picsum.photos/seed/cb3-m/600/400" alt="组合 · 点击跳 Unsplash" loading="lazy">
 <figcaption class="gallery-post-caption" style="color:#ffd54f">组合 · 点击跳 Unsplash</figcaption>
 </a>
@@ -1594,7 +1594,7 @@ $</p>
 
 <h3>15.8 旧语法兜底（兼容旧文章）</h3>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
-<p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
+<p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项位置对应：<strong>有链接的项</strong>点击开灯箱后于「i」面板显示跳转链接，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
 <h2>16. 长代码块自动折叠</h2>
 <p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
 <pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
