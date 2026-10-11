@@ -182,5 +182,45 @@ console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
     t('静态条 v17：静态条与多行式连排互不干扰', h7.includes('甲静态') && h7.includes('丙正文')
         && (h7.match(/admonition-body/g) || []).length === 1);
 }
+
+/* 图集新主语法 :::gallery（v1.1.0） */
+{
+    const md = [':::gallery', '', '![湖泊与山脉](https://picsum.photos/seed/a/600/400)', '', '![海边日落](https://picsum.photos/seed/b/600/750)', '', ':::'].join('\n');
+    const h = render(md);
+    t('图集：基本渲染（article-gallery + title + grid）', h.includes('article-gallery') && h.includes('gallery-post-title') && h.includes('gallery-post-grid'));
+    t('图集：figure/figcaption 说明文字', (h.match(/<figure class="gallery-post-item">/g) || []).length === 2 && h.includes('<figcaption class="gallery-post-caption">湖泊与山脉</figcaption>'));
+    t('图集：默认标题「图集 / GALLERY」', h.includes('图集 / GALLERY'));
+
+    const h2 = render(':::gallery{title="自定义相册"}\n![x](https://e/a.png)\n:::');
+    t('图集：{title="…"} 自定义标题', h2.includes('自定义相册') && !h2.includes('图集 / GALLERY'));
+
+    t('图集：空正文降级原文', render(':::gallery\n没有图片行\n:::').includes(':::gallery'));
+    t('图集：空 alt 无 figcaption', !render(':::gallery\n![](https://e/a.png)\n:::').includes('figcaption'));
+
+    /* 提示框内 */
+    const inNote = render('> [!NOTE] 提示框标题\n> 正文\n> :::gallery\n> ![嵌套图](https://e/n.png)\n> :::');
+    t('图集：提示框内渲染', inNote.includes('admonition-body') && inNote.includes('gallery-post-caption') && inNote.includes('嵌套图'));
+
+    /* 折叠面板内 */
+    const inFold = render(':::folding{title="折叠面板"}\n:::gallery\n![折叠图](https://e/f.png)\n:::\n:::');
+    t('图集：折叠面板内渲染', inFold.includes('details-box') && inFold.includes('gallery-post-caption') && inFold.includes('折叠图'));
+
+    /* 折叠嵌套折叠内 */
+    const nested = [':::folding{title="外"}', ':::folding{title="内"}', ':::gallery', '![双层图](https://e/n2.png)', ':::', ':::', ':::'].join('\n');
+    const hn = render(nested);
+    const innerOk = (hn.match(/<figure class="gallery-post-item">/g) || []).length === 1;
+    t('图集：折叠嵌套折叠内渲染', innerOk && hn.includes('双层图') && (hn.match(/details-box/g) || []).length === 2);
+
+    /* 折叠内提示框内 */
+    const foldNote = [':::folding{title="外层折叠"}', '> [!TIP] 折叠内提示', '> :::gallery', '> ![提示内图](https://e/fn.png)', '> :::', ':::'].join('\n');
+    const hfn = render(foldNote);
+    t('图集：折叠面板内提示框内渲染', hfn.includes('details-box') && hfn.includes('admonition-body') && hfn.includes('提示内图'));
+
+    /* 选项卡内 + 旧语法兜底共存 */
+    const inTabs = render('::::tabs\n:::tab{title="图集页"}\n:::gallery\n![页签图](https://e/t.png)\n:::\n:::\n::::');
+    t('图集：选项卡内渲染', inTabs.includes('md-tabs') && inTabs.includes('页签图'));
+    t('图集：旧 <gallery src> 语法兜底保留', render('<gallery src="https://e/a.png, https://e/b.png"></gallery>').includes('<gallery src='));
+}
+
 console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
 process.exit(fail ? 1 : 0);

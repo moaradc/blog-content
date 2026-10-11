@@ -681,11 +681,104 @@ console.log('details > code');
 
 </details>
 
-## 15. 图集标签（可选 links）
+## 15. 图集
+
+### 15.1 新（主）语法：`:::gallery` 容器包裹 `![说明文字](图片地址)` 行
+
+与折叠、选项卡同一套容器指令（栈式解析，支持嵌套）。每行 `![说明文字](地址)` 的说明文字渲染为图片下方的说明浮层；`{title="…"}` 可自定义标题栏：
+
+:::gallery
+![湖泊与山脉](https://picsum.photos/seed/lake-m/600/400)
+![绿色森林中的小路](https://picsum.photos/seed/forest-m/600/750)
+![海边日落](https://picsum.photos/seed/sunset-m/600/600)
+![城市夜景](https://picsum.photos/seed/city-m/600/800)
+:::
+
+:::gallery{title="四时之景"}
+![春 · 樱](https://picsum.photos/seed/spring-m/600/500)
+![夏 · 海](https://picsum.photos/seed/summer-m/600/600)
+![秋 · 山](https://picsum.photos/seed/autumn-m/600/700)
+![冬 · 雪](https://picsum.photos/seed/winter-m/600/400)
+:::
+
+### 15.2 提示框内的图集
+
+> [!NOTE] 提示框内图集
+> 图集可出现在全部 13 种提示框内：
+>
+> :::gallery
+> ![提示框内 · 蓝湖](https://picsum.photos/seed/note-m/600/600)
+> ![提示框内 · 云杉](https://picsum.photos/seed/note2-m/600/800)
+> :::
+
+### 15.3 折叠面板内的图集
+
+:::folding{title="展开查看折叠面板内的图集"}
+
+:::gallery
+![折叠内 · 晨雾](https://picsum.photos/seed/fold-m/600/500)
+![折叠内 · 谷仓](https://picsum.photos/seed/fold2-m/600/650)
+:::
+
+:::
+
+### 15.4 折叠面板嵌套折叠面板内的图集
+
+:::folding{title="外层折叠（内有第二层）"}
+
+内层折叠再嵌一层图集：
+
+:::folding{title="内层折叠（图集在此层）"}
+
+:::gallery
+![双层折叠内 · 溪流](https://picsum.photos/seed/deep-m/600/700)
+![双层折叠内 · 苔原](https://picsum.photos/seed/deep2-m/600/450)
+:::
+
+:::
+
+:::
+
+### 15.5 折叠面板内提示框内的图集
+
+:::folding{title="折叠内提示框内图集"}
+
+> [!TIP] 折叠面板内提示框
+> 提示框位于折叠面板内，图集位于提示框内：
+>
+> :::gallery
+> ![折叠内提示框内 · 极光](https://picsum.photos/seed/tip-m/600/600)
+> ![折叠内提示框内 · 星轨](https://picsum.photos/seed/tip2-m/600/750)
+> :::
+
+:::
+
+### 15.6 选项卡内的图集
+
+::::tabs
+:::tab{title="风景"}
+
+:::gallery
+![选项卡 · 山脊](https://picsum.photos/seed/tab1-m/600/600)
+![选项卡 · 湖畔](https://picsum.photos/seed/tab2-m/600/800)
+:::
+
+:::
+:::tab{title="街拍"}
+
+:::gallery
+![选项卡 · 巷口](https://picsum.photos/seed/tab3-m/600/500)
+![选项卡 · 骑楼](https://picsum.photos/seed/tab4-m/600/650)
+:::
+
+:::
+::::
+
+### 15.7 旧语法兜底（兼容旧文章）
 
 <gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery>
 
-`links` 属性与 `src` 逐项对应：**有链接的项**跳转外链，**空项**维持灯箱预览。
+旧 `<gallery src="…">` 语法仍兼容渲染（无说明文字）。`links` 属性与 `src` 逐项对应：**有链接的项**跳转外链，**空项**维持灯箱预览。新文章请使用 15.1 的容器语法。
 
 ## 16. 长代码块自动折叠
 
@@ -752,7 +845,7 @@ main();
 | 数学公式 | ✓ §8 | ✓ §2 | ✓ §3 | ✓ §4 | — |
 | 原生 details | ✓ §14 | ✓ §2 | — | — | — |
 | 行内元素（mark/kbd/spoiler 等） | ✓ §9 | ✓ §2 | ✓ §3 | ✓ §1 | ✓ §14 |
-| 图集 gallery | ✓ §15 | — | — | — | — |
+| 图集 gallery | ✓ §15 | ✓ §15 | ✓ §15 | ✓ §15 | — |
 
 引擎要点：容器指令**栈式解析**（`::::tabs` > `:::tab` > `:::folding` 逐层闭合）；提示框先于容器变换，内部容器每行加 `>` 前缀；`::video` `::linkcard` `::github` 为叶子指令，容器内压缩为单行。
 

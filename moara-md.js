@@ -2,7 +2,11 @@
  * 同一份实现同时供两条渲染管线使用，保证产物一致：
  * - 浏览器端：/article?id=<> 页面由 article.js 调用（marked v15 前置变换）
  * - Node 端 ：blog-content 仓 generate-article-html.js require 本文件（/posts/<id> SEO 直出 HTML）
- * 与本文件保持同步的副本：blog-content 仓根目录 moara-md.js（复制即用，两仓无共享子模块机制） */
+ * 与本文件保持同步的副本：blog-content 仓根目录 moara-md.js（复制即用，两仓无共享子模块机制）
+ *
+ * v1.1.0：图集新（主）语法 :::gallery{title="…"} 包裹 ![说明文字](图片地址) 行；
+ *         与 folding/tabs 同套栈式容器解析，支持嵌套（提示框/折叠/选项卡）。
+ *         旧 <gallery src="…"> 语法保留兜底（浏览器端由 article.js 增强）。 */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
@@ -12,7 +16,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
     'use strict';
 
-    var VERSION = '1.0.0';
+    var VERSION = '1.1.0';
 
     /* 基础工具 */
 
@@ -287,7 +291,7 @@
     /* 叶子指令（双冒号、单行、无闭合围栏） */
     var LEAF_DIRECTIVES = ['video', 'linkcard', 'github'];
     /* 容器指令（三冒号及以上、需闭合围栏） */
-    var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab'];
+    var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab', 'gallery'];
     /* 无正文指令：三冒号形式同样自足（不消费闭合围栏，正文无意义）。文档约定：折叠块内建议使用 :: 叶子形式，避免围栏歧义。 */
     var BODYLESS_DIRECTIVES = ['video', 'linkcard', 'github'];
 
@@ -427,6 +431,42 @@
 
     var FOLDING_CLOSE = '</div>\n</div>\n</div>';
 
+    var GALLERY_IMG_RE = /^[ \t]*!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
+
+    /**
+     * 渲染图集容器（新主语法）：:::gallery{title="…"} 包裹若干 ![说明文字](图片地址) 行。
+     * 与 folding/tabs 同一套栈式容器解析，支持嵌套于提示框、折叠、选项卡内。
+     * 零图片行 → 返回空串（调用方按原文降级输出）；旧 <gallery src> 仍兜底可用。
+     */
+    function renderGalleryDirective(body, attrs) {
+        var items = [];
+        String(body).split('\n').forEach(function (ln) {
+            var m = ln.match(GALLERY_IMG_RE);
+            if (m) items.push({ alt: m[1].trim(), url: m[2] });
+        });
+        if (!items.length) return '';
+
+        var title = (attrs && attrs.title != null && String(attrs.title).trim() !== '')
+            ? String(attrs.title).trim()
+            : '图集 / GALLERY';
+
+        var cells = items.map(function (it) {
+            return '<figure class="gallery-post-item">' +
+                '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">' +
+                (it.alt
+                    ? '\n<figcaption class="gallery-post-caption">' + escapeHtml(it.alt) + '</figcaption>'
+                    : '') +
+                '\n</figure>';
+        }).join('\n');
+
+        return '<div class="article-gallery">' +
+            '\n<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> ' + escapeHtml(title) + '</div>' +
+            '\n<div class="gallery-post-grid">' +
+            '\n' + cells +
+            '\n</div>' +
+            '\n</div>';
+    }
+
     /** 指令主变换：栈式解析容器围栏，递归处理帧体。未闭合围栏 / 未知指令 / tab 脱离 tabs → 原文降级输出 + 告警 */
     function transformDirectives(text, opts) {
         var lines = text.split('\n');
@@ -464,11 +504,21 @@
             }
         };
 
-        /** 关闭一个栈帧：folding/tab/tabs/video容器/linkcard容器/github容器 */
+        /** 关闭一个栈帧：folding/tab/tabs/gallery/video容器/linkcard容器/github容器 */
         var closeFrame = function (frame) {
             var body = frame.bodyLines.join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
 
             switch (frame.name) {
+                case 'gallery': {
+                    var galleryHtml = renderGalleryDirective(body, frame.attrs);
+                    if (galleryHtml) {
+                        emitBlock(galleryHtml, frame.indent);
+                    } else {
+                        warn(':::gallery 内无 ![说明](地址) 图片行（原样输出）: ' + frame.raw.trim());
+                        emitBlock(frame.raw + '\n' + body + '\n' + ':::', frame.indent);
+                    }
+                    break;
+                }
                 case 'folding': {
                     var inner = transformDirectives(body, opts);
                     emitBlock(

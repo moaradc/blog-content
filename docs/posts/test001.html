@@ -1260,9 +1260,248 @@ $</p>
 </code></pre>
 </details>
 
-<h2>15. 图集标签（可选 links）</h2>
+<h2>15. 图集</h2>
+<h3>15.1 新（主）语法：<code>:::gallery</code> 容器包裹 <code>![说明文字](图片地址)</code> 行</h3>
+<p>与折叠、选项卡同一套容器指令（栈式解析，支持嵌套）。每行 <code>![说明文字](地址)</code> 的说明文字渲染为图片下方的说明浮层；<code>{title=&quot;…&quot;}</code> 可自定义标题栏：</p>
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/lake-m/600/400" alt="湖泊与山脉" loading="lazy">
+<figcaption class="gallery-post-caption">湖泊与山脉</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/forest-m/600/750" alt="绿色森林中的小路" loading="lazy">
+<figcaption class="gallery-post-caption">绿色森林中的小路</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/sunset-m/600/600" alt="海边日落" loading="lazy">
+<figcaption class="gallery-post-caption">海边日落</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/city-m/600/800" alt="城市夜景" loading="lazy">
+<figcaption class="gallery-post-caption">城市夜景</figcaption>
+</figure>
+</div>
+</div>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 四时之景</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/spring-m/600/500" alt="春 · 樱" loading="lazy">
+<figcaption class="gallery-post-caption">春 · 樱</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/summer-m/600/600" alt="夏 · 海" loading="lazy">
+<figcaption class="gallery-post-caption">夏 · 海</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/autumn-m/600/700" alt="秋 · 山" loading="lazy">
+<figcaption class="gallery-post-caption">秋 · 山</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/winter-m/600/400" alt="冬 · 雪" loading="lazy">
+<figcaption class="gallery-post-caption">冬 · 雪</figcaption>
+</figure>
+</div>
+</div>
+
+
+<h3>15.2 提示框内的图集</h3>
+<div class="admonition admonition-note" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-sticky-note-line" aria-hidden="true"></i>
+<span class="admonition-title-text">提示框内图集</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>图集可出现在全部 13 种提示框内：</p>
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/note-m/600/600" alt="提示框内 · 蓝湖" loading="lazy">
+<figcaption class="gallery-post-caption">提示框内 · 蓝湖</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/note2-m/600/800" alt="提示框内 · 云杉" loading="lazy">
+<figcaption class="gallery-post-caption">提示框内 · 云杉</figcaption>
+</figure>
+</div>
+</div>
+
+
+</div>
+</div>
+
+<h3>15.3 折叠面板内的图集</h3>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">展开查看折叠面板内的图集</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/fold-m/600/500" alt="折叠内 · 晨雾" loading="lazy">
+<figcaption class="gallery-post-caption">折叠内 · 晨雾</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/fold2-m/600/650" alt="折叠内 · 谷仓" loading="lazy">
+<figcaption class="gallery-post-caption">折叠内 · 谷仓</figcaption>
+</figure>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<h3>15.4 折叠面板嵌套折叠面板内的图集</h3>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">外层折叠（内有第二层）</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<p>内层折叠再嵌一层图集：</p>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">内层折叠（图集在此层）</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/deep-m/600/700" alt="双层折叠内 · 溪流" loading="lazy">
+<figcaption class="gallery-post-caption">双层折叠内 · 溪流</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/deep2-m/600/450" alt="双层折叠内 · 苔原" loading="lazy">
+<figcaption class="gallery-post-caption">双层折叠内 · 苔原</figcaption>
+</figure>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<h3>15.5 折叠面板内提示框内的图集</h3>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">折叠内提示框内图集</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<div class="admonition admonition-tip" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-lightbulb-line" aria-hidden="true"></i>
+<span class="admonition-title-text">折叠面板内提示框</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+<p>提示框位于折叠面板内，图集位于提示框内：</p>
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tip-m/600/600" alt="折叠内提示框内 · 极光" loading="lazy">
+<figcaption class="gallery-post-caption">折叠内提示框内 · 极光</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tip2-m/600/750" alt="折叠内提示框内 · 星轨" loading="lazy">
+<figcaption class="gallery-post-caption">折叠内提示框内 · 星轨</figcaption>
+</figure>
+</div>
+</div>
+
+
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<h3>15.6 选项卡内的图集</h3>
+<div class="md-tabs" data-md-tabs>
+<div class="md-tabs-head">
+<div class="md-tabs-bar" role="tablist">
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-5-0" aria-controls="md-tabpanel-5-0" aria-selected="true">风景</button>
+<button class="md-tab-btn" type="button" role="tab" id="md-tab-5-1" aria-controls="md-tabpanel-5-1" aria-selected="false" tabindex="-1">街拍</button>
+
+</div>
+<button class="md-tabs-toggle" type="button" aria-expanded="false" title="展开/收起面板内容" aria-label="展开/收起面板内容"><i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i></button>
+</div>
+<div class="md-tabs-body"><div class="md-tab-panel" role="tabpanel" id="md-tabpanel-5-0" aria-labelledby="md-tab-5-0" tabindex="0">
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tab1-m/600/600" alt="选项卡 · 山脊" loading="lazy">
+<figcaption class="gallery-post-caption">选项卡 · 山脊</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tab2-m/600/800" alt="选项卡 · 湖畔" loading="lazy">
+<figcaption class="gallery-post-caption">选项卡 · 湖畔</figcaption>
+</figure>
+</div>
+</div>
+
+
+</div>
+<div class="md-tab-panel" role="tabpanel" id="md-tabpanel-5-1" aria-labelledby="md-tab-5-1" tabindex="0" hidden>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 图集 / GALLERY</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tab3-m/600/500" alt="选项卡 · 巷口" loading="lazy">
+<figcaption class="gallery-post-caption">选项卡 · 巷口</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/tab4-m/600/650" alt="选项卡 · 骑楼" loading="lazy">
+<figcaption class="gallery-post-caption">选项卡 · 骑楼</figcaption>
+</figure>
+</div>
+</div>
+
+
+</div>
+</div>
+</div>
+
+
+<h3>15.7 旧语法兜底（兼容旧文章）</h3>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
-<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。</p>
+<p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
 <h2>16. 长代码块自动折叠</h2>
 <p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
 <pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
@@ -1418,9 +1657,9 @@ main();
 <tr>
 <td>图集 gallery</td>
 <td align="center">✓ §15</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
+<td align="center">✓ §15</td>
+<td align="center">✓ §15</td>
+<td align="center">✓ §15</td>
 <td align="center">—</td>
 </tr>
 </tbody></table>
