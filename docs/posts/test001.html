@@ -1499,7 +1499,70 @@ $</p>
 </div>
 
 
-<h3>15.7 旧语法兜底（兼容旧文章）</h3>
+<h3>15.7 属性控制与链接包裹（v1.2.0）</h3>
+<p><code>notitle</code>（或 <code>title=&quot;&quot;</code>）隐藏标题栏；<code>caption=&quot;false&quot;</code> / <code>nocaption</code> 关闭说明浮层；<code>caption-color=&quot;…&quot;</code> 调整说明文字颜色（图与文字撞色时用）；<code>[![说明](图)](链接)</code> 渲染为整格锚点（新标签页打开）；长说明自动两行截断加省略号：</p>
+<div class="article-gallery">
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/nt1-m/600/600" alt="无标题栏 · 湖" loading="lazy">
+<figcaption class="gallery-post-caption">无标题栏 · 湖</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/nt2-m/600/800" alt="无标题栏 · 林" loading="lazy">
+<figcaption class="gallery-post-caption">无标题栏 · 林</figcaption>
+</figure>
+</div>
+</div>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 关闭说明浮层</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/nc1-m/600/750" alt="说明被关闭 1" loading="lazy">
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/nc2-m/600/400" alt="说明被关闭 2" loading="lazy">
+</figure>
+</div>
+</div>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 金色说明文字</div>
+<div class="gallery-post-grid">
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/gold1-m/600/500" alt="金色 · 沙丘" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#ffd54f">金色 · 沙丘</figcaption>
+</figure>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/gold2-m/600/650" alt="金色 · 麦田" loading="lazy">
+<figcaption class="gallery-post-caption" style="color:#ffd54f">金色 · 麦田</figcaption>
+</figure>
+</div>
+</div>
+
+
+<div class="article-gallery">
+<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> 链接包裹与超长说明截断</div>
+<div class="gallery-post-grid">
+<a class="gallery-post-item" href="https://unsplash.com" target="_blank" rel="noopener noreferrer" title="点击跳转 Unsplash">
+<img src="https://picsum.photos/seed/lw1-m/600/600" alt="点击跳转 Unsplash" loading="lazy">
+<figcaption class="gallery-post-caption">点击跳转 Unsplash</figcaption>
+</a>
+<a class="gallery-post-item" href="https://github.com" target="_blank" rel="noopener noreferrer" title="点击跳转 GitHub">
+<img src="https://picsum.photos/seed/lw2-m/600/800" alt="点击跳转 GitHub" loading="lazy">
+<figcaption class="gallery-post-caption">点击跳转 GitHub</figcaption>
+</a>
+<figure class="gallery-post-item">
+<img src="https://picsum.photos/seed/long-m/600/400" alt="这是一段非常长的说明文字用来演示说明浮层的自动截断行为超过两行后应当以省略号收尾不再继续向下扩张" loading="lazy">
+<figcaption class="gallery-post-caption">这是一段非常长的说明文字用来演示说明浮层的自动截断行为超过两行后应当以省略号收尾不再继续向下扩张</figcaption>
+</figure>
+</div>
+</div>
+
+
+<h3>15.8 旧语法兜底（兼容旧文章）</h3>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
 <p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
 <h2>16. 长代码块自动折叠</h2>

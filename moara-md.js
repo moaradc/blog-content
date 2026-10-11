@@ -6,7 +6,9 @@
  *
  * v1.1.0：图集新（主）语法 :::gallery{title="…"} 包裹 ![说明文字](图片地址) 行；
  *         与 folding/tabs 同套栈式容器解析，支持嵌套（提示框/折叠/选项卡）。
- *         旧 <gallery src="…"> 语法保留兜底（浏览器端由 article.js 增强）。 */
+ *         旧 <gallery src="…"> 语法保留兜底（浏览器端由 article.js 增强）。
+ * v1.2.0：图集属性扩展 notitle / caption="false" / nocaption / caption-color；
+ *         支持 [![说明](图)](链接) 整格锚点跳转；说明浮层 CSS 两行截断。 */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
@@ -16,7 +18,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
     'use strict';
 
-    var VERSION = '1.1.0';
+    var VERSION = '1.2.0';
 
     /* 基础工具 */
 
@@ -432,35 +434,61 @@
     var FOLDING_CLOSE = '</div>\n</div>\n</div>';
 
     var GALLERY_IMG_RE = /^[ \t]*!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
+    /* 链接包裹：[![说明](图片)](链接) → 整格锚点（新标签页打开） */
+    var GALLERY_LINK_RE = /^[ \t]*\[!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
+
+    /** 说明文字颜色属性值校验：仅放行 #hex / 常用色名 / rgb(a)（防 style 注入），否则忽略 */
+    function safeColorAttr(v) {
+        var s = String(v == null ? '' : v).trim();
+        if (/^#[0-9a-fA-F]{3,8}$/.test(s)) return s;
+        if (/^rgba?\(\s*[\d.,\s%]+\)$/.test(s)) return s;
+        if (/^[a-zA-Z]{2,24}$/.test(s)) return s.toLowerCase();
+        return '';
+    }
 
     /**
-     * 渲染图集容器（新主语法）：:::gallery{title="…"} 包裹若干 ![说明文字](图片地址) 行。
+     * 渲染图集容器（新主语法）：:::gallery{…} 包裹若干 ![说明文字](图片地址) 行（支持 [![说明](图)](链接) 整格跳转）。
+     * 属性：title="自定义标题" / notitle（或 title=""）隐藏标题栏；caption="false" 或 nocaption 关闭说明浮层；
+     *       caption-color="#fff" 自定义说明文字颜色（图与文字撞色时调整）。
      * 与 folding/tabs 同一套栈式容器解析，支持嵌套于提示框、折叠、选项卡内。
      * 零图片行 → 返回空串（调用方按原文降级输出）；旧 <gallery src> 仍兜底可用。
      */
     function renderGalleryDirective(body, attrs) {
+        attrs = attrs || {};
         var items = [];
         String(body).split('\n').forEach(function (ln) {
+            var ml = ln.match(GALLERY_LINK_RE);
+            if (ml) { items.push({ alt: ml[1].trim(), url: ml[2], link: ml[3] }); return; }
             var m = ln.match(GALLERY_IMG_RE);
             if (m) items.push({ alt: m[1].trim(), url: m[2] });
         });
         if (!items.length) return '';
 
-        var title = (attrs && attrs.title != null && String(attrs.title).trim() !== '')
-            ? String(attrs.title).trim()
-            : '图集 / GALLERY';
+        var rawTitle = attrs.title != null ? String(attrs.title).trim() : '';
+        var hideTitle = attrBool(attrs.notitle) === true || (rawTitle === '' && attrs.title != null);
+        var title = rawTitle !== '' ? rawTitle : '图集 / GALLERY';
+
+        var captionOff = attrBool(attrs.nocaption) === true
+            || String(attrs.caption).trim() === 'false'
+            || String(attrs.caption).trim() === '0';
+        var captionColor = safeColorAttr(attrs['caption-color'] != null ? attrs['caption-color'] : attrs.captionColor);
+        var capStyle = captionColor ? ' style="color:' + escapeHtml(captionColor) + '"' : '';
 
         var cells = items.map(function (it) {
-            return '<figure class="gallery-post-item">' +
-                '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">' +
-                (it.alt
-                    ? '\n<figcaption class="gallery-post-caption">' + escapeHtml(it.alt) + '</figcaption>'
-                    : '') +
-                '\n</figure>';
+            var cap = (!captionOff && it.alt)
+                ? '\n<figcaption class="gallery-post-caption"' + capStyle + '>' + escapeHtml(it.alt) + '</figcaption>'
+                : '';
+            var img = '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">';
+            if (it.link) {
+                return '<a class="gallery-post-item" href="' + escapeHtml(it.link) + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(it.alt) + '">' +
+                    img + cap +
+                    '\n</a>';
+            }
+            return '<figure class="gallery-post-item">' + img + cap + '\n</figure>';
         }).join('\n');
 
         return '<div class="article-gallery">' +
-            '\n<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> ' + escapeHtml(title) + '</div>' +
+            (hideTitle ? '' : '\n<div class="gallery-post-title"><i class="ri-gallery-view-2" aria-hidden="true"></i> ' + escapeHtml(title) + '</div>') +
             '\n<div class="gallery-post-grid">' +
             '\n' + cells +
             '\n</div>' +

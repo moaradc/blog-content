@@ -774,7 +774,32 @@ console.log('details > code');
 :::
 ::::
 
-### 15.7 旧语法兜底（兼容旧文章）
+### 15.7 属性控制与链接包裹（v1.2.0）
+
+`notitle`（或 `title=""`）隐藏标题栏；`caption="false"` / `nocaption` 关闭说明浮层；`caption-color="…"` 调整说明文字颜色（图与文字撞色时用）；`[![说明](图)](链接)` 渲染为整格锚点（新标签页打开）；长说明自动两行截断加省略号：
+
+:::gallery{notitle}
+![无标题栏 · 湖](https://picsum.photos/seed/nt1-m/600/600)
+![无标题栏 · 林](https://picsum.photos/seed/nt2-m/600/800)
+:::
+
+:::gallery{title="关闭说明浮层" caption="false"}
+![说明被关闭 1](https://picsum.photos/seed/nc1-m/600/750)
+![说明被关闭 2](https://picsum.photos/seed/nc2-m/600/400)
+:::
+
+:::gallery{title="金色说明文字" caption-color="#ffd54f"}
+![金色 · 沙丘](https://picsum.photos/seed/gold1-m/600/500)
+![金色 · 麦田](https://picsum.photos/seed/gold2-m/600/650)
+:::
+
+:::gallery{title="链接包裹与超长说明截断"}
+[![点击跳转 Unsplash](https://picsum.photos/seed/lw1-m/600/600)](https://unsplash.com)
+[![点击跳转 GitHub](https://picsum.photos/seed/lw2-m/600/800)](https://github.com)
+![这是一段非常长的说明文字用来演示说明浮层的自动截断行为超过两行后应当以省略号收尾不再继续向下扩张](https://picsum.photos/seed/long-m/600/400)
+:::
+
+### 15.8 旧语法兜底（兼容旧文章）
 
 <gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery>
 

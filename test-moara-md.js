@@ -220,6 +220,20 @@ console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
     const inTabs = render('::::tabs\n:::tab{title="图集页"}\n:::gallery\n![页签图](https://e/t.png)\n:::\n:::\n::::');
     t('图集：选项卡内渲染', inTabs.includes('md-tabs') && inTabs.includes('页签图'));
     t('图集：旧 <gallery src> 语法兜底保留', render('<gallery src="https://e/a.png, https://e/b.png"></gallery>').includes('<gallery src='));
+
+    /* v1.2.0：属性扩展 / 链接包裹 / 截断协议 */
+    t('图集：notitle 隐藏标题栏', !render(':::gallery{notitle}\n![a](https://e/a.png)\n:::').includes('gallery-post-title'));
+    t('图集：title="" 同样隐藏标题栏', !render(':::gallery{title=""}\n![a](https://e/a.png)\n:::').includes('gallery-post-title'));
+    t('图集：caption="false" 关闭说明浮层', !render(':::gallery{caption="false"}\n![甲](https://e/a.png)\n:::').includes('figcaption'));
+    t('图集：nocaption 旗标等效关闭', !render(':::gallery{nocaption}\n![甲](https://e/a.png)\n:::').includes('figcaption'));
+    const cc = render(':::gallery{caption-color="#ffd54f"}\n![甲](https://e/a.png)\n:::');
+    t('图集：caption-color 落内联样式', cc.includes('style="color:#ffd54f"'));
+    t('图集：caption-color 非法值拒绝（防注入）', !render(':::gallery{caption-color="red;}p{x}"}\n![甲](https://e/a.png)\n:::').includes('style='));
+    const lw = render(':::gallery\n[![点击去 Unsplash](https://e/i.png)](https://unsplash.com)\n![普通图](https://e/n.png)\n:::');
+    t('图集：链接包裹图 → 整格锚点 a.gallery-post-item', lw.includes('<a class="gallery-post-item" href="https://unsplash.com"') && lw.includes('target="_blank"') && lw.includes('noopener'));
+    t('图集：链接包裹图说明浮层保留', lw.includes('点击去 Unsplash</figcaption>'));
+    t('图集：链接格与普通格混排', lw.includes('<figure class="gallery-post-item">'));
+    t('图集：超长说明仍完整输出（截断由 CSS line-clamp 承担）', render(':::gallery\n![很长很长很长很长很长很长](https://e/a.png)\n:::').includes('很长很长很长很长很长很长</figcaption>'));
 }
 
 console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
