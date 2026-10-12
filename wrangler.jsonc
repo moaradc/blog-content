@@ -7,7 +7,17 @@
     "binding": "ASSETS",
     "html_handling": "drop-trailing-slash",
     "not_found_handling": "none",
-    "run_worker_first": ["/", "/music/*"]
+    "run_worker_first": [
+      "/",
+      "/music/*.mp3",
+      "/music/*.flac",
+      "/music/*.wav",
+      "/music/*.ogg",
+      "/music/*.oga",
+      "/music/*.m4a",
+      "/music/*.aac",
+      "/music/*.opus"
+    ]
   },
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
