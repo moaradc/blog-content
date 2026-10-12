@@ -924,3 +924,29 @@ export const twice = (x) => fold(x) * 2;
 ```
 
 :::
+
+## 19. 音乐卡片（新语法 v2）
+
+### 19.1 英文·逐行歌词（无翻译）
+
+<music title="Blazing Heart (英文版)" artist="Chrissy Costanza、HOYO-MiX" src="music/Chrissy Costanza、HOYO-MiX - Blazing Heart (英文版).mp3" lrc="music/Chrissy Costanza、HOYO-MiX - Blazing Heart (英文版).lrc"></music>
+
+### 19.2 英文·逐字歌词 + 中文翻译
+
+<music title="唯有追赶风的方向 (Only By Chasing the Wind)" artist="知更鸟、HOYO-MiX、Chevy" src="music/知更鸟、HOYO-MiX、Chevy - 唯有追赶风的方向 (Only By Chasing the Wind).mp3" lrc="music/知更鸟、HOYO-MiX、Chevy - 唯有追赶风的方向 (Only By Chasing the Wind).lrc"></music>
+
+### 19.3 日语·逐行歌词 + 翻译
+
+<music title="てねてね" artist="悒うつぼ" src="music/悒うつぼ - てねてね.mp3" lrc="music/悒うつぼ - てねてね.lrc"></music>
+
+### 19.4 中文·增强逐字歌词（无翻译）
+
+<music title="天生鬼才" artist="萧敬腾、HOYO-MiX" src="music/萧敬腾、HOYO-MiX - 天生鬼才.mp3" lrc="music/萧敬腾、HOYO-MiX - 天生鬼才.lrc"></music>
+
+### 19.5 法语·增强逐字歌词 + 中文翻译
+
+<music title="轻涟 La vaguelette" artist="HOYO-MiX" src="music/HOYO-MiX - 轻涟 La vaguelette.mp3" lrc="music/HOYO-MiX - 轻涟 La vaguelette.lrc"></music>
+
+### 19.6 旧语法兜底（music.json）
+
+<music id="cry"></music>

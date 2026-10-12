@@ -3,23 +3,558 @@
 <rss version="2.0" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="http://search.yahoo.com/mrss/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>沫然Blog</title>
-    <link>https://blog.945426.xyz</link>
+    <link>https://blog.945426.xyz/</link>
     <description>极简博客</description>
     <language>zh-CN</language>
-    <lastBuildDate>Thu, 08 Oct 2026 13:27:00 GMT</lastBuildDate>
+    <lastBuildDate>Fri, 09 Oct 2026 00:20:00 GMT</lastBuildDate>
     <generator>generate-rss.js (PagesCMS)</generator>
     <atom:link href="https://blog.945426.xyz/rss.xml" rel="self" type="application/rss+xml"/>
     <managingEditor>moara@foxmail.com (沫然)</managingEditor>
     <webMaster>moara@foxmail.com (沫然)</webMaster>
+    <item>
+      <title>图表复杂度压力测试矩阵</title>
+      <link>https://blog.945426.xyz/posts/test003</link>
+      <guid isPermaLink="false">test003</guid>
+      <pubDate>Fri, 09 Oct 2026 00:20:00 GMT</pubDate>
+      <description>各类 mermaid 图表在不同信息复杂程度（简单/中等/超复杂）下的显示效果压力测试矩阵：甘特长周期、宽流程图、多方时序、长名字标签等边界场景。</description>
+      <content:encoded><![CDATA[<p>本文按「简单 → 中等 → 超复杂」三档构造各图型样本，验证自适应比例、缩放控件与布局在信息量增大时的表现。重点场景：<strong>超长时间线甘特图</strong>（约 190 天 / 20+ 任务 / 长任务名）。</p>
+<h2>1. 甘特图（用户重点场景：时间线拉长）</h2>
+<h3>1.1 简单：6 任务 / 2 周</h3>
+<pre><code class="language-mermaid">gantt
+    title 简单发版流程
+    dateFormat YYYY-MM-DD
+    section 准备
+    需求确认           :done, a1, 2026-10-01, 3d
+    技术方案           :active, a2, after a1, 2d
+    section 实施
+    开发               :b1, after a2, 5d
+    测试               :b2, after b1, 3d
+    上线               :milestone, b3, after b2, 0d
+</code></pre>
+<h3>1.2 中等：12 任务 / 2 个月</h3>
+<pre><code class="language-mermaid">gantt
+    title 季度迭代计划
+    dateFormat YYYY-MM-DD
+    section 需求
+    需求收集         :done, r1, 2026-09-01, 7d
+    需求评审         :done, r2, after r1, 3d
+    section 设计
+    概要设计         :done, d1, after r2, 5d
+    详细设计         :active, d2, after d1, 7d
+    section 开发
+    前端开发         :dev1, after d2, 15d
+    后端开发         :dev2, after d2, 18d
+    联调             :dev3, after dev1, 5d
+    section 测试
+    功能测试         :t1, after dev3, 8d
+    性能测试         :t2, after t1, 4d
+    回归测试         :t3, after t2, 3d
+    section 发布
+    灰度发布         :g1, after t3, 3d
+    全量发布         :milestone, g2, after g1, 0d
+</code></pre>
+<h3>1.3 超复杂：20+ 任务 / 约 190 天 / 长任务名 / 多 section</h3>
+<pre><code class="language-mermaid">gantt
+    title 半年度产品发布计划（长周期复杂度压测）
+    dateFormat YYYY-MM-DD
+    axisFormat %y-%m-%d
+    section 需求与调研
+    市场调研与用户访谈收集整理分析                 :done, r01, 2026-01-05, 21d
+    竞品对标分析与技术可行性预研评估               :done, r02, after r01, 14d
+    产品需求文档撰写与多轮评审确认                 :done, r03, after r02, 10d
+    交互原型与视觉设计交付                         :active, r04, after r03, 21d
+    section 架构与设计
+    基础架构搭建与开发环境建设                     :a01, 2026-02-16, 14d
+    数据模型设计与数据库迁移方案                   :a02, after a01, 12d
+    接口契约定义与Mock服务                         :a03, after a01, 10d
+    section 核心开发
+    核心功能模块开发                               :c01, after a02, 45d
+    数据迁移与历史数据清洗改造                     :c02, after a02, 30d
+    权限体系与安全加固改造                         :c03, after a03, 25d
+    前端组件库升级与页面重构                       :c04, after a03, 40d
+    性能优化与容量扩容专项                         :c05, after c01, 14d
+    section 测试与质量
+    单元测试与集成测试覆盖                         :q01, after c01, 21d
+    系统测试与缺陷修复回归                         :q02, after q01, 18d
+    安全渗透测试与整改                             :q03, after q02, 10d
+    压力测试与容量验证                             :q04, after q03, 7d
+    section 发布与运维
+    灰度发布与放量观察                             :p01, after q04, 7d
+    全量发布                                       :milestone, p02, after p01, 0d
+    监控告警体系加固                               :m01, after p02, 30d
+    稳定性巡检与故障演练                           :m02, after m01, 45d
+</code></pre>
+<h2>2. 流程图</h2>
+<h3>2.1 简单：3 节点</h3>
+<pre><code class="language-mermaid">flowchart LR
+    A[开始] --&gt; B[处理] --&gt; C[结束]
+</code></pre>
+<h3>2.2 中等：12 节点 / 分支</h3>
+<pre><code class="language-mermaid">flowchart TD
+    A[用户请求] --&gt; B{网关鉴权}
+    B --&gt;|通过| C[路由分发]
+    B --&gt;|拒绝| Z1[401 返回]
+    C --&gt; D[服务A]
+    C --&gt; E[服务B]
+    D --&gt; F[(缓存查询)]
+    F --&gt;|命中| G[返回缓存]
+    F --&gt;|未命中| H[数据库查询]
+    H --&gt; I[写回缓存]
+    I --&gt; G
+    E --&gt; J[消息队列]
+    J --&gt; K[异步任务处理]
+    G --&gt; Y[响应客户端]
+    K --&gt; Y
+</code></pre>
+<h3>2.3 超复杂：25+ 节点 / 多分支 / 跨列</h3>
+<pre><code class="language-mermaid">flowchart LR
+    A[入口] --&gt; B{分流}
+    B --&gt;|路径1| C1[采集] --&gt; D1[清洗] --&gt; E1[特征]
+    B --&gt;|路径2| C2[抓取] --&gt; D2[解析] --&gt; E2[索引]
+    B --&gt;|路径3| C3[订阅] --&gt; D3[聚合] --&gt; E3[存储]
+    E1 --&gt; F{模型判定}
+    E2 --&gt; F
+    E3 --&gt; G[归档]
+    F --&gt;|高置信| H1[自动发布]
+    F --&gt;|中置信| H2[人工复核] --&gt; I[反馈回流]
+    F --&gt;|低置信| H3[丢弃]
+    H1 --&gt; J[质量评估]
+    I --&gt; J
+    J --&gt;|达标| K1[入库] --&gt; L[报表]
+    J --&gt;|未达标| K2[重训] --&gt; D1
+    G --&gt; L
+    L --&gt; M[告警监控] --&gt; N{健康?}
+    N --&gt;|是| A
+    N --&gt;|否| O[降级恢复] --&gt; A
+    subgraph 支撑
+        P[(元数据库)]
+        Q[(时序库)]
+        R[配置中心]
+    end
+    D1 -.-&gt; P
+    M -.-&gt; Q
+    C3 -.-&gt; R
+</code></pre>
+<h2>3. 时序图</h2>
+<h3>3.1 简单：3 参与方</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    participant U as 用户
+    participant S as 服务
+    participant D as 数据库
+    U-&gt;&gt;S: 查询
+    S-&gt;&gt;D: SELECT
+    D--&gt;&gt;S: 数据
+    S--&gt;&gt;U: 结果
+</code></pre>
+<h3>3.2 中等：6 参与方 / 循环</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant C as 客户端
+    participant G as 网关
+    participant A as 认证服务
+    participant O as 订单服务
+    participant P as 支付服务
+    participant N as 通知服务
+    C-&gt;&gt;G: 下单请求
+    G-&gt;&gt;A: 鉴权
+    A--&gt;&gt;G: 通过
+    G-&gt;&gt;O: 创建订单
+    O-&gt;&gt;P: 发起支付
+    loop 支付重试
+        P--&gt;&gt;O: 处理中
+        O-&gt;&gt;P: 轮询状态
+    end
+    P--&gt;&gt;O: 支付成功
+    O-&gt;&gt;N: 触发通知
+    N--&gt;&gt;C: 推送消息
+    O--&gt;&gt;C: 返回订单号
+</code></pre>
+<h3>3.3 超复杂：10 参与方 / 嵌套</h3>
+<pre><code class="language-mermaid">sequenceDiagram
+    autonumber
+    participant App as 移动端
+    participant Web as Web端
+    participant CDN as CDN
+    participant GW as API网关
+    participant Auth as 认证中心
+    participant User as 用户服务
+    participant Prod as 商品服务
+    participant Inv as 库存服务
+    participant Ord as 订单服务
+    participant Pay as 支付中心
+    App-&gt;&gt;CDN: 静态资源
+    Web-&gt;&gt;CDN: 静态资源
+    App-&gt;&gt;GW: 登录
+    Web-&gt;&gt;GW: 登录
+    GW-&gt;&gt;Auth: 校验凭证
+    Auth-&gt;&gt;User: 拉取档案
+    User--&gt;&gt;Auth: 档案
+    Auth--&gt;&gt;GW: Token
+    GW--&gt;&gt;App: Token
+    GW--&gt;&gt;Web: Token
+    App-&gt;&gt;GW: 下单
+    GW-&gt;&gt;Ord: 创建订单
+    Ord-&gt;&gt;Prod: 校验商品
+    Ord-&gt;&gt;Inv: 锁定库存
+    alt 有库存
+        Inv--&gt;&gt;Ord: 锁定成功
+        Ord-&gt;&gt;Pay: 请求支付
+        Pay--&gt;&gt;Ord: 支付回调
+        Ord--&gt;&gt;GW: 下单成功
+    else 无库存
+        Inv--&gt;&gt;Ord: 库存不足
+        Ord--&gt;&gt;GW: 下单失败
+    end
+    GW--&gt;&gt;App: 结果
+</code></pre>
+<h2>4. 时间线</h2>
+<h3>4.1 简单：5 事件</h3>
+<pre><code class="language-mermaid">timeline
+    title 项目里程碑
+    2026 Q1 : 立项
+    2026 Q2 : Alpha
+    2026 Q3 : Beta
+    2026 Q4 : GA
+    2027 Q1 : V2
+</code></pre>
+<h3>4.2 超复杂：18 事件 / 长文本</h3>
+<pre><code class="language-mermaid">timeline
+    title 团队年度演进大事记（长文本复杂度压测）
+    2026年1月 : 团队组建完成首批五人到位 : 确立技术选型与仓库规范
+    2026年2月 : 基础框架搭建完成 : CI/CD 流水线上线
+    2026年3月 : 首个内部版本发布 : 完成首轮用户访谈
+    2026年4月 : 数据层重构 : 引入读写分离
+    2026年5月 : 压力测试通过 : 单机 QPS 破万
+    2026年6月 : 灰度发布启动 : 监控告警体系就绪
+    2026年7月 : 全量上线 : 首个付费客户签约
+    2026年8月 : 多区域部署 : 平均延迟下降四成
+    2026年9月 : 安全渗透整改完成 : 通过等保三级测评
+    2026年10月 : 数据平台一期 : 自助报表上线
+</code></pre>
+<h2>5. 类图</h2>
+<h3>5.1 简单：3 类</h3>
+<pre><code class="language-mermaid">classDiagram
+    class Article {
+        +String title
+        +render()
+    }
+    class Tag
+    Article &quot;1&quot; --&gt; &quot;*&quot; Tag : 拥有
+</code></pre>
+<h3>5.2 超复杂：12 类 / 多关系</h3>
+<pre><code class="language-mermaid">classDiagram
+    class User {
+        +Long id
+        +String name
+        +String email
+        +register()
+        +login()
+    }
+    class Account {
+        +Long id
+        +BigDecimal balance
+        +deposit(amount)
+        +withdraw(amount)
+    }
+    class Order {
+        +Long id
+        +OrderStatus status
+        +create()
+        +cancel()
+    }
+    class OrderItem {
+        +Long id
+        +Integer quantity
+        +BigDecimal price
+    }
+    class Product {
+        +Long id
+        +String sku
+        +String name
+    }
+    class Inventory {
+        +Long id
+        +Integer available
+        +lock(qty)
+        +release(qty)
+    }
+    class Payment {
+        +Long id
+        +PayChannel channel
+        +refund()
+    }
+    class Coupon {
+        +String code
+        +BigDecimal discount
+        +verify()
+    }
+    class Logistics {
+        +Long id
+        +String trackingNo
+        +ship()
+    }
+    class Review {
+        +Long id
+        +Integer stars
+        +String comment
+    }
+    class Category {
+        +Long id
+        +String name
+    }
+    class Shopcart {
+        +Long id
+        +addItem(item)
+    }
+    User &quot;1&quot; --&gt; &quot;1&quot; Account : 绑定
+    User &quot;1&quot; --&gt; &quot;*&quot; Order : 下单
+    Order &quot;1&quot; --&gt; &quot;*&quot; OrderItem : 包含
+    OrderItem &quot;*&quot; --&gt; &quot;1&quot; Product : 对应
+    Product &quot;*&quot; --&gt; &quot;1&quot; Category : 归类
+    Product &quot;1&quot; --&gt; &quot;1&quot; Inventory : 库存
+    Order &quot;1&quot; --&gt; &quot;1&quot; Payment : 支付
+    Order &quot;*&quot; --&gt; &quot;*&quot; Coupon : 使用
+    Order &quot;1&quot; --&gt; &quot;0..1&quot; Logistics : 履约
+    Product &quot;1&quot; --&gt; &quot;*&quot; Review : 评价
+    User &quot;1&quot; --&gt; &quot;1&quot; Shopcart : 持有
+    Shopcart &quot;*&quot; --&gt; &quot;*&quot; Product : 加购
+</code></pre>
+<h2>6. ER 图</h2>
+<h3>6.1 简单：4 实体</h3>
+<pre><code class="language-mermaid">erDiagram
+    USER ||--o{ ORDER : places
+    ORDER ||--|{ LINE_ITEM : contains
+    PRODUCT ||--o{ LINE_ITEM : &quot;ordered in&quot;
+    USER {
+        string name
+    }
+</code></pre>
+<h3>6.2 超复杂：10 实体</h3>
+<pre><code class="language-mermaid">erDiagram
+    CUSTOMER ||--o{ ORDER : places
+    ORDER ||--|{ ORDER_ITEM : includes
+    PRODUCT ||--o{ ORDER_ITEM : covers
+    CATEGORY ||--o{ PRODUCT : groups
+    SUPPLIER ||--o{ PRODUCT : provides
+    WAREHOUSE ||--o{ STOCK : stores
+    PRODUCT ||--|| STOCK : has
+    ORDER ||--o| INVOICE : billed
+    INVOICE ||--o{ PAYMENT : settled
+    SHIPMENT ||--|| ORDER : fulfills
+    CUSTOMER ||--o{ ADDRESS : registers
+    CUSTOMER {
+        string id PK
+        string name
+        string email
+    }
+    ORDER {
+        string id PK
+        string customer_id FK
+        datetime created
+    }
+    ORDER_ITEM {
+        string order_id FK
+        string product_id FK
+        int qty
+    }
+    PRODUCT {
+        string id PK
+        string sku
+        decimal price
+    }
+    STOCK {
+        string product_id FK
+        int available
+    }
+</code></pre>
+<h2>7. 用户旅程</h2>
+<h3>7.1 简单：4 步</h3>
+<pre><code class="language-mermaid">journey
+    title 早晨
+    section 日常
+      起床: 5: 我
+      洗漱: 3: 我
+      通勤: 2: 我
+      到岗: 4: 我
+</code></pre>
+<h3>7.2 超复杂：12 步 / 多角色</h3>
+<pre><code class="language-mermaid">journey
+    title 内容创作全流程（多角色复杂度压测）
+    section 选题
+      选题会: 4: 作者, 编辑
+      竞品调研: 3: 作者
+      立项确认: 5: 编辑
+    section 创作
+      撰写初稿: 3: 作者
+      补充数据: 4: 作者, 数据分析师
+      配图设计: 4: 设计师
+    section 审核
+      编辑审稿: 3: 编辑
+      事实核查: 5: 编辑, 专家
+      法务过审: 2: 法务
+    section 发布
+      排版定稿: 4: 作者, 编辑
+      定时发布: 5: 作者
+      数据复盘: 4: 数据分析师, 编辑
+</code></pre>
+<h2>8. 状态图</h2>
+<h3>8.1 简单</h3>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; 草稿
+    草稿 --&gt; 发布: 提交
+    发布 --&gt; [*]
+</code></pre>
+<h3>8.2 超复杂：10+ 状态</h3>
+<pre><code class="language-mermaid">stateDiagram-v2
+    [*] --&gt; 待支付
+    待支付 --&gt; 已支付: 支付成功
+    待支付 --&gt; 已取消: 超时
+    已支付 --&gt; 待发货
+    待发货 --&gt; 已发货: 出库
+    已发货 --&gt; 派送中: 揽收
+    派送中 --&gt; 已签收: 签收
+    派送中 --&gt; 异常: 滞留
+    异常 --&gt; 派送中: 恢复
+    异常 --&gt; 退回中: 无法投递
+    已签收 --&gt; 售后中: 申请售后
+    售后中 --&gt; 已退款
+    售后中 --&gt; 已换货
+    退回中 --&gt; 已退款
+    已签收 --&gt; 已完成: 确认
+    已退款 --&gt; [*]
+    已完成 --&gt; [*]
+</code></pre>
+<h2>9. 饼图</h2>
+<h3>9.1 简单：4 片</h3>
+<pre><code class="language-mermaid">pie title 流量来源
+    &quot;搜索&quot; : 45
+    &quot;直接&quot; : 30
+    &quot;外链&quot; : 15
+    &quot;其他&quot; : 10
+</code></pre>
+<h3>9.2 超复杂：10 片</h3>
+<pre><code class="language-mermaid">pie title 内容类型分布（多切片复杂度压测）
+    &quot;技术长文&quot; : 22
+    &quot;技术短篇&quot; : 18
+    &quot;随笔杂谈&quot; : 15
+    &quot;翻译转载&quot; : 12
+    &quot;读书笔记&quot; : 10
+    &quot;工具推荐&quot; : 8
+    &quot;周报汇总&quot; : 6
+    &quot;摄影相册&quot; : 4
+    &quot;影评剧评&quot; : 3
+    &quot;碎碎念&quot; : 2
+</code></pre>
+<h2>10. 思维导图</h2>
+<h3>10.1 简单</h3>
+<pre><code class="language-mermaid">mindmap
+  root((博客))
+    写作
+    阅读
+</code></pre>
+<h3>10.2 超复杂：多分支深叶</h3>
+<pre><code class="language-mermaid">mindmap
+  root((技术体系))
+    前端
+      框架
+        React
+        Vue
+        Svelte
+      工程化
+        Vite
+        Turbopack
+      样式
+        Tailwind
+        CSS变量
+    后端
+      语言
+        Node.js
+        Go
+        Rust
+      存储
+        MySQL
+        PostgreSQL
+        Redis
+      消息
+        Kafka
+        RocketMQ
+    基础设施
+      容器
+        Docker
+        K8s
+      观测
+        日志
+        指标
+        追踪
+    质量
+      测试
+        单元
+        E2E
+      安全
+        审计
+        扫描
+</code></pre>
+<h2>11. Git 图</h2>
+<h3>11.1 超复杂：多分支</h3>
+<pre><code class="language-mermaid">gitGraph
+    commit id: &quot;init&quot;
+    branch develop
+    commit
+    commit
+    branch feature/auth
+    commit
+    commit
+    checkout main
+    merge develop tag: &quot;v0.9&quot;
+    checkout feature/auth
+    commit
+    checkout main
+    merge feature/auth
+    branch feature/pay
+    commit
+    commit
+    commit
+    checkout develop
+    merge feature/pay
+    checkout main
+    merge develop tag: &quot;v1.0&quot;
+    branch hotfix
+    commit
+    checkout main
+    merge hotfix tag: &quot;v1.0.1&quot;
+</code></pre>
+<h2>12. 象限图</h2>
+<h3>12.1 超复杂：8 数据点 / 长标签</h3>
+<pre><code class="language-mermaid">quadrantChart
+    title 任务优先级矩阵（多点复杂度压测）
+    x-axis 低投入 --&gt; 高投入
+    y-axis 低回报 --&gt; 高回报
+    quadrant-1 重点投入
+    quadrant-2 快速回报
+    quadrant-3 谨慎评估
+    quadrant-4 逐步淘汰
+    重构核心支付链路: [0.82, 0.88]
+    优化首页首屏加载: [0.45, 0.85]
+    新增暗色主题模式: [0.25, 0.62]
+    建设自动化测试: [0.7, 0.75]
+    迁移老旧PHP模块: [0.88, 0.4]
+    社区内容运营: [0.35, 0.5]
+    修复若干视觉细节: [0.18, 0.28]
+    评估新数据库选型: [0.6, 0.55]
+</code></pre>
+]]></content:encoded>
+      <category>Demo</category>
+      <dc:creator>moara</dc:creator>
+    </item>
     <item>
       <title>123云盘&quot;公摊网盘&quot;事件调研</title>
       <link>https://blog.945426.xyz/posts/test002</link>
       <guid isPermaLink="false">test002</guid>
       <pubDate>Thu, 08 Oct 2026 13:27:00 GMT</pubDate>
       <description>9月24日双空间公告、大众舆论导向与独立判断</description>
-      <content:encoded><![CDATA[<p><strong>报告日期：2026年10月8日</strong> Qwen3.8-Flash</p>
+      <content:encoded><![CDATA[<p><strong>报告日期：2026年10月8日</strong> 由 Qwen3.8-Flash 撰写，内容并非 100% 准确</p>
 <h2>摘要</h2>
-<p>2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成&quot;标准空间&quot;与&quot;专业空间&quot;两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。调整后免费用户能自主上传的容量只有50GB，会员也只到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。舆论把这套规则压缩成一句&quot;全球首创有公摊的网盘&quot;，媒体按50GB与2TB的配置算出97%的&quot;公摊比例&quot;并广泛转载<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a>,<a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>；法律界人士认为对服务期内的付费用户大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖与QQ频道内部讨论均未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。</p>
+<p>2026年9月24日14:30，123云盘把运行多年的单一存储空间拆成&quot;标准空间&quot;与&quot;专业空间&quot;两套互不通用的额度：标准空间承载靠去重技术支撑的转存文件，专业空间承载用户独自持有的文件、大于10GB的超大文件以及直链与图床产生的文件<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。调整后用户能自主上传的额度只剩专业空间那一格：免费用户50GB，VIP 1TB，SVIP 2TB，长期VIP 3TB，这组数字在123云盘官方会员权益页上逐档列出（10月9日截图）<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。舆论把这套规则压缩成一句&quot;全球首创有公摊的网盘&quot;，媒体按50GB与2TB的配置算出97%的&quot;公摊比例&quot;并广泛转载<sup><a href="https://m.weibo.cn/detail/5348416278495832?wm=90194_90009">weibo.cn</a>,<a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。官方在9月28日承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向并支持退款，但明确保留双空间制度<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>；一篇法律分析文章认为对服务期内的付费用户大概率构成违约，这一判断未经司法或监管认定<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。渠道覆盖上，B站、微博与大众媒体样本完整，百度贴吧的事件专项帖未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>；官方年费用户群的一手记录补上了另一块拼图——公告次日07:20管理员开启&quot;始终禁言&quot;，此后4天里以@全体成员单向同步修复进展，9月28日20:57在群内全文发布致歉，至文章撰写日10月8日仍未解禁。本报告的判断是：这次调整在商业逻辑上可解释，在产品程序上不合格——生效早于公告、历史文件未经告知被重新归类，才是用户不信任的来源，而非成本区分本身。</p>
 <h2>1. 公告本身：一次把&quot;共享池&quot;和&quot;独占池&quot;切开的空间重构</h2>
 <h3>1.1 9月24日公告的规则实质</h3>
 <p>123云盘于2026年9月24日14:30起正式实施双空间机制，把运行多年的单一存储空间一分为二<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。原空间更名为&quot;标准空间&quot;，沿用重复文件与回收站不计容量的机制，用于存放用户转存自他人的文件及其他非独占文件；新增的&quot;专业空间&quot;采用多副本分布式对象存储，用于存放用户独自存储的文件、大于10GB的超大文件、分卷压缩文件组，以及直链、图床、视频转码服务产生的文件，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a>,<a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。</p>
@@ -39,7 +574,7 @@
     P --&gt; X[额度耗尽即无法继续上传&lt;br&gt;标准空间剩余容量不可借用]
 </code></pre>
 <p>新老用户以2026年9月24日14:30:00为界区分，此前注册的是老用户，此后注册的是新用户<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。配额落地的实际结果如下表。</p>
-<p><strong>表1：双空间机制下的用户配额对照</strong></p>
+<p><strong>表1：双空间机制下的用户配额对照（官方会员权益页与升级公告口径合并）</strong></p>
 <table>
 <thead>
 <tr>
@@ -79,12 +614,37 @@
 <td align="left">100TB</td>
 <td align="left">基础空间叠加会员权益<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup></td>
 </tr>
+<tr>
+<td align="left">长期VIP已实名用户</td>
+<td align="left">3TB</td>
+<td align="left">6PB+2TB</td>
+<td align="left">基础空间叠加会员权益，与官方会员权益页一致</td>
+</tr>
+<tr>
+<td align="left">新VIP未实名用户</td>
+<td align="left">1TB</td>
+<td align="left">18TB+50GB</td>
+<td align="left">官方会员权益页（10月9日截图）</td>
+</tr>
+<tr>
+<td align="left">新SVIP未实名用户</td>
+<td align="left">2TB</td>
+<td align="left">98TB+50GB</td>
+<td align="left">官方会员权益页（10月9日截图）</td>
+</tr>
+<tr>
+<td align="left">长期VIP未实名用户</td>
+<td align="left">3TB</td>
+<td align="left">6PB+50GB</td>
+<td align="left">官方会员权益页（10月9日截图）</td>
+</tr>
 </tbody></table>
+<p>官方会员权益页把容量分成两行：一行是按是否实名认证区分的主容量，一行是所有档位统一标注的专业空间额度（VIP 1TB、SVIP 2TB、长期VIP 3TB、免费用户 50GB）。这一页还列出三项会员共有的&quot;成长容量 800GB/月、上限至 100TB&quot;，免费用户该行为叉号；本页没有标注成长容量计入专业空间还是标准空间，需要以云盘空间页面显示为准。</p>
 <p>:::folding{title=&quot;点开补充：配额表之外的三条细则&quot;}</p>
 <ul>
 <li>历史文件兼容处理：升级上线时账号内已存在的文件，无论原始来源或属性，统一归类为标准文件并计入标准空间，不占用专业空间配额；此后这些文件再次发生操作时，系统按新规则重新判断属性，重新分类后若对应空间超额，按该空间容量管理规则执行<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a>,<a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。</li>
 <li>实名认证口径：老用户后续完成实名认证不重复增加标准空间，新用户首次实名后标准空间提升至2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。</li>
-<li>快科技与腾讯网在9月25日转述的公告截图中还列出未实名新会员档位：新VIP未实名用户为专业空间1TB加标准空间18TB+50GB，新SVIP未实名用户为专业空间2TB加标准空间98TB+50GB；同批报道指出，标准空间对转存文件同样设有单文件10GB的上限。</li>
+<li>快科技与腾讯网在9月25日转述的公告截图中还列出未实名新会员档位：新VIP未实名用户为专业空间1TB加标准空间18TB+50GB，新SVIP未实名用户为专业空间2TB加标准空间98TB+50GB；同批报道指出，标准空间对转存文件同样设有单文件10GB的上限。这批媒体转述的未实名额度，与10月9日官方会员权益页截图完全一致，可作交叉印证。</li>
 </ul>
 <p>:::</p>
 <h3>1.2 从上线到致歉的十二天</h3>
@@ -93,20 +653,121 @@
 <p>[!WARNING] 生效在前、公告在后
 用户在9月24日下午打开云盘时看到的是已经改好的额度，而不是一份可供预留过渡期的预告。这一顺序问题，在后续致歉声明中被官方归入&quot;上线节奏&quot;与&quot;规则说明&quot;两项不足。</p>
 </blockquote>
-<p>舆论发酵四天后，123云盘于9月28日发布《关于近期&quot;专业空间&quot;升级调整的说明与致歉》<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。官方承认本次调整在上线节奏、产品设计、规则说明和存量权益衔接四方面存在不足，并提出五条优化方向：提高各等级用户赠送的专业空间容量并向老用户倾斜；优化空间归属规则，不再简单以文件大小区分；多人共有文件占用空间由各拥有人账户均摊；完善存量会员权益过渡方案；更清晰地展示规则变化<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。优化方案力争在2026年11月前上线，对无法继续正常使用的用户支持按原支付渠道退还剩余服务期对应费用，同时官方强调不会因规则调整擅自删除用户正常存储的文件<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<p>舆论发酵四天后，123云盘于9月28日发布《关于近期&quot;专业空间&quot;升级调整的说明与致歉》<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a>,<a href="https://www.123pan.com/Notice/?id=570152">123云盘站内公告</a></sup>。官方承认本次调整在上线节奏、产品设计、规则说明和存量权益衔接四方面存在不足，并提出五条优化方向：提高各等级用户赠送的专业空间容量并向老用户倾斜；优化空间归属规则，不再简单以文件大小区分；多人共有文件占用空间由各拥有人账户均摊；完善存量会员权益过渡方案；更清晰地展示规则变化<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。优化方案力争在2026年11月前上线，对无法继续正常使用的用户支持按原支付渠道退还剩余服务期对应费用，同时官方强调不会因规则调整擅自删除用户正常存储的文件<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
 <pre><code class="language-mermaid">timeline
-    title 事件十二天
-    2026-09-24 14:30 : 双空间机制生效
-    2026-09-24 15:41 : 升级公告发布
+    title 事件十二天（站内公开信息与年费用户群记录合流）
+    2026-09-24 14时30分 : 双空间机制生效
+    2026-09-24 15时41分 : 升级公告发布
+    2026-09-25 07时20分 : 年费用户群开启始终禁言
+    2026-09-25 08时01分 : 群内首条缺陷认领
     2026-09-25 : 媒体集中报道配额落差
-    2026-09-28 : 官方说明与致歉
+    2026-09-26 11时32分 : 群内同步五条进展
+    2026-09-27 13时13分 : 误判容量归零重置
+    2026-09-28 20时00分 : 站内致歉公告挂出
+    2026-09-28 20时57分 : 群内全文发布致歉
     2026-09-29 : 话题进入微博热搜
+    2026-09-29 : 群内每日值班公告开始
     2026-09-30 : 社区复盘与成本解读
+    2026-10-08 : 群内始终禁言仍未解除
     2026-11 前 : 优化方案目标上线节点
 </code></pre>
 <p>致歉之后又追加了一次程序回滚。因升级后出现程序缺陷，部分历史文件被误判为专业文件，修复程序执行24小时未处理完毕，官方最终把所有用户的已用专业容量列入标准容量<sup><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">腾讯网</a></sup>。对首次报告该缺陷并帮助定位问题的用户，官方表示将予以感谢和奖励<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。至9月28日，安卓客户端的更新说明中已把&quot;新增专业空间&quot;列为版本特性，用户可在文件列表中按所属空间筛选文件。</p>
 <p>:::folding{title=&quot;这里值得留意的一点：致歉改的是&#39;分法&#39;，不是&#39;分不开&#39;&quot;}</p>
 <p>五条优化方向里，第2条与第3条直接回应争议核心——不再简单以文件大小区分归属、共有文件由拥有人均摊。但官方同时明确，双空间制度本身不会被取消，能接受调整的继续用，不能接受的老会员可申请退款<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。换句话说，致歉修正的是分类规则的粗糙程度与告知方式，把&quot;独占文件要单独计账&quot;这一底层设计保留了下来。凤凰网与快科技在9月29日转载致歉声明全文时，同样把它概括为&quot;优化空间规则并支持退款&quot;，而非&quot;撤回调整&quot;。</p>
+<p>:::</p>
+<h3>1.3 群内十二天：在禁言群里，用公告追修复</h3>
+<p>公开渠道看到的是公告与致歉，看不到的是官方年费用户群里的另一条时间线。这条线索上最重要的事实是顺序：9月27日13:13，管理员在群内已经宣布&quot;已将所有被误判空间的用户的已用专业容量归零、所有被误判文件重置为标准文件，回归到历史文件状态&quot;。公开致歉这边，站内公告页面标注的时间是9月28日20:00:55，这一时刻来自媒体转载所附的公告截图<sup><a href="https://www.acfun.cn/a/ac48881070?_t=t">acfun.cn</a></sup>，群内以@全体成员同步全文是同日20:57。按这三组时间，实质性的回滚动作比致歉早了整整一天。</p>
+<blockquote>
+<p>[!NOTE] 本节材料口径
+以下四条群内公告来自123云盘官方年费用户群的成员记录，含@全体成员原文。这类群内容不被搜索引擎公开索引，第三方无法独立核验；凡能与站内公告、媒体报道交叉印证的部分，文中另行注明可核验来源。引用原文时用引号标出，未加引号的是转述。</p>
+</blockquote>
+<p>::::tabs{open}</p>
+<p>:::tab{title=&quot;9月25日 07:20 与 08:01&quot;}</p>
+<ul>
+<li><strong>07:20</strong> 管理员开启&quot;始终禁言&quot;。此后直到文章撰写日10月8日，禁言未解除。</li>
+<li><strong>08:01</strong> 群内首条@全体成员认领缺陷：文件所属空间计算逻辑&quot;在特定情况下存在错误，导致部分用户的一些标准文件被误计入专业空间&quot;，官方称&quot;今天之内会修复该问题&quot;，并承诺&quot;我们修复后会重算容量&quot;，对情绪给出&quot;请稍安勿躁&quot;的安抚。同一条公告还认领了两个待测问题：新上传且秒传的文件被计入专业空间、自己的10GB内专业文件被他人转存后未更新为标准文件。</li>
+</ul>
+<p>:::</p>
+<p>:::tab{title=&quot;9月26日 11:32 五条进展&quot;}</p>
+<ul>
+<li>空间计算逻辑错误已于前一日修正，但上线至修正期间被误判的文件需重新判定，凌晨开始执行判定程序，&quot;由于文件量较大，预计还要再等几个小时&quot;，且此时&quot;部分用户的容量仍然是不准的&quot;。</li>
+<li><strong>专业空间超额无法下载网盘内文件的逻辑已调整，现在允许大家下回自己网盘内的文件</strong>——这是本轮争议里一次明确的权益回退：此前专业空间超额会连带锁死用户取回自有文件。</li>
+<li>对历史文件的下载、在线播放、预览、查看详情不再触发空间判定，这几个操作不会导致文件从标准空间进入专业空间。</li>
+<li>10GB内专业文件被他人转存后未更新为标准文件：官方称&quot;测试过了，逻辑是对的&quot;，但存在计算延迟，建议隔日再查，超24小时未更新可联系群内技术支持。</li>
+<li>10GB以上大文件计入专业空间的问题&quot;后续会有更好方案，争取在平台成本与用户合理需求之间找到平衡&quot;。</li>
+</ul>
+<p>:::</p>
+<p>:::tab{title=&quot;9月27日 13:13 归零重置与五条答疑&quot;}</p>
+<p>修复策略在这天换了路线：昨天尝试修复误判文件并重算容量，&quot;由于数据量太大，修复程序执行了24小时仍未处理完毕&quot;，于是改为把被误判用户的已用专业容量归零、把被误判文件重置为标准文件。同日群内答疑给出五条规则说明：</p>
+<ol>
+<li>新增文件（上传、转存、离线下载）默认先进标准空间，后台异步判定归属，属专业的改为蓝色专业文件标识，高负载下状态刷新可能延迟。</li>
+<li>标准空间的重复文件不计容量与回收站不计容量规则仍然有效，但数据量大时容量扣减存在延迟，&quot;过几天我们会上线手动刷新容量功能&quot;。</li>
+<li>转存时同时对专业空间与标准空间可用容量做双重判定，任一空间可用容量小于对应总大小即转存失败。</li>
+<li>规则中的&quot;转码文件&quot;仅指开发者工具&quot;视频转码&quot;服务产生的文件，网盘内播放视频产生的自动转码不算，&quot;播放视频不会多占用任何容量&quot;。</li>
+<li>专业空间与过去的网盘空间不同：旧空间禁止商用、禁止存储监控/直播/日志/视频切片类内容，而专业空间对标商业云对象存储，允许商用与各类专业用途、不限内容类型、采用两地三副本冗余存储，后续将上线S3协议及更多对象存储功能。</li>
+</ol>
+<p>:::</p>
+<p>:::tab{title=&quot;9月28日 20:57 与 9月29日起&quot;}</p>
+<ul>
+<li><strong>20:57</strong> 管理员把《关于近期&quot;专业空间&quot;升级调整的说明与致歉》全文贴入群内，内容与站内公告一致：承认上线节奏、产品设计、规则说明、存量权益衔接四项不足，给出五条优化方向，力争2026年11月前上线，支持退款登记，承诺不因规则调整擅自删除用户正常存储的文件<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。这份声明在群内的传播方式仍是@全体成员+禁言。</li>
+<li><strong>9月29日起</strong> 管理员每天发布一条&quot;@全体成员 今天技术支持值班人员@xxx，大家有业务问题可以私聊咨询&quot;，同日大量VIP用户进群。群的功能由此定型：公开讨论关闭，问题处理转入私聊一对一。</li>
+</ul>
+<p>:::</p>
+<p>::::</p>
+<p><strong>表2：群内公告动作与规则含义（材料为年费用户群记录）</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">群内时间</th>
+<th align="left">公告动作</th>
+<th align="left">对用户的规则含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">9月25日 07:20</td>
+<td align="left">开启始终禁言</td>
+<td align="left">群内公开讨论通道关闭</td>
+</tr>
+<tr>
+<td align="left">9月25日 08:01</td>
+<td align="left">认领空间计算逻辑错误</td>
+<td align="left">误判定性为缺陷，承诺当日修复并重算容量</td>
+</tr>
+<tr>
+<td align="left">9月26日 11:32</td>
+<td align="left">放开超额禁下载</td>
+<td align="left">专业空间超额不再锁死自有文件的下载权</td>
+</tr>
+<tr>
+<td align="left">9月26日 11:32</td>
+<td align="left">四种查看操作不再触发判定</td>
+<td align="left">播放、预览不再会把标准文件推入专业空间</td>
+</tr>
+<tr>
+<td align="left">9月27日 13:13</td>
+<td align="left">已用专业容量归零、误判文件重置</td>
+<td align="left">放弃精算路径，回滚到历史文件状态</td>
+</tr>
+<tr>
+<td align="left">9月27日 13:13</td>
+<td align="left">转存做双空间容量双重判定</td>
+<td align="left">任一空间不足即转存失败</td>
+</tr>
+<tr>
+<td align="left">9月28日 20:57</td>
+<td align="left">致歉声明全文入群</td>
+<td align="left">制度保留，承诺11月前优化并开放退款</td>
+</tr>
+<tr>
+<td align="left">9月29日起</td>
+<td align="left">每日值班人员公告，大量VIP进群</td>
+<td align="left">沟通改为私聊，群转为单向公告牌</td>
+</tr>
+</tbody></table>
+<p>这四天里能读出的，不只是修复速度，还有决策路径的变化。9月25日08:01的说法是&quot;今天之内修复、修复后重算容量&quot;，9月26日11:32改口为&quot;判定程序仍在跑、容量还不准&quot;，到9月27日13:13直接换成归零重置——从精确重算退到整体回滚，官方给出的理由是数据量太大、24小时跑不完。这与站内公告只说&quot;核心问题已基本恢复&quot;的口径相比，群内记录要诚实得多，也更能说明这次升级的工程准备程度：判定逻辑与异步任务的处理能力，撑不住一次全量用户的历史文件重算。</p>
+<p>:::folding{title=&quot;点开看：9月27日第5条答疑为什么值得单独说&quot;}</p>
+<p>前四条答疑都是把已有规则讲清楚，第5条是官方第一次正面给专业空间做价值陈述：旧网盘空间本来就禁止商用、禁止监控/直播/日志/视频切片类内容，用户&quot;以往只能偷偷商用和存储&quot;，既有资源浪费也有账号被风控、数据取不回的自身风险；专业空间对标商业云对象存储，允许商用与各类专业用途、不限内容类型、采用两地三副本冗余存储，后续还要上线S3协议与对象存储专属功能。</p>
+<p>这段表述解释了&quot;专业空间&quot;这个名字的来历，也暴露了争议的结构性难点：平台端把它当成一次把灰色需求合规化、并向对象存储靠拢的产品升级；用户端看到的是自己原有额度被切走、且切走的部分要另付钱。同一条规则，一侧叙述为新增能力，一侧体验为权益缩减，公开渠道里几乎没有第三种说法。</p>
 <p>:::</p>
 <h2>2. 大众导向：情绪如何凝聚成&quot;公摊网盘&quot;这一个词</h2>
 <h3>2.1 标签的传播路径与杀伤力</h3>
@@ -115,9 +776,9 @@
 <p>[!QUOTE] 传播链条
 微博话题以&quot;#123云盘被吐槽全球首创有公摊网盘#&quot;与&quot;#123云盘公开道歉#&quot;双标签形式在9月29日聚合发布；搜狐、网易、快科技、今日头条、百家号、AcFun、UC头条、什么值得买在9月25日至10月3日间接力同一表述，AcFun弹幕视频网也转载了&quot;网友吐槽全球首创有公摊网盘&quot;的相关内容<sup><a href="https://www.acfun.cn/a/ac48881070?_t=t">acfun.cn</a></sup>。</p>
 </blockquote>
-<p>媒体在计算这个类比时给出了具体比例：按免费用户50GB专业空间加2TB标准空间的配置，公摊比例高达97%<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。这一数字的杀伤力来自反差——被抱怨多年的住房公摊比例往往只在20%左右，而网盘给出的&quot;公摊&quot;接近其五倍。</p>
+<p>媒体在计算这个类比时给出了具体比例：按免费用户50GB专业空间加2TB标准空间，可自主上传的部分是 50GB ÷ (50GB + 2048GB)，约2.4%，报道据此把剩下的97.6%称作公摊，流传中的97%是取整后的数字<sup><a href="https://www.sohu.com/a/1082873644_184641">搜狐</a></sup>。这一数字的杀伤力来自反差：同一篇报道把住房公摊拿来对照，称其比例往往在20%左右，而网盘给出的公摊接近其五倍。需要说明，20%是该文的类比口径，不是本次调研统计的房产数据，两者可比之处只有一项——名义面积与实际可用面积之间的差额。</p>
 <pre><code class="language-mermaid">pie showData
-    title 免费用户名义空间的构成（按双空间规则）
+    title 免费用户名义容量构成（媒体口径取整，实际为97.6比2.4）
     &quot;标准空间（不可自主上传，被类比为公摊）&quot; : 97
     &quot;专业空间（可自主上传）&quot; : 3
 </code></pre>
@@ -127,19 +788,19 @@
 <p>:::tab{title=&quot;B站：拆解规则与动员维权&quot;}</p>
 <p>B站长文动态《123云盘这次，踩雷区了》把新旧配额落差逐条摊开：新免费用户可自行上传的空间从2TB缩减至50GB，新SVIP用户从102TB缩减至2TB，并给出结论&quot;不管是对老用户还是新用户，均是不利的&quot;<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。文中有会员晒出专业空间仅剩1TB的截图，也有用户提出不能简单退款了事，因为迁移所花的时间成本无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。</p>
 <p>视频区的情绪更直接：有UP主发布题为&quot;现在的123云盘【2025年9月起】&quot;的内容，以及&quot;严肃谴责123云盘违约&quot;&quot;避雷这个网站&quot;一类视频，反映的是对规则变更的正面拒绝<sup><a href="https://www.bilibili.com/video/BV1jA4KzfEpH/">哔哩哔哩</a></sup>。</p>
-<p>需要说明渠道对抗的历史。2026年4月30日，123云盘曾发布严正声明，称bili_13514709093、剑客泰菲123456、apngda三名B站用户恶意造谣诽谤，已对侵权内容与传播数据做公证保全并向公安机关报案，声明中提到相关不实内容累计播放数万次、单条最高播放量突破1.7万<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。也就是说，B站同时是本次舆情发酵的主阵地，也是123云盘历史上唯一公开点名维权的平台。</p>
 <p>:::</p>
 <p>:::tab{title=&quot;百度贴吧：长期不满的沉淀池&quot;}</p>
 <p>经过多轮精准搜索（含&quot;123云盘吧 专业空间 吐槽&quot;、&quot;123云盘吧 公摊 9月&quot;、&quot;123云盘吧 双空间 搬家&quot;以及 site:tieba.baidu.com 定向检索），百度贴吧&quot;123云盘吧&quot;关于9月24日双空间事件的专项讨论帖未被搜索引擎公开索引。可检索到的贴吧内容呈现的是长期积累的不满：在&quot;各位免费用户开始准备搬家吧&quot;一帖中，有用户评论&quot;开了三年会员的我都不用了，何况免费的，简直狗屎一般，体验极差，早点换115吧&quot;；另有用户指出&quot;这个盘刚公测了四年，就由当初宣称的永不限速改成了现在这个德性，彻底堵死了非会员的路&quot;<sup><a href="https://tieba.baidu.com/p/10270118510">百度贴吧</a></sup>。资源社区相关帖子里还能看到&quot;离线成功率太低&quot;&quot;同步有bug&quot;这类功能性抱怨<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup>。</p>
 <p>:::</p>
-<p>:::tab{title=&quot;QQ频道与QQ群：入口存在，内容不可见&quot;}</p>
-<p>同样经过多轮检索（含&quot;123云盘 QQ频道 专业空间 讨论&quot;、&quot;123云盘 官方QQ群 9月24日 双空间&quot;），未找到针对9月24日双空间事件的QQ频道或QQ群原始讨论内容。目前仅能确认123云盘资源社区网站置顶帖中提及存在&quot;123社区qq群组、tg频道&amp;群组&quot;<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>，其内部关于该事件的具体讨论未被公开搜索引擎索引。这部分舆论样本只能定性为不可获取，任何&quot;QQ群内一片叫好或一片声讨&quot;的判断都没有依据。</p>
+<p>:::tab{title=&quot;QQ群：靠一手记录补上的那块拼图&quot;}</p>
+<p>这一渠道公开检索仍然是空白：多轮检索（含&quot;123云盘 QQ频道 专业空间 讨论&quot;、&quot;123云盘 官方QQ群 9月24日 双空间&quot;）都找不到事件相关的群内原始内容，仅能确认123云盘资源社区网站置顶帖中提及存在&quot;123社区qq群组、tg频道&amp;群组&quot;<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup>。也就是说，任何写这篇文章的人都没有条件凭检索还原群内舆论。</p>
+<p>本篇用的是另一条路：由群成员提供的官方年费用户群@全体成员公告原文（详见1.3节）。这些材料能直接证明三件事——群在9月25日07:20被开启始终禁言、修复进展以每日公告单向同步、9月28日20:57致歉全文入群。它们能还原官方一侧的动作序列，却还原不了用户一侧的发言内容，因为禁言之后的群消息本身就不存在。因此对QQ群，可靠结论只有一句：付费用户群内的声音没有留下可查记录，留下的痕迹是管理员的回应节奏与关闭讨论这个动作本身。</p>
 <p>:::</p>
 <p>:::tab{title=&quot;其他社区：换盘与止损&quot;}</p>
 <p>卡饭论坛IT资讯区转载相关新闻后，用户&quot;风屿法师&quot;留言&quot;刚把我的旧版安装包合集放到123盘上面去分发，早知道不碰它了&quot;，用户&quot;DeepFormat&quot;回复&quot;我换天翼了&quot;，用户&quot;hardkin&quot;评论&quot;之前可以直接浏览器下载的，现在都要转存入自己网盘才能使用浏览器下载&quot;&quot;123在逐渐向全面收费过渡&quot;<sup><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">kafan.cn</a></sup>。</p>
 <p>:::</p>
 <p>::::</p>
-<p><strong>表2：各渠道信息可得性（截至2026年10月8日检索）</strong></p>
+<p><strong>表3：各渠道信息可得性（截至2026年10月8日，检索结果与群内一手记录合并）</strong></p>
 <table>
 <thead>
 <tr>
@@ -174,47 +835,38 @@
 <td align="left">事件专项帖未被索引，仅可检索到长期不满与搬家讨论<sup><a href="https://tieba.baidu.com/p/9371711126">百度贴吧</a></sup></td>
 </tr>
 <tr>
-<td align="left">QQ频道与QQ群</td>
+<td align="left">QQ频道</td>
 <td align="left">未覆盖</td>
-<td align="left">仅确认存在官方社群入口，事件内部讨论未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup></td>
+<td align="left">仅确认存在官方社群入口，事件相关讨论未被公开索引<sup><a href="https://tieba.baidu.com/p/9332852980">百度贴吧</a></sup></td>
+</tr>
+<tr>
+<td align="left">官方年费用户群</td>
+<td align="left">一手记录，不可公开核验</td>
+<td align="left">9月25日07:20起始终禁言、四天逐条修复公告、9月28日20:57致歉全文入群、9月29日起每日值班公告，材料由群成员提供</td>
 </tr>
 </tbody></table>
 <p>:::folding{title=&quot;补充观察：检索不到的渠道，怎么处理才诚实&quot;}</p>
-<p>贴吧与QQ频道的缺口，是本次调研必须写进结论的一部分，而不是藏在脚注里。原因是这两个渠道恰好是网盘重度用户与资源分享者的聚集地，它们的沉默不代表情绪温和，只代表内容不公开可索引。因此在评估大众导向时，可公开验证的样本集中在B站、微博话题、媒体报道与卡饭论坛四处；把这几处的负面强度外推为&quot;全网一致反对&quot;是可行的，外推为&quot;所有用户都在搬家&quot;则超出证据范围。</p>
+<p>渠道缺口要写进结论，而不是藏进脚注。本篇的证据因此分成三档：第一档是可公开检索、第三方可复核的站内公告、媒体报道、B站内容、微博话题与卡饭论坛回帖；第二档是群成员提供的一手记录，能还原官方一侧的动作序列但无法独立核验；第三档是彻底的空白，即百度贴吧的事件专项帖与QQ频道内部讨论，它们不出现不代表情绪温和，只代表内容不进索引。评估大众导向时，负面强度可以从第一档的四处一致外推为&quot;公开舆论场几乎一致反对&quot;；把第二档的禁言事实读成&quot;群内一片声讨&quot;则超出证据范围——我们只知道讨论被关闭，不知道被关闭前说了什么；把任何一档外推为&quot;所有用户都在搬家&quot;同样没有依据。</p>
+<p>:::</p>
+<h3>2.3 禁言：大众导向的最后一环是渠道处置</h3>
+<p>群内记录补上了舆论研究里最难拿到的那类证据：平台怎么处理它不愿接受的反馈。按群成员提供的记录，9月24日公告发布后官方年费用户群内出现大量不满，9月25日07:20管理员把群设为始终禁言，到文章撰写日的10月8日仍未解除。</p>
+<ul>
+<li><strong>2026年9月25日07:20</strong>，对象换成自家年费会员，手段换成关闭发言权；同一时段，官方仍在群里逐条修bug、逐条答疑。</li>
+<li><strong>2026年9月29日起</strong>，群内改为每天播报值班人员，&quot;大家有业务问题可以私聊咨询&quot;，同日大量VIP用户进群。问题处理路径由公开讨论改为一对一私聊。</li>
+</ul>
+<blockquote>
+<p>[!DANGER] 修bug与关讨论是同时发生的
+单看公告内容，这四天的官方动作是负责任的技术响应：认领缺陷、放开超额禁下载、取消查看操作触发判定、误判容量归零重置、致歉并开放退款。单看群设置，同一批动作发生在一只始终禁言的群里。两者合起来才是完整图景——问题在解决，表达在关闭，而被关闭的表达并没有消失，它转移到了B站、微博话题、贴吧与各类论坛。公开渠道里负面声量的集中爆发，与付费群内禁言的时间点是重合的。</p>
+</blockquote>
+<p>这也让&quot;公摊&quot;标签的传播条件变得可解释：当最该发声的一群人（付费额度受损最重的年费会员）在自己的群里说不出话，舆论的载体就只能由站外媒体与内容平台承担。于是最终呈现的大众导向，是一个几乎只剩批评的公开场——不是因为温和的意见不存在，而是持重心的用户没有公开表达的位置。</p>
+<p>:::folding{title=&quot;这一节能推到哪一步，推不到哪一步&quot;}</p>
+<p>可以推到的：平台在争议期内的沟通策略是&quot;单向公告+关闭发言&quot;，这一点有群内时间与公告原文支撑，且与致歉声明第五部分承诺的&quot;完善重大规则调整前的用户沟通和灰度验证机制&quot;<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>形成对照——承诺指向的是调整前的沟通，实际动作是调整后的禁言。</p>
+<p>推不到的：群内用户的具体发言内容、禁言决定的作出人、群内是否有过短暂开放。这些都没有留下可查记录，任何&quot;群内骂声一片&quot;或&quot;群内多数用户接受解释&quot;的说法都不该写进这篇文章。</p>
 <p>:::</p>
 <h2>3. 争议底层：权益账、成本账与合规账</h2>
 <h3>3.1 付费老用户的权益缩水与违约争议</h3>
-<p>用户真正被削减的不是容量数字，而是容量的用途。法律界人士在评估本次调整时给出的判断是：对仍在服务期内的付费用户，本次改动大概率构成违约<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。依据是民法典的格式条款原则——平台协议中&quot;有权调整规则&quot;的条款，不能用来单方面削减用户已经付费购买的核心服务权益；用户购买的是完整存储空间，平台私自拆分并限制使用属于实质性减损权益，道歉与退款都是事后补救，不代表当初行为合法合规<sup><a href="https://www.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。</p>
+<p>用户真正被削减的不是容量数字，而是容量的用途。&quot;对仍在服务期内的付费用户大概率构成违约&quot;这句判断，出自一篇今日头条的分析文章，作者援引民法典格式条款原则：平台协议里&quot;有权调整规则&quot;的条款不能用来单方面削减用户已经付费购买的核心服务权益，用户买的是完整存储空间，平台私自拆分并限制使用属于实质性减损权益，道歉与退款都是事后补救，不代表当初行为合法合规<sup><a href="https://m.toutiao.com/article/7691149615235695144/">今日头条</a></sup>。需要分清的是，这是媒体评论文章里的法律分析，本轮检索没有看到法院判决、监管定性或公开的立案信息，把这句判断当作已生效的结论会超出证据。用户能确认的事实只有一条：付费时买到的额度，用途变了。</p>
 <p>落差的具体量级可以从自主上传容量的变化读出。</p>
-<p><strong>表3：用户可自行上传容量在调整前后的变化（数据出自B站长文《123云盘这次，踩雷区了》）</strong></p>
-<table>
-<thead>
-<tr>
-<th align="left">用户档位</th>
-<th align="left">调整前自主上传容量</th>
-<th align="left">调整后自主上传容量</th>
-<th align="left">溯源</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">新免费用户</td>
-<td align="left">2TB</td>
-<td align="left">50GB</td>
-<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
-</tr>
-<tr>
-<td align="left">新VIP用户</td>
-<td align="left">22TB</td>
-<td align="left">1TB</td>
-<td align="left">该长文口径，本轮检索未获第二个独立来源交叉验证</td>
-</tr>
-<tr>
-<td align="left">新SVIP用户</td>
-<td align="left">102TB</td>
-<td align="left">2TB</td>
-<td align="left"><sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup></td>
-</tr>
-</tbody></table>
 <p>退款为什么不足以平息争议，B站长文里那条评论给出了答案：多年会员的钱已经交了，文件也已经搬进来了，现在使用条件变了，即便能退款，整理和迁移花掉的时间也无法计算<sup><a href="https://m.163.com/dy/article/L82ITOUJ0531BB1N.html">网易</a></sup>。这是一种典型的&quot;沉没成本加迁移成本&quot;结构——退给用户的只是剩余服务期的对价，用户付出的却是把数十TB文件重新分类、下载、再上传另一块盘的劳动与时间。<a href="%E8%BF%81%E7%A7%BB%E6%88%90%E6%9C%AC%E5%9C%A8%E6%9C%AC%E6%AC%A1%E4%BA%8B%E4%BB%B6%E4%B8%AD%E5%B9%B6%E9%9D%9E%E6%8A%BD%E8%B1%A1%E6%8B%85%E5%BF%A7%E3%80%82%E8%87%B4%E6%AD%89%E5%A3%B0%E6%98%8E%E6%8F%90%E5%88%B0%EF%BC%8C%E5%9B%A0%E7%A8%8B%E5%BA%8F%E7%BC%BA%E9%99%B7%E5%AF%BC%E8%87%B4%E9%83%A8%E5%88%86%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E8%A2%AB%E8%AF%AF%E5%88%A4%E4%B8%BA%E4%B8%93%E4%B8%9A%E6%96%87%E4%BB%B6%EF%BC%8C%E4%BF%AE%E5%A4%8D%E7%A8%8B%E5%BA%8F%E6%89%A7%E8%A1%8C24%E5%B0%8F%E6%97%B6%E6%9C%AA%E5%A4%84%E7%90%86%E5%AE%8C%E6%AF%95%EF%BC%8C%E5%AE%98%E6%96%B9%E6%9C%80%E7%BB%88%E5%B0%86%E8%A2%AB%E8%AF%AF%E5%88%A4%E7%94%A8%E6%88%B7%E7%9A%84%E5%B7%B2%E7%94%A8%E4%B8%93%E4%B8%9A%E5%AE%B9%E9%87%8F%E9%87%8D%E7%BD%AE%E4%B8%BA%E6%A0%87%E5%87%86%E6%96%87%E4%BB%B6%3Csup%3E%5B%E8%85%BE%E8%AE%AF%E7%BD%91%5D(https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap)%3C/sup%3E%EF%BC%9B%E8%A7%84%E5%88%99%E6%9C%AC%E8%BA%AB%E8%BF%98%E8%A6%81%E6%B1%82%E5%8E%86%E5%8F%B2%E6%96%87%E4%BB%B6%E5%9C%A8%E5%86%8D%E6%AC%A1%E5%8F%91%E7%94%9F%E6%93%8D%E4%BD%9C%E6%97%B6%E6%8C%89%E6%96%B0%E8%A7%84%E5%88%99%E9%87%8D%E6%96%B0%E5%88%A4%E6%96%AD%E5%B1%9E%E6%80%A7%3Csup%3E%5Bdonews.com%5D(https://www.donews.com/news/1/6724009.html)%3C/sup%3E%EF%BC%8C%E8%BF%99%E6%84%8F%E5%91%B3%E7%9D%80%E7%94%A8%E6%88%B7%E9%9C%80%E8%A6%81%E5%8F%8D%E5%A4%8D%E6%A0%B8%E5%AF%B9%E6%96%87%E4%BB%B6%E5%BD%92%E5%B1%9E%E3%80%82">^migrate</a></p>
 <blockquote>
 <p>[!FAILURE] 用户不满的层次结构
@@ -225,8 +877,7 @@
 <p>:::folding{title=&quot;点开看：123云盘成本传导的两年时间线（媒体公开报道口径）&quot;}</p>
 <ul>
 <li>2025年11月26日：发布免费用户权益调整通知，免费提取流量由PC与网页端单日累计上限1GB，调整为全端单月累计上限10GB；在线播放音视频计入流量；取消游客下载100MB以内文件的免费权益。官方称打击对象是批量注册、破解接口、盗链建站的&quot;羊毛党&quot;，并用&quot;不是撑不住，是守得住&quot;作为说明标题。</li>
-<li>2025年12月12日：发布部分商品价格调整通知，理由是三网运营商实施跨网流量省间结算、跨网跨省流量结算成本显著上升，服务器硬盘与内存采购维护成本出现数倍增长，自2026年1月1日0时起调价；通知附带的结算规则显示跨网结算价拟按6000元/G执行。</li>
-<li>2026年4月30日：对三名B站用户发布严正声明并报案，指其恶意造谣诽谤<sup><a href="https://www.toutiao.com/article/7634474714823524891/">今日头条</a></sup>。</li>
+<li>2025年12月12日：发布部分商品价格调整通知，理由是三网运营商实施跨网流量省间结算、跨网跨省流量结算成本显著上升，服务器硬盘与内存采购维护成本出现数倍增长，自2026年1月1日0时起调价。</li>
 <li>2026年5月31日：发布沉默用户服务冻结通知，连续一年以上未登录的免费账号数据转入冷存并冻结30天，逾期未激活将被清理，付费会员不受影响。</li>
 <li>2026年6月4日：开通&quot;账号使用权过户&quot;官方服务，过户服务费按合同成交价的20%计收、最低100元。</li>
 <li>2026年8月：博主&quot;6GHz&quot;公开称花2999元购买5年期1PB空间加会员，仅上传18TB摄影素材即以触发风控为由被停用账号，客服要求加钱升级商用版，当事人向市场监管部门投诉并获受理；同容量方案此后报价降至2699元10年。</li>
@@ -239,10 +890,64 @@
 <p>[!NOTE] 两条账不能互相抵
 成本上升解释的是&quot;为什么要改&quot;，不解释&quot;为什么可以不打招呼就改&quot;。存储芯片涨价是行业共同面对的约束，同期各家网盘的处理方式并不相同；把成本压力直接等同于调整程序的正当性，是平台侧叙事里最容易滑过去的一步。</p>
 </blockquote>
+<h3>3.3 用户视角的重算：这些规则落到你的文件上是什么后果</h3>
+<p>前面几节讲的是平台的账。换成用户的位置，双空间真正改变的是四件事：自己的文件和别人转存的文件不再共用一份额度；单文件超过10GB就落入更贵的池子；文件是否&quot;只有你持有&quot;会动态改变归属；转存时要同时通过两块空间的容量判定。把这四件事摊到常见文件上，结果如下。</p>
+<p><strong>表5：常见文件在双空间规则下的归属与用户后果</strong></p>
+<table>
+<thead>
+<tr>
+<th align="left">你的文件类型</th>
+<th align="left">落在哪块空间</th>
+<th align="left">判定依据</th>
+<th align="left">用户后果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">手机相册原画质备份</td>
+<td align="left">专业空间</td>
+<td align="left">用户独自存储的文件计入专业空间<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup></td>
+<td align="left">免费档50GB，开通会员也只有1TB到3TB，备份需求大的账号会先撑不住</td>
+</tr>
+<tr>
+<td align="left">相机原片、剪辑工程、加密备份</td>
+<td align="left">专业空间</td>
+<td align="left">独占文件与大于10GB的超大文件都计入专业空间<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup></td>
+<td align="left">单个大文件就可能吃掉大半额度，标准空间剩多少都帮不上</td>
+</tr>
+<tr>
+<td align="left">热门影视、软件安装包这类转存资源</td>
+<td align="left">标准空间</td>
+<td align="left">转存自他人的文件计入标准空间，重复文件不计容量<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup></td>
+<td align="left">这类用法几乎不受影响</td>
+</tr>
+<tr>
+<td align="left">直链、图床、开发者工具视频转码产生的文件</td>
+<td align="left">专业空间</td>
+<td align="left">公告把这三类功能产生的文件划入专业空间<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>；9月27日群内答疑补充，网盘内播放视频的自动转码不算，播放不多占容量（一手记录）</td>
+<td align="left">做图床、挂直链的人成本模型被改写；普通在线看片不受这一条影响</td>
+</tr>
+<tr>
+<td align="left">监控录像、直播录屏、商用素材</td>
+<td align="left">专业空间</td>
+<td align="left">致歉声明把这类共有率极低的需求单列为调整动因<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>；9月27日群内答疑称专业空间允许商用、采用两地三副本冗余（一手记录）</td>
+<td align="left">原本违反旧规则、有被风控风险的用途，现在有了明码标价的合规通道</td>
+</tr>
+<tr>
+<td align="left">回收站文件与重复文件</td>
+<td align="left">不占容量</td>
+<td align="left">标准空间沿用重复文件与回收站文件不计容量的机制<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup></td>
+<td align="left">这条老福利没有被取消，仍是123云盘相对同行的省容量设计</td>
+</tr>
+</tbody></table>
+<p>表里最容易被低估的一行是&quot;转存双重判定&quot;。按9月27日的群内说明，转存时专业空间与标准空间的可用容量会同时校验，任一块不够就转存失败（一手记录）。这意味着一个标准空间还剩几十TB、专业空间已经满的账号，转存大文件照样会被拒。同类问题在9月26日有过一次权益回退：此前专业空间超额会连带锁死自有文件的下载，调整后允许用户把自己的文件下回去（一手记录）。</p>
+<p>用户的实际反馈已经走到投诉渠道。黑猫投诉平台上一条9月25日提交的投诉以&quot;123云盘会员空间被拆分，核心权益缩减要求退款答复&quot;为题，诉求写明要求就未在APP显著弹窗告知给予正式答复，并退还账号剩余权益，投诉人称已联系客服未获合理解决<sup><a href="https://sx.tousu.sina.cn/complaint/view/17401851582/?sld=00ff7892f475b61805d3f9ac3d88a44c">黑猫投诉</a></sup>。同一时间窗口里，一篇10月7日的免费网盘横评把123云盘写进&quot;改规则翻车，谨慎上车&quot;，提到评论区出现退款潮与下载限速的说法，给出的建议是观望、别急着充钱<sup><a href="https://m.163.com/dy/article/L8LA8790055616YL.html">网易</a></sup>。该横评属自媒体对比稿，文中对阿里云盘、夸克网盘的容量与速度描述本轮未逐一核验，只作为用户端情绪的旁证引用。</p>
+<p>把同行怎么处理规则调整摆在一起看，判断会更清楚。迅雷在2026年4月16日通知，连续一年未登录的非会员用户初始免费空间在2027年4月16日之后调整为10GB，超出部分的文件不删除，只保留下载和访问、不能再存新文件<sup><a href="https://www.163.com/dy/article/KULI4VP505119K9O.html">网易</a></sup>。百度网盘的做法是超365天未登录把2TB降为100GB且不可恢复，文件仍在，想存新的要扩容。阿里云盘与夸克网盘走账户冻结，冻结前会经短信、邮件提醒。123云盘在2026年5月31日的沉默用户通知里同样给了缓冲期，连续一年未登录转冷存冻结30天，但逾期之后数据被清理，付费会员在有效期内不受影响<sup><a href="https://www.ithome.com/0/957/721.htm">IT之家</a></sup>。同样是降本，几家的差别集中在两点：动不动用户的存量数据，以及告不告诉用户。</p>
+<p>:spoiler[用户在意的其实不是平台要不要降本，而是降本会不会动到我的数据和已经付过的钱，以及动手之前有没有人先说一声。]</p>
 <h2>4. 我的判断：这件事应该怎么读，用户该怎么办</h2>
 <h3>4.1 对公告与舆论双方的评估</h3>
 <p>就公告本身，我的判断分两层。商业逻辑层，这次调整站得住：去重技术决定的&quot;共享文件近乎免费、独占文件全额占用物理盘&quot;这一成本结构是客观事实，把两类文件分账管理，方向上与行业通行做法一致<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。产品程序层，这次调整站不住：生效时刻早于公告时刻、历史文件在用户不知情的情况下被重新归类、以文件大小作为一刀切的判定标尺，这三点合起来构成的是程序上的不合格，官方在9月28日的致歉里承认的四项不足也正是这四项<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。用一句更直白的话概括：把&quot;独占文件要单独算账&quot;这件事做成制度，是可以的；把它做成用户醒来才发现自己已经住进公摊房，是不可以的。</p>
 <p>就舆论，&quot;公摊&quot;标签精准但过于简化，它把合理的成本区分与不合理的告知方式一并否定掉了。97%这个数字在传播上是有效的，在技术上却偷换了单位——它比较的是&quot;名义面积&quot;与&quot;可使用面积&quot;，而标准空间本来就是被去重技术支持的共享池，用户过去实际也在共用它，并不是新出现的公摊。真正值得追问的不是&quot;公摊比例多高&quot;，而是下一次规则变更用户能否提前知道。UC头条在9月30日的评论里把这点写得很清楚：&quot;我关心的不是道歉，是下一次改规则谁先知道&quot;。这类反思比单纯的情绪声讨更有推动力，因为它指向可验证的机制改动，而不是要求平台撤销一项成本上必要的制度。</p>
+<p>把群内记录补进来之后，我的判断还要往下压一层：这次事件暴露的核心问题不是容量设计，而是沟通权力的不对称。误判容量归零重置发生在9月27日13:13，公开致歉在9月28日20:00挂出、20:57入群——官方内部对问题性质的判断比对外表述更早也更具体；致歉声明写&quot;责任在我们&quot;，同一只群从9月25日07:20起一直保持始终禁言。承认错误的文字和接受意见的姿态，没有对齐。这一段判断的前提是群内记录与原文一致，那份记录无法公开核验，若与实际情况有出入，推论要一并作废。反过来看9月26日那三条修正——超额不再锁死自有文件下载、播放预览不再触发空间判定、判定逻辑错误前一日已修——它们都不是制度层面的让步，只是把规则的不合理后果削掉，用户立刻能感到差别。这说明可谈的空间一直存在，只是入口由平台单方开关。</p>
 <p>:spoiler[把话说到底：这是一次把&quot;信息不对称红利&quot;公开化的定价改革，只是选错了执行顺序。]</p>
 <h3>4.2 给不同用户的选择建议与观察指标</h3>
 <p>判断去留的依据应当是个人的文件构成，而不是舆论声量。</p>
@@ -261,16 +966,24 @@
 </code></pre>
 <ul>
 <li><strong>以转存他人分享为主的免费用户</strong>：标准空间的机制没有变化，重复文件与回收站依旧不计容量，实际体验的变动有限<sup><a href="https://www.myzaker.com/article/6ab74be58e9f0930da5ac851">ZAKER新闻</a></sup>。真正影响这类用户的是流量侧的收紧，与双空间属于两条线。</li>
-<li><strong>以相机原片、加密备份、商用素材为主的付费用户</strong>：这是受损最重的一群。自有文件几乎必然落入专业空间，而专业空间的免费额度只有50GB，会员也仅到1TB或2TB<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。</li>
+<li><strong>以相机原片、加密备份、商用素材为主的付费用户</strong>：这是受损最重的一群。自有文件几乎必然落入专业空间，官方会员权益页上三档会员的专业空间分别是 VIP 1TB、SVIP 2TB、长期VIP 3TB，免费用户 50GB（10月9日截图）<sup><a href="https://mparticle.uc.cn/article_org.html?uc_param_str=frdnsnpfvecpntnwprdssskt#!wm_cid=776502841050159104!!wm_id=1d2d859a7da24a0187a2256ca80b9f80">uc.cn</a></sup>。这类用户即使标准空间剩余几十TB，专业空间耗尽即无法继续上传。</li>
 <li><strong>把123云盘当WebDAV与直链源的用户</strong>：直链、图床、视频转码服务产生的文件全部计入专业空间，且相同专业文件每份独立计算容量<sup><a href="https://www.donews.com/news/1/6724009.html">donews.com</a></sup>。这类用法的成本模型被规则直接改写，属于必须重算的一类。</li>
 </ul>
-<p>对还在观望的用户，我建议只盯三项验证指标，不必被每日的舆论噪音推着做决定：</p>
+<p>眼下有四件事值得做，和最终留不留无关。</p>
 <ul>
+<li><input disabled="" type="checkbox"> 打开云盘空间页，把专业空间的已用与总额抄下来，与官方会员权益页的额度对照，页面截图保留时间戳</li>
+<li><input disabled="" type="checkbox"> 数一下自己的文件里有多少个超过10GB、有多少属于只有自己持有的独占文件，这两个数字决定专业空间够不够用</li>
+<li><input disabled="" type="checkbox"> 重要数据在本地或另一块盘留一份副本。误判回滚与沉默账号清理这两件事都说明，单一云盘不该是唯一副本</li>
+<li><input disabled="" type="checkbox"> 需要退款的走在线客服登记，备好订单信息和剩余权益截图；公开投诉平台上已经有以未在APP显著弹窗告知为诉求的记录，协商不顺时这是一条备选路径</li>
+</ul>
+<p>对还在观望的用户，我建议盯四项验证指标，不必被每日的舆论噪音推着做决定：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 年费用户群的&quot;始终禁言&quot;是否解除。这是最容易观察的先导指标，比任何容量数字都更早说明沟通机制是否真的变了</li>
 <li><input disabled="" type="checkbox"> 专业空间赠送容量是否真的提高，且对老用户的倾斜有明确数字，而不是&quot;适当倾斜&quot;这类表述</li>
 <li><input disabled="" type="checkbox"> 空间归属规则是否取消文件大小这条标尺，直链与图床场景是否被单独豁免</li>
 <li><input disabled="" type="checkbox"> 重大规则调整前是否建立了提前公示与灰度验证机制，官方在致歉里承诺&quot;完善重大规则调整前的用户沟通和灰度验证机制&quot;<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup></li>
 </ul>
-<p>这三项在2026年11月前落地，则本次事件可视为一次被舆论修正的产品事故；若落地内容仍停留在容量数字的微调，则用户需要接受一个新的基本前提：在123云盘里，名义容量与可用容量是两件事，任何后续文件都应按这一前提估值。退款窗口按原支付渠道退还剩余服务期对应费用，是当下唯一可以立刻执行的止损手段<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
+<p>这四项在2026年11月前落地，则本次事件可视为一次被舆论修正的产品事故；若落地内容仍停留在容量数字的微调，则用户需要接受一个新的基本前提：在123云盘里，名义容量与可用容量是两件事，任何后续文件都应按这一前提估值。退款窗口按原支付渠道退还剩余服务期对应费用，是当下唯一可以立刻执行的止损手段<sup><a href="https://i.ifeng.com/c/8woLLQzD9gx">凤凰网</a></sup>。</p>
 <h2>核心参考文献</h2>
 <p><a href="https://www.sohu.com/a/1082873644_184641">全球首创网盘公摊，123云盘突然开始“赶客”_用户_文件_空间</a></p>
 <p><a href="https://i.ifeng.com/c/8woLLQzD9gx">123云盘调整空间规则后引发用户不满，官方致歉并披露优化方向_凤凰网</a></p>
@@ -292,15 +1005,17 @@
 <p><a href="https://bbs.kafan.cn/thread-2295792-1-1.html">网友吐槽全球首创有公摊网盘！123云盘道歉：优化空间归属规则、支持退款_IT资讯区_资讯专区 卡饭论坛 - 互助分享 - 大气谦和!</a></p>
 <p><a href="https://i.ifeng.com/c/8whi6AdA4Gx">123云盘新增专业空间：原空间更名为标准空间，老用户免费配额为50GB + 2TB_凤凰网</a></p>
 <p><a href="https://view.inews.qq.com/k/20260929A089G000?openApp=false&web_channel=wap">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款</a></p>
-<p><a href="https://www.bilibili.com/video/BV17avCeeEqc/">突发！123云盘被三大运营商标记为诈骗网站</a></p>
-<p><a href="https://news.qq.com/rain/a/20260430A06T8700">123 云盘声明称 3 名B站用户恶意造谣诽谤，已向公安机关报案_腾讯新闻</a></p>
-<p><a href="https://tieba.baidu.com/p/9321302158">123的离线下载功能怎么样呀【123云盘吧】_百度贴吧</a></p>
 <p><a href="http://t.cj.sina.com.cn/articles/view/5828676220/15b6a8a7c02001le5e">全球首创网盘公摊，123云盘突然开始“赶客”__财经头条__新浪财经</a></p>
 <p><a href="https://m.163.com/dy/article/L83KMIN10511BE1V.html?spss=adap_pc">全球首创网盘公摊，123云盘突然开始“赶客”|哈希值|服务器|腾讯版小龙虾|赶客_手机网易网</a></p>
 <p><a href="https://www.163.com/dy/article/KRORUV0605119K9O.html">又一良心网盘撑不住了，正式涨价！|云存储|运营商|满血版模型_网易订阅</a></p>
 <p><a href="https://www.163.com/dy/article/KGTU737J051288MF.html">不跑路但涨价！运营商新规+硬件暴涨“双杀”，云盘更难了？|云存储|流量包|蓝屏事件_网易订阅</a></p>
 <p><a href="https://www.acfun.cn/a/ac48881070?_t=t">网友吐槽全球首创有公摊网盘！123云盘道歉:支持退款 - AcFun弹幕视频网 - 认真你就输啦 (?ω?)ノ- ( ゜- ゜)つロ</a></p>
 <p><a href="https://www.123pan.com/Notice/?id=570152">关于近期“专业空间” 升级调整的说明与致歉</a></p>
+<p><a href="https://sx.tousu.sina.cn/complaint/view/17401851582/?sld=00ff7892f475b61805d3f9ac3d88a44c">123云盘会员空间被拆分，核心权益缩减要求退款答复（黑猫投诉）</a></p>
+<p><a href="https://m.163.com/dy/article/L8LA8790055616YL.html">2026免费网盘横评：谁真不限速不坑人</a></p>
+<p><a href="https://www.163.com/dy/article/KULI4VP505119K9O.html">网盘「大地震」，长期不登录数据清零（迅雷、百度、阿里、夸克对照）</a></p>
+<p><a href="https://www.ithome.com/0/957/721.htm">123 云盘：将对长期未登录的免费用户进行服务冻结</a></p>
+<p>两处一手材料的补充说明：官方会员权益页数值取自用户在2026年10月9日于123云盘手机端拍摄的截图；官方年费用户群的各条@全体成员公告由群成员提供原文，属不可公开核验的一手记录，文中凡引用该来源均已标注。</p>
 ]]></content:encoded>
       <category>Demo</category>
       <dc:creator>moara</dc:creator>
@@ -872,9 +1587,104 @@ $$</p>
 </code></pre>
 </details>
 
-<h2>15. 图集标签（可选 links）</h2>
+<h2>15. 图集</h2>
+<h3>15.1 新（主）语法：<code>:::gallery</code> 容器包裹 <code>![说明文字](图片地址)</code> 行</h3>
+<p>与折叠、选项卡同一套容器指令（栈式解析，支持嵌套）。每行 <code>![说明文字](地址)</code> 的说明文字渲染为图片下方的说明浮层；<code>{title=&quot;…&quot;}</code> 可自定义标题栏：</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/lake-m/600/400" alt="湖泊与山脉">
+<img src="https://picsum.photos/seed/forest-m/600/750" alt="绿色森林中的小路">
+<img src="https://picsum.photos/seed/sunset-m/600/600" alt="海边日落">
+<img src="https://picsum.photos/seed/city-m/600/800" alt="城市夜景">
+:::</p>
+<p>:::gallery{title=&quot;四时之景&quot;}
+<img src="https://picsum.photos/seed/spring-m/600/500" alt="春 · 樱">
+<img src="https://picsum.photos/seed/summer-m/600/600" alt="夏 · 海">
+<img src="https://picsum.photos/seed/autumn-m/600/700" alt="秋 · 山">
+<img src="https://picsum.photos/seed/winter-m/600/400" alt="冬 · 雪">
+:::</p>
+<h3>15.2 提示框内的图集</h3>
+<blockquote>
+<p>[!NOTE] 提示框内图集
+图集可出现在全部 13 种提示框内：</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/note-m/600/600" alt="提示框内 · 蓝湖">
+<img src="https://picsum.photos/seed/note2-m/600/800" alt="提示框内 · 云杉">
+:::</p>
+</blockquote>
+<h3>15.3 折叠面板内的图集</h3>
+<p>:::folding{title=&quot;展开查看折叠面板内的图集&quot;}</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/fold-m/600/500" alt="折叠内 · 晨雾">
+<img src="https://picsum.photos/seed/fold2-m/600/650" alt="折叠内 · 谷仓">
+:::</p>
+<p>:::</p>
+<h3>15.4 折叠面板嵌套折叠面板内的图集</h3>
+<p>:::folding{title=&quot;外层折叠（内有第二层）&quot;}</p>
+<p>内层折叠再嵌一层图集：</p>
+<p>:::folding{title=&quot;内层折叠（图集在此层）&quot;}</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/deep-m/600/700" alt="双层折叠内 · 溪流">
+<img src="https://picsum.photos/seed/deep2-m/600/450" alt="双层折叠内 · 苔原">
+:::</p>
+<p>:::</p>
+<p>:::</p>
+<h3>15.5 折叠面板内提示框内的图集</h3>
+<p>:::folding{title=&quot;折叠内提示框内图集&quot;}</p>
+<blockquote>
+<p>[!TIP] 折叠面板内提示框
+提示框位于折叠面板内，图集位于提示框内：</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/tip-m/600/600" alt="折叠内提示框内 · 极光">
+<img src="https://picsum.photos/seed/tip2-m/600/750" alt="折叠内提示框内 · 星轨">
+:::</p>
+</blockquote>
+<p>:::</p>
+<h3>15.6 选项卡内的图集</h3>
+<p>::::tabs
+:::tab{title=&quot;风景&quot;}</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/tab1-m/600/600" alt="选项卡 · 山脊">
+<img src="https://picsum.photos/seed/tab2-m/600/800" alt="选项卡 · 湖畔">
+:::</p>
+<p>:::
+:::tab{title=&quot;街拍&quot;}</p>
+<p>:::gallery
+<img src="https://picsum.photos/seed/tab3-m/600/500" alt="选项卡 · 巷口">
+<img src="https://picsum.photos/seed/tab4-m/600/650" alt="选项卡 · 骑楼">
+:::</p>
+<p>:::
+::::</p>
+<h3>15.7 属性控制与链接包裹（v1.2.0）</h3>
+<p><code>notitle</code>（或 <code>title=&quot;&quot;</code>）隐藏标题栏；<code>caption=&quot;false&quot;</code> / <code>nocaption</code> 关闭说明浮层；<code>caption-color=&quot;…&quot;</code> 调整说明文字颜色（图与文字撞色时用）；<code>[![说明](图)](链接)</code> 渲染为整格锚点（协议 v4：点击图片开灯箱，跳转链接显示在灯箱「i」信息面板）；长说明自动两行截断加省略号：</p>
+<p>:::gallery{notitle}
+<img src="https://picsum.photos/seed/nt1-m/600/600" alt="无标题栏 · 湖">
+<img src="https://picsum.photos/seed/nt2-m/600/800" alt="无标题栏 · 林">
+:::</p>
+<p>:::gallery{title=&quot;关闭说明浮层&quot; caption=&quot;false&quot;}
+<img src="https://picsum.photos/seed/nc1-m/600/750" alt="说明被关闭 1">
+<img src="https://picsum.photos/seed/nc2-m/600/400" alt="说明被关闭 2">
+:::</p>
+<p>:::gallery{title=&quot;金色说明文字&quot; caption-color=&quot;#ffd54f&quot;}
+<img src="https://picsum.photos/seed/gold1-m/600/500" alt="金色 · 沙丘">
+<img src="https://picsum.photos/seed/gold2-m/600/650" alt="金色 · 麦田">
+:::</p>
+<p>:::gallery{title=&quot;链接包裹与超长说明截断&quot;}
+<a href="https://unsplash.com"><img src="https://picsum.photos/seed/lw1-m/600/600" alt="点击跳转 Unsplash"></a>
+<a href="https://github.com"><img src="https://picsum.photos/seed/lw2-m/600/800" alt="点击跳转 GitHub"></a>
+<img src="https://picsum.photos/seed/long-m/600/400" alt="这是一段非常长的说明文字用来演示说明浮层的自动截断行为超过两行后应当以省略号收尾不再继续向下扩张">
+:::</p>
+<p>属性可任意组合（空格分隔，写在同一个 <code>{}</code> 内）；<code>notitle</code> 与 <code>title</code> 同用时 notitle 优先；浮层关闭时 <code>caption-color</code> 自然无效：</p>
+<p>:::gallery{notitle caption-color=&quot;#7CFCB0&quot;}
+<img src="https://picsum.photos/seed/cb1-m/600/600" alt="组合 · 无标题且青色浮层 1">
+<img src="https://picsum.photos/seed/cb2-m/600/800" alt="组合 · 无标题且青色浮层 2">
+:::</p>
+<p>:::gallery{title=&quot;链接 + 颜色组合&quot; caption-color=&quot;#ffd54f&quot;}
+<a href="https://unsplash.com"><img src="https://picsum.photos/seed/cb3-m/600/400" alt="组合 · 点击跳 Unsplash"></a>
+<img src="https://picsum.photos/seed/cb4-m/600/750" alt="组合 · 金色浮层普通格">
+:::</p>
+<h3>15.8 旧语法兜底（兼容旧文章）</h3>
 <p><gallery src="https://picsum.photos/seed/a/600/400, https://picsum.photos/seed/b/600/750, https://picsum.photos/seed/c/600/600, https://picsum.photos/seed/d/600/800" links="https://unsplash.com, https://github.com, , "></gallery></p>
-<p><code>links</code> 属性与 <code>src</code> 逐项对应：<strong>有链接的项</strong>跳转外链，<strong>空项</strong>维持灯箱预览。</p>
+<p>旧 <code>&lt;gallery src=&quot;…&quot;&gt;</code> 语法仍兼容渲染（无说明文字）。<code>links</code> 属性与 <code>src</code> 逐项位置对应：<strong>有链接的项</strong>点击开灯箱后于「i」面板显示跳转链接，<strong>空项</strong>维持灯箱预览。新文章请使用 15.1 的容器语法。</p>
 <h2>16. 长代码块自动折叠</h2>
 <p>超过 300px 高的代码块自动折叠，底部出现展开按钮：</p>
 <pre><code class="language-ts">// 长代码块折叠演示：mac-code-block 超高自动收起
@@ -1030,9 +1840,9 @@ main();
 <tr>
 <td>图集 gallery</td>
 <td align="center">✓ §15</td>
-<td align="center">—</td>
-<td align="center">—</td>
-<td align="center">—</td>
+<td align="center">✓ §15</td>
+<td align="center">✓ §15</td>
+<td align="center">✓ §15</td>
 <td align="center">—</td>
 </tr>
 </tbody></table>
@@ -1064,6 +1874,19 @@ pnpm build
 export const twice = (x) =&gt; fold(x) * 2;
 </code></pre>
 <p>:::</p>
+<h2>19. 音乐卡片（新语法 v2）</h2>
+<h3>19.1 英文·逐行歌词（无翻译）</h3>
+<p><music title="Blazing Heart (英文版)" artist="Chrissy Costanza、HOYO-MiX" src="music/Chrissy Costanza、HOYO-MiX - Blazing Heart (英文版).mp3" lrc="music/Chrissy Costanza、HOYO-MiX - Blazing Heart (英文版).lrc"></music></p>
+<h3>19.2 英文·逐字歌词 + 中文翻译</h3>
+<p><music title="唯有追赶风的方向 (Only By Chasing the Wind)" artist="知更鸟、HOYO-MiX、Chevy" src="music/知更鸟、HOYO-MiX、Chevy - 唯有追赶风的方向 (Only By Chasing the Wind).mp3" lrc="music/知更鸟、HOYO-MiX、Chevy - 唯有追赶风的方向 (Only By Chasing the Wind).lrc"></music></p>
+<h3>19.3 日语·逐行歌词 + 翻译</h3>
+<p><music title="てねてね" artist="悒うつぼ" src="music/悒うつぼ - てねてね.mp3" lrc="music/悒うつぼ - てねてね.lrc"></music></p>
+<h3>19.4 中文·增强逐字歌词（无翻译）</h3>
+<p><music title="天生鬼才" artist="萧敬腾、HOYO-MiX" src="music/萧敬腾、HOYO-MiX - 天生鬼才.mp3" lrc="music/萧敬腾、HOYO-MiX - 天生鬼才.lrc"></music></p>
+<h3>19.5 法语·增强逐字歌词 + 中文翻译</h3>
+<p><music title="轻涟 La vaguelette" artist="HOYO-MiX" src="music/HOYO-MiX - 轻涟 La vaguelette.mp3" lrc="music/HOYO-MiX - 轻涟 La vaguelette.lrc"></music></p>
+<h3>19.6 旧语法兜底（music.json）</h3>
+<p><music id="cry"></music></p>
 ]]></content:encoded>
       <category>Demo</category>
       <dc:creator>moara</dc:creator>

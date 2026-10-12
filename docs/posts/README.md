@@ -91,7 +91,9 @@ pnpm add moara
 - frontmatter 加 `math: true` 启用 KaTeX 数学公式（`$...$` / `\(...\)` 行内，`$$...$$` / `\[...\]` 块级，支持 aligned 等环境）
 - 链接包裹的图片 `[![alt](img)](url)`：图片点击开灯箱，仅右上角角标跳转（新标签页）
 - `<gallery src="url1, url2" links="link1, link2">` — 图集（`links` 可选，逐项对应，空项维持灯箱预览）
-- `<music id="xxx"></music>` — 音乐卡片
+- `<music title="标题" artist="歌手" src="music/xxx.mp3" lrc="music/xxx.lrc"/>` — **音乐卡片 v2（主语法）**：自包含属性，无需登记 music.json；`src`/`lrc` 为相对 `raw-posts.945426.xyz` 根的路径或绝对 URL，均可省略（`lrc` 省略=纯音乐）；`title`/`artist` 缺省回落歌词 `[ti:]`/`[ar:]` 标签。可选 `tlrc="music/xxx.zh.lrc"` 指定独立翻译歌词文件（翻译行只展示不高亮）
+- 歌词兼容：标准逐行 / `<mm:ss.xxx>` 尖括号逐字（增强）/ 行内 `[mm:ss.xxx]` 方括号逐字 / 同时间戳交错翻译行（自动识别）/ `[ti][ar][al][offset]` 标签 / 2~3 位毫秒 / 同文件混排格式
+- `<music id="xxx"></music>` — 音乐卡片旧语法（对旧文章兜底，查 `music/music.json`）
 - `<ul class="todo-list">...</ul>` — 待办清单
 - `<details><summary>原生折叠</summary>` + 空行 + 内容 + `</details>` — 原生折叠（与 :::folding 视觉统一）
 - `<span class='spoiler'>隐藏内容</span>` — 旧版黑幕写法（仍兼容，推荐 `:spoiler[]`）

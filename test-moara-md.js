@@ -236,5 +236,23 @@ console.log(`${pass + fail} 项断言：${pass} 通过，${fail} 失败`);
     t('图集：超长说明仍完整输出（截断由 CSS line-clamp 承担）', render(':::gallery\n![很长很长很长很长很长很长](https://e/a.png)\n:::').includes('很长很长很长很长很长很长</span></figcaption>'));
 }
 
+
+/* ═══ v1.2.11 音乐卡片新语法：标签属性透传 ═══ */
+{
+    const card = '<music title="天生鬼才" artist="萧敬腾、HOYO-MiX" src="music/萧敬腾、HOYO-MiX - 天生鬼才.mp3" lrc="music/萧敬腾、HOYO-MiX - 天生鬼才.lrc"></music>';
+    const h = render(card);
+    t('音乐：新语法成对标签原样透传', h.includes('src="music/萧敬腾、HOYO-MiX - 天生鬼才.mp3"') && h.includes('lrc="') && h.includes('title="天生鬼才"') && h.includes('artist='));
+    const sc = render('<music title="轻涟" src="music/x.mp3" lrc="music/x.lrc"/>');
+    t('音乐：自闭合简写规范化为成对', sc.includes('<music title="轻涟" src="music/x.mp3" lrc="music/x.lrc"></music>'));
+    const uc = render('<music src="music/y.mp3">');
+    t('音乐：未闭合自动补全', uc.includes('<music src="music/y.mp3"></music>'));
+    const old = render('<music id="cry"></music>');
+    t('音乐：旧语法 id 兜底透传', old.includes('<music id="cry"></music>'));
+    const mix = render('前文\n\n<music title="A" src="a.mp3" lrc="a.lrc"/>\n\n后文');
+    t('音乐：markdown 上下文不污染标签', mix.includes('<music title="A" src="a.mp3" lrc="a.lrc"></music>') && mix.includes('前文') && mix.includes('后文'));
+    const attr = render('<music src="music/z.mp3" tlrc="music/z.zh.lrc"/>');
+    t('音乐：tlrc 翻译歌词属性透传', attr.includes('tlrc="music/z.zh.lrc"'));
+}
+
 console.log((pass + fail) + ' 项断言：' + pass + ' 通过，' + fail + ' 失败');
 process.exit(fail ? 1 : 0);
