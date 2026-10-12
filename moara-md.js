@@ -477,7 +477,7 @@
 
         var cells = items.map(function (it) {
             var cap = (!captionOff && it.alt)
-                ? '\n<figcaption class="gallery-post-caption"' + capStyle + '>' + escapeHtml(it.alt) + '</figcaption>'
+                ? '\n<figcaption class="gallery-post-caption"' + capStyle + '><span class="gallery-post-caption-text">' + escapeHtml(it.alt) + '</span></figcaption>'
                 : '';
             var img = '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">';
             if (it.link) {
