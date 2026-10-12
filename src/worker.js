@@ -61,12 +61,25 @@ async function serveRange(env, url, rangeHeader) {
   const full = await env.ASSETS.fetch(new Request(url, { method: "GET" }));
   if (!full.ok) return full;
 
-  const total = Number(full.headers.get("Content-Length") || 0);
-  if (!total) return withAssetCors(full);
+  /* ASSETS 绑定响应为流式、不带 Content-Length 头（实测 wrangler dev 探针 CL=null），
+     故以实际读取的字节长度作为总长，不能依赖响应头 */
+  const buf = await full.arrayBuffer();
+  const total = buf.byteLength;
 
-  /* 仅处理常规单区间；多区间等非常规格式回退整档 200 */
+  const baseHeaders = {
+    "Content-Type": full.headers.get("Content-Type") || "application/octet-stream",
+    "Access-Control-Allow-Origin": full.headers.get("Access-Control-Allow-Origin") || "*",
+  };
+  const etag = full.headers.get("ETag");
+  if (etag) baseHeaders["ETag"] = etag;
+  const cacheControl = full.headers.get("Cache-Control");
+  if (cacheControl) baseHeaders["Cache-Control"] = cacheControl;
+
+  /* 仅处理常规单区间；多区间/空区间等非常规格式回退整档 200 */
   const m = /^bytes=(\d*)-(\d*)$/.exec(rangeHeader.trim());
-  if (!m || (m[1] === "" && m[2] === "")) return withAssetCors(full);
+  if (!m || (m[1] === "" && m[2] === "") || !total) {
+    return new Response(buf, { status: 200, headers: baseHeaders });
+  }
 
   let start, end;
   if (m[1] === "") {
@@ -82,28 +95,21 @@ async function serveRange(env, url, rangeHeader) {
   if (start > end || start >= total) {
     return new Response(null, {
       status: 416,
-      headers: {
+      headers: Object.assign({}, baseHeaders, {
         "Content-Range": "bytes */" + total,
         "Accept-Ranges": "bytes",
-        "Access-Control-Allow-Origin": "*",
-      },
+      }),
     });
   }
 
-  const headers = new Headers({
-    "Content-Type": full.headers.get("Content-Type") || "application/octet-stream",
-    "Content-Length": String(end - start + 1),
-    "Content-Range": "bytes " + start + "-" + end + "/" + total,
-    "Accept-Ranges": "bytes",
-    "Access-Control-Allow-Origin": "*",
+  return new Response(buf.slice(start, end + 1), {
+    status: 206,
+    headers: Object.assign({}, baseHeaders, {
+      "Content-Length": String(end - start + 1),
+      "Content-Range": "bytes " + start + "-" + end + "/" + total,
+      "Accept-Ranges": "bytes",
+    }),
   });
-  const etag = full.headers.get("ETag");
-  if (etag) headers.set("ETag", etag);
-  const cacheControl = full.headers.get("Cache-Control");
-  if (cacheControl) headers.set("Cache-Control", cacheControl);
-
-  const buf = await full.arrayBuffer();
-  return new Response(buf.slice(start, end + 1), { status: 206, headers });
 }
 
 /* 兜底：经 Worker 转发的资产响应若未应用 _headers 的全局 ACAO 则补齐
