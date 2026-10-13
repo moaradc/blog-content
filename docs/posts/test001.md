@@ -6,7 +6,6 @@ author: moara
 category: ["Demo"]
 tags: ["Demo", "Markdown"]
 desc: 沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。
-math: true
 ---
 本文是博客 Markdown 扩展语法的**完整演示**：先逐一列举全部组件，再给出**嵌套组合矩阵**。所有组件由 `moara-md` 扩展层渲染（浏览器端与 `/posts/<id>` 直出共用同一实现，产物一致）。
 
@@ -781,6 +780,14 @@ console.log('details > code');
 :::gallery{notitle}
 ![无标题栏 · 湖](https://picsum.photos/seed/nt1-m/600/600)
 ![无标题栏 · 林](https://picsum.photos/seed/nt2-m/600/800)
+:::
+
+:::gallery{title="pixiv"}
+![](https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0l000d7w32xne4num52gzj2DIYPAdYOAdeyDpxPDqJy.webp)
+![](https://1814804152.cdn.123clouddisk.com/1814804152/ymjew503t0m000d7w32y3ocobrkotd34DIYPAdYOAdeyDpxPDqJy.jpg)
+![](https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0l000d7w33g3oqn4u6j5t0eDIYPAdYOAdeyDpxPDqJy.webp)
+![](https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0m000d7w33gwac32qm5i6zkDIYPAdYOAdeyDpxPDqJy.webp)
+![](https://1814804152.cdn.123clouddisk.com/1814804152/yk6baz03t0n000d7w33hoq5x5d1rvsr6DIYPAdYOAdeyDpxPDqJy.webp)
 :::
 
 :::gallery{title="关闭说明浮层" caption="false"}
