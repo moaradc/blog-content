@@ -1,15 +1,11 @@
 /* moara-md.js — 沫然Blog Markdown 扩展层（浏览器 / Node 双端共享）
- * 同一份实现同时供两条渲染管线使用，保证产物一致：
- * - 浏览器端：/article?id=<> 页面由 article.js 调用（marked v15 前置变换）
- * - Node 端 ：blog-content 仓 generate-article-html.js require 本文件（/posts/<id> SEO 直出 HTML）
- * 与本文件保持同步的副本：blog-content 仓根目录 moara-md.js（复制即用，两仓无共享子模块机制）
- *
- * v1.1.0：图集新（主）语法 :::gallery{title="…"} 包裹 ![说明文字](图片地址) 行；
- *         与 folding/tabs 同套栈式容器解析，支持嵌套（提示框/折叠/选项卡）。
- *         旧 <gallery src="…"> 语法保留兜底（浏览器端由 article.js 增强）。
- * v1.2.0：图集属性扩展 notitle / caption="false" / nocaption / caption-color；
- * v1.2.2：链接包裹格对齐站点协议（补 img-link-wrap 类；点击开灯箱、链接在 i 面板）；
- *         支持 [![说明](图)](链接) 整格锚点跳转；说明浮层 CSS 两行截断。 */
+ * 同一份实现供两条渲染管线使用，保证产物一致：
+ * - 浏览器端：article.js（marked 前置变换）
+ * - Node 端：blog-content 仓 generate-article-html.js（SEO 直出）
+ * 两仓各持副本，改动需手动同步。
+ * v1.1：:::gallery{…} 包裹 ![说明](图) 行（栈式解析、可嵌套）；旧 <gallery src> 兜底
+ * v1.2：notitle/nocaption/caption-color；[![](图)](链接) 整格锚点；说明浮层两行截断
+ * v1.2.3：postprocess 给内容图片统一补 loading="lazy" / decoding="async"（幂等） */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
@@ -19,7 +15,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
     'use strict';
 
-    var VERSION = '1.2.2';
+    var VERSION = '1.2.3';
 
     /* 基础工具 */
 
@@ -36,7 +32,7 @@
         return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     }
 
-    /** 解析指令属性串 {a="1" b='2' c=3 flag}，布尔旗标（无 =）置 true；返回普通对象 */
+    /** 属性串解析：{a="1" b='2' c=3 flag}，旗标（无 =）置 true */
     function parseAttrs(raw) {
         var attrs = {};
         if (!raw) return attrs;
@@ -52,7 +48,7 @@
         return attrs;
     }
 
-    /** 布尔属性解析：旗标 / ="true" → true；="false" → false；缺省或未识别值 → undefined（供面板级继承组级语义） */
+    /** 布尔解析：旗标 / "true"→true，"false"→false，缺省或未识别→undefined（供面板继承） */
     function attrBool(v) {
         if (v === true) return true;
         if (v === false) return false;
@@ -97,12 +93,12 @@
         highlight: 'important'
     };
 
-    /* 标记行语法：[!TYPE] + {attrs}（尾缀前后均可）+ 可选折叠尾缀 + 可选自定义标题 */
+    /* 标记行：[!TYPE] {attrs} 折叠尾缀(±) {attrs} 自定义标题 */
     var ADM_MARKER_RE = /^\[!(\w+)\][ \t]*(?:\{([^}]*)\})?[ \t]*([+-]?)[ \t]*(?:\{([^}]*)\})?[ \t]*(.*)$/;
 
     /* ① 代码区摘离 / ⑦ 归还 */
 
-    /* 围栏 info 串解析：```lang title="..."；title marked 默认丢弃 → 取出后重写为携带 data-title 的<pre><code> HTML（marked 视作 html 块原样透传），标题栏渲染由前端完成。无 title 的围栏原样归还 marked */
+    /* ```lang title="…"：title 取出重写为 <pre data-title>；无 title 的围栏原样归还 */
     function parseCodeFenceInfo(raw) {
         var rest = String(raw || '').trim();
         if (!rest) return null;
@@ -127,20 +123,19 @@
             + escapeHtml(body) + '</code></pre>';
     }
 
-    /** 摘离围栏代码块与行内 code span，防止其内容被后续变换误处理。占位符含随机 nonce，避免与正文同形文本碰撞；还原用 split/join，规避 String.replace 对 $ 等替换特殊字符的二次解释 */
+    /** 摘离围栏与行内代码防误处理；nonce 占位符 + split/join 还原（规避 $ 特殊字符） */
     function extractCode(text, ctx) {
         var codeSpans = [];
         var nonce = makeNonce();
         var ph = function (i) { return '%%MD_CODE_' + nonce + '_' + i + '%%'; };
 
-        /* fenced code block：```lang 或 ~~~lang 起始，同串围栏闭合。info 串带 title 时重写为 <pre data-title> 原生 HTML 块 */
         var fenceRegex = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n[ \t]*\1[ \t]*(?=\n|$)/gm;
         text = text.replace(fenceRegex, function (match) {
             codeSpans.push(rewriteFenceInfo(match));
             return ph(codeSpans.length - 1);
         });
 
-        /* 行内 code span：成对 1-2 个反引号、不从更长反引号串中间起配。3+ 反引号串留给围栏语义：否则引用块内（> 前缀）的 ``` 围栏会被误配对成跨行行内代码，占位符吞掉 > 前缀后围栏失衡，殃及后续顶层指令 */
+        /* 行内 code：成对 1-2 个反引号，3+ 留给围栏（防引用块内围栏误配对） */
         var inlineCodeRegex = /(?<!`)(`{1,2})(?!`)((?:[^`]|\n(?!\n))+?)\1(?!`)/g;
         text = text.replace(inlineCodeRegex, function (match) {
             codeSpans.push(match);
@@ -161,7 +156,7 @@
         return out;
     }
 
-    /* ② 遗留自定义标签保护（与旧版行为等价，旧语法仅作兼容降级） */
+    /* ② 遗留标签保护（旧语法兼容降级） */
     function protectLegacyTags(text, ctx) {
         var placeholders = ctx.customTags || (ctx.customTags = []);
         var nonce = ctx.tagNonce || (ctx.tagNonce = makeNonce());
@@ -175,11 +170,11 @@
         /* 成对自定义标签：<music id="x"></music> / <gallery src="a, b"></gallery> */
         text = text.replace(/<(music|gallery)\b[^>]*>[\s\S]*?<\/\1>/gi, push);
 
-        /* 裸写法防御：<gallery ...> 未闭合会吞掉后续全部内容（HTML 解析将其后元素视为子节点），自闭合 / 裸开标签统一补闭合（成对已在上一步换为占位符，此处剩余必为裸标签）。 */
+        /* 裸标签防御：未闭合会吞掉后续内容，统一补闭合 */
         text = text.replace(/<(music|gallery)\b([^>]*?)\s*\/>/gi, '<$1$2></$1>');
         text = text.replace(/<(music|gallery)\b([^>]*?)>(?!<\/\1>)/gi, '<$1$2></$1>');
 
-        /* 旧版折叠框整块 HTML（已废弃，此处仅为防截断保护；渲染走旧 CSS） */
+        /* 旧版折叠框整块（防截断保护） */
         text = text.replace(/<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, push);
 
         /* 行内黑幕 <span class='spoiler'>…</span> */
@@ -234,7 +229,6 @@
                     var customTitle = marker[5].trim();
 
                     if (!ADM_TYPES[type]) {
-                        /* 未知类型：原样输出引用块 */
                         if (opts && opts.onWarn) opts.onWarn('[moara-md] 未知 admonition 类型: ' + rawType);
                         out.push(lines.slice(i, j).join('\n'));
                         i = j;
@@ -245,7 +239,7 @@
                     var title = escapeHtml(customTitle || conf.label);
                     var inner = quote.slice(firstIdx + 1).join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
                     var hasBody = inner.trim() !== '';
-                    /* 无正文（单行式）为静态信息条：不可折叠、无 v 图标，尾缀 + / - 与 body 一并失去意义 */
+                    /* 无正文 → 静态信息条，不可折叠 */
                     var isCollapsible = hasBody;
                     var openByDefault = hasBody && collapse === '+';
 
@@ -275,7 +269,6 @@
                     );
                     i = j;
                 } else {
-                    /* 普通引用块：原样保留 */
                     out.push(lines.slice(i, j).join('\n'));
                     i = j;
                 }
@@ -295,12 +288,12 @@
     var LEAF_DIRECTIVES = ['video', 'linkcard', 'github'];
     /* 容器指令（三冒号及以上、需闭合围栏） */
     var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab', 'gallery'];
-    /* 无正文指令：三冒号形式同样自足（不消费闭合围栏，正文无意义）。文档约定：折叠块内建议使用 :: 叶子形式，避免围栏歧义。 */
+    /* 无正文指令：三冒号形式同样自足，不消费闭合围栏 */
     var BODYLESS_DIRECTIVES = ['video', 'linkcard', 'github'];
 
     var tabsUid = 0;
 
-    /** 渲染视频嵌入节点。attrs：type / id / url|src / poster / title / aspect */
+    /** 视频嵌入。attrs：type / id / url|src / poster / title / aspect */
     function renderVideo(attrs) {
         var type = String(attrs.type || '').toLowerCase();
         var id = String(attrs.id || '').trim();
@@ -331,7 +324,7 @@
         if (!src) return '';
 
         if (isIframe) {
-            /* 点击加载门面（lite-youtube-embed 协议）：首屏零 iframe 请求，点击后才注入真实播放器（autoplay=1） */
+            /* 点击加载门面：首屏零 iframe，点击后注入播放器 */
             var provider = /player\.bilibili\.com/.test(src) ? 'bilibili' : 'youtube';
             var pIcon = provider === 'bilibili' ? 'ri-bilibili-line' : 'ri-youtube-line';
             var pLabel = provider === 'bilibili' ? 'bilibili' : 'YouTube';
@@ -348,13 +341,13 @@
                 '</div>';
         }
 
-        /* 直链视频：裸 <video>，跟随原始尺寸（width:100% / height:auto 由 CSS 处理） */
+        /* 直链视频：裸 <video>（尺寸由 CSS 处理） */
         return '<video controls preload="metadata" playsinline src="' + escapeHtml(src) + '"' +
             (poster ? ' poster="' + escapeHtml(poster) + '"' : '') +
             (title ? ' title="' + escapeHtml(title) + '"' : '') + '></video>';
     }
 
-    /** 渲染链接卡片外壳。图标 / 站内标题由 article.js 运行时填充（SEO 直出 HTML 同样经 article.js 增强，两路径行为一致） */
+    /** 链接卡片外壳；图标 / 站内标题由 article.js 运行时填充 */
     function renderLinkcard(attrs) {
         var url = String(attrs.url || attrs.src || '').trim();
         var post = String(attrs.post || '').trim();
@@ -438,7 +431,7 @@
     /* 链接包裹：[![说明](图片)](链接) → 整格锚点（新标签页打开） */
     var GALLERY_LINK_RE = /^[ \t]*\[!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
 
-    /** 说明文字颜色属性值校验：仅放行 #hex / 常用色名 / rgb(a)（防 style 注入），否则忽略 */
+    /** caption-color 校验：仅放行 #hex / rgb(a) / 色名（防 style 注入） */
     function safeColorAttr(v) {
         var s = String(v == null ? '' : v).trim();
         if (/^#[0-9a-fA-F]{3,8}$/.test(s)) return s;
@@ -447,13 +440,7 @@
         return '';
     }
 
-    /**
-     * 渲染图集容器（新主语法）：:::gallery{…} 包裹若干 ![说明文字](图片地址) 行（支持 [![说明](图)](链接) 整格跳转）。
-     * 属性：title="自定义标题" / notitle（或 title=""）隐藏标题栏；caption="false" 或 nocaption 关闭说明浮层；
-     *       caption-color="#fff" 自定义说明文字颜色（图与文字撞色时调整）。
-     * 与 folding/tabs 同一套栈式容器解析，支持嵌套于提示框、折叠、选项卡内。
-     * 零图片行 → 返回空串（调用方按原文降级输出）；旧 <gallery src> 仍兜底可用。
-     */
+    /** 图集：title/notitle 隐标题；caption="false"/nocaption 关浮层；caption-color；[![说明](图)](链接) → 整格锚点 img-link-wrap；零图片行返回空串（原文降级） */
     function renderGalleryDirective(body, attrs) {
         attrs = attrs || {};
         var items = [];
@@ -481,7 +468,6 @@
                 : '';
             var img = '\n<img src="' + escapeHtml(it.url) + '" alt="' + escapeHtml(it.alt) + '" loading="lazy">';
             if (it.link) {
-                // img-link-wrap：与站点协议同构（点击由 setupImages 接管开灯箱；跳转链接在灯箱 i 面板）
                 return '<a class="gallery-post-item img-link-wrap" href="' + escapeHtml(it.link) + '" target="_blank" rel="noopener noreferrer" title="' + escapeHtml(it.alt) + '">' +
                     img + cap +
                     '\n</a>';
@@ -518,7 +504,7 @@
         var emitBlock = function (html, indent) {
             var block = '\n\n' + indentBlock(html, indent) + '\n\n';
             if (stack.length > 0) {
-                /* 嵌套场景：内层容器闭合时，渲染结果写入父帧体（随父容器递归渲染包裹），而非直接落文档层 —— 否则嵌套折叠分裂渲染 */
+                /* 嵌套：渲染结果写入父帧体，随父容器递归包裹 */
                 stack[stack.length - 1].bodyLines.push(block);
             } else {
                 out.push(block);
@@ -534,7 +520,7 @@
             }
         };
 
-        /** 关闭一个栈帧：folding/tab/tabs/gallery/video容器/linkcard容器/github容器 */
+        /** 关闭一个栈帧（folding/tab/tabs/gallery） */
         var closeFrame = function (frame) {
             var body = frame.bodyLines.join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
 
@@ -561,7 +547,7 @@
                     var uid = ++tabsUid;
                     var bar = '';
                     var panels = '';
-                    /* ::::tabs 无属性 → 默认折叠（仅标题栏可见）；{open} → 默认展开（与 :::folding 语义一致） */
+                    /* tabs 默认折叠；{open} 默认展开（同 :::folding） */
                     var tabsOpen = !!(frame.attrs &&
                         (frame.attrs.open === true || String(frame.attrs.open).toLowerCase() === 'true'));
                     frame.panels.forEach(function (p, idx) {
@@ -609,7 +595,7 @@
                 var name = openMatch[3].toLowerCase();
                 var attrs = parseAttrs(openMatch[4] || '');
 
-                /* 叶子指令（恰好两个冒号）：单行自足。位于容器（折叠/选项卡）内时写入容器缓冲（压缩为单行，保证 marked HTML 块解析不跨空行），否则进入顶层输出 */
+                /* 叶子指令（恰好两个冒号）：单行自足 */
                 if (fenceLen === 2) {
                     if (LEAF_DIRECTIVES.indexOf(name) !== -1) {
                         var leafHtml = renderLeafDirective(name, attrs);
@@ -619,15 +605,13 @@
                             continue;
                         }
                         warn('::' + name + ' 指令参数缺失：' + line.trim());
-                        /* 参数缺失 → 原文降级 */
                     }
-                    /* 非已知叶子指令：按普通文本继续（交 marked 处理） */
                     out.push(line);
                     i++;
                     continue;
                 }
 
-                /* 无正文指令（>= 3 冒号的 video/linkcard/github）：自足渲染，不入栈、不消费后续围栏 —— 其后的 ::: 属于外层容器 */
+                /* 无正文指令（>= 3 冒号）：自足渲染，不入栈、不消费围栏 */
                 if (BODYLESS_DIRECTIVES.indexOf(name) !== -1) {
                     var bodylessHtml = renderLeafDirective(name, attrs);
                     if (bodylessHtml) {
@@ -698,7 +682,7 @@
                     var frame = stack.pop();
                     if (frame.name === 'tab') {
                         var innerHtml = transformDirectives(frame.bodyLines.join('\n'), opts);
-                        /* 面板级 notoc 优先（true/false 显式值）；缺省继承组级 ::::tabs{notoc} 的整组排除 */
+                        /* 面板级 notoc 优先，缺省继承组级 */
                         var panelNotoc = attrBool(frame.attrs.notoc);
                         frame.owner.panels.push({
                             title: frame.attrs.title != null && String(frame.attrs.title).trim() !== ''
@@ -733,7 +717,6 @@
             warn('指令未闭合（原文输出）: ' + unclosed.raw.trim());
             var literal = [unclosed.raw].concat(unclosed.bodyLines);
             if (unclosed.name === 'tab' && unclosed.owner) {
-                /* tab 未闭合：内容已入帧体，直接原文回填 */
                 out.push('\n\n' + literal.join('\n') + '\n\n');
             } else {
                 out.push('\n\n' + literal.join('\n') + '\n\n');
@@ -744,8 +727,7 @@
         return out.join('\n').replace(/\n{4,}/g, '\n\n\n');
     }
 
-    /* ④b 数学公式摘离 / 归还
-     * marked 开启 breaks 后会把多行 $$ 公式块拆成多个文本节点（<br>），KaTeX auto-render 无法跨节点匹配定界符。摘离为占位符后，公式在文本中始终是单一段落级整体，归还后由运行时统一渲染 */
+    /* ④b 数学公式摘离/归还：marked breaks 会拆散多行 $$，摘离保持公式整体 */
 
     function extractMath(text, ctx) {
         if (!/\$|\\\(|\\\[/.test(text)) return text;
@@ -815,12 +797,11 @@
         var body = outLines.join('\n');
 
         body = body.replace(/\[\^([^\s\]]+)\]/g, function (whole, label) {
-            if (!(label in defs)) return whole; /* 未定义引用保持原文（与 GFM 一致） */
+            if (!(label in defs)) return whole;
             if (!(label in refMap)) {
                 refMap[label] = Object.keys(refMap).length + 1;
             }
             var n = refMap[label];
-            /* 按钮协议：运行时平滑滚动（不更新地址栏），键盘可达 */
             return '<sup class="fn-ref" id="fnref-' + escapeHtml(label) + '" data-fn-ref="' + escapeHtml(label) + '"' +
                 ' role="button" tabindex="0" aria-label="查看注释卡片">' + n + '</sup>';
         });
@@ -832,7 +813,6 @@
         var items = used.map(function (label) {
             var token = '%%FN_BODY_' + makeNonce() + '%%';
             pending.push({ token: token, md: defs[label], label: label });
-            /* 序号位与正文 .fn-ref 同源（共用 class，像素级一致），点击返回引用处 */
             return '<li id="fn-' + escapeHtml(label) + '" class="footnote-item">' +
                 '<button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-' + escapeHtml(label) + '"' +
                 ' aria-label="返回引用处 ' + (refMap[label] || '') + '">' + (refMap[label] || '') + '</button>' +
@@ -840,7 +820,6 @@
                 '</li>';
         }).join('\n');
 
-        /* 附加说明区：低调灰底面板，位于正文末尾（上一篇/下一篇导航由模板置于 article 之外） */
         return body + '\n\n<section class="footnotes" data-footnotes data-notoc>' +
             '\n<div class="footnotes-title"><i class="ri-book-open-line" aria-hidden="true"></i><span>注释</span></div>' +
             '\n<ol class="footnotes-list">\n' + items + '\n</ol>\n</section>';
@@ -856,13 +835,7 @@
     }
 
     /* 对外 API */
-    /**
-     * Markdown 正文前置变换
-     * @param {string} bodyMd - 已剥离 frontmatter 的正文
-     * @param {Object} [opts]
-     * @param {Function} [opts.onWarn] - 告警回调（浏览器 console / Node stderr）
-     * @returns {{ text: string, ctx: Object }}
-     */
+    /** 前置变换：返回 { text, ctx }；opts.onWarn 为告警回调 */
     function preprocess(bodyMd, opts) {
         var ctx = {};
         var text = String(bodyMd == null ? '' : bodyMd);
@@ -880,19 +853,12 @@
         return { text: text, ctx: ctx };
     }
 
-    /**
-     * marked.parse 之后的后置处理
-     * @param {string} html
-     * @param {Object} ctx - preprocess 返回的 ctx
-     * @param {Object} [api]
-     * @param {Function} [api.parseInline] - marked.parseInline，用于脚注定义体
-     * @returns {string}
-     */
+    /** 后置处理：marked.parse 之后调用；api.parseInline 用于脚注定义体 */
     function postprocess(html, ctx, api) {
         api = api || {};
         var out = String(html);
 
-        /* ⓪ 内容图片懒加载：marked 默认输出不带 loading/decoding，统一补齐（组件模板已带的自动跳过） */
+        /* ⓪ 内容图片统一补 loading=lazy / decoding=async（幂等） */
         out = out.replace(/<img\b([^>]*)>/g, function (all, attrs) {
             var a = String(attrs);
             if (!/\sloading\s*=/.test(a)) a += ' loading="lazy"';
@@ -913,7 +879,7 @@
                 } else {
                     rendered = escapeHtml(fn.md);
                 }
-                /* 注释区 http(s) 外链新标签页打开；文内锚点（fn-jump/回引）不受影响 */
+                /* 外链新标签页打开 */
                 rendered = String(rendered).replace(
                     /<a\s+href="(https?:\/\/[^"]*)"/gi,
                     '<a href="$1" target="_blank" rel="noopener noreferrer"'
@@ -925,7 +891,7 @@
         /* ② 遗留自定义标签还原 */
         out = restoreLegacyTags(out, ctx);
 
-        /* ③ 数学公式还原（置于最后，确保脚注/标签回填不影响占位符） */
+        /* ③ 数学公式还原（置于最后） */
         out = restoreMath(out, ctx);
 
         return out;
