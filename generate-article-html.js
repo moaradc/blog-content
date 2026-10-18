@@ -298,12 +298,11 @@ for (const file of files.sort()) {
   };
   const articleMetaJson = escapeAttr(JSON.stringify(articleMetaObj));
 
-  const coverOgHtml = coverUrl
-    ? `<meta property="og:image" content="${escapeAttr(coverUrl)}" />`
-    : "";
-  const coverTwitterHtml = coverUrl
-    ? `<meta name="twitter:image" content="${escapeAttr(coverUrl)}" />`
-    : "";
+  // 无封面图文章回退到站点头像，保证 og:image / twitter:image / JSON-LD image 始终有图
+  const fallbackImage = `${SITE_META.url.replace(/\/$/, "")}${SITE_META.ogImage}`;
+  const ogImageUrl = coverUrl || fallbackImage;
+  const coverOgHtml = `<meta property="og:image" content="${escapeAttr(ogImageUrl)}" />`;
+  const coverTwitterHtml = `<meta name="twitter:image" content="${escapeAttr(ogImageUrl)}" />`;
   const twitterCardType = coverUrl ? "summary_large_image" : "summary";
   const dateDisplay = formatDate(dateStr);
   const datePublished = toIsoDate(dateStr);
