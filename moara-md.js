@@ -892,6 +892,14 @@
         api = api || {};
         var out = String(html);
 
+        /* ⓪ 内容图片懒加载：marked 默认输出不带 loading/decoding，统一补齐（组件模板已带的自动跳过） */
+        out = out.replace(/<img\b([^>]*)>/g, function (all, attrs) {
+            var a = String(attrs);
+            if (!/\sloading\s*=/.test(a)) a += ' loading="lazy"';
+            if (!/\sdecoding\s*=/.test(a)) a += ' decoding="async"';
+            return '<img' + a + '>';
+        });
+
         /* ① 脚注定义体：inline 渲染回填 */
         if (ctx.footnotes && ctx.footnotes.length) {
             ctx.footnotes.forEach(function (fn) {
