@@ -33,18 +33,12 @@
     <!-- JSON-LD 结构化数据 -->
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown写作指南","description":"一篇使用Markdown格式编写的示例文章，展示MD文件支持功能。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/107"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-06-09T02:00:00.000Z","dateModified":"2026-06-09T02:00:00.000Z","url":"https://blog.945426.xyz/posts/107","articleBody":"什么是Markdown？ Markdown是一种轻量级标记语言，让你可以使用纯文本格式编写文档，然后转换成有效的HTML。 基本语法 文本格式 粗体文本 使用双星号 斜体文本 使用单星号 删除线 使用双波浪号 代码 行内代码： console.log(&#39;Hello&#39;) 代码块： function greet(name) { return `Hello, ${name}!`; } 列表 第一项 第二项 第三项 引用 Markdown让写作回归本质，专注于内容而非排版。 链接与图片 访问GitHub"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown写作指南","item":"https://blog.945426.xyz/posts/107"}]}]</script>
 
-    <!-- 第三方资源预连接 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://unpkg.com" />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-
     <!-- 第三方资源 -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
 
-    <!-- Waline 评论样式（评论在页尾，异步加载不阻塞首屏） -->
-    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" media="print" onload="this.media='all'" />
+    <!-- Waline 评论样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
     <!-- highlight.js 主题 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
@@ -52,19 +46,19 @@
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- 第三方库（defer：解析期不阻塞，执行顺序与文档顺序一致，均在 DOMContentLoaded 前执行完） -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
-    <script src="https://www.midijs.net/lib/midi.js" defer></script>
+    <!-- 第三方库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
     <!-- 本站 JS -->
-    <script src="https://blog.945426.xyz/assets/js/marked.min.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/noise.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/config.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/users.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/marquee-control.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
 
     <style>
       #detail-content { overflow-x: auto; }
@@ -277,7 +271,7 @@
 </blockquote>
 <h3>链接与图片</h3>
 <p><a href="https://github.com">访问GitHub</a></p>
-<p><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop" alt="示例图片" loading="lazy" decoding="async"></p>
+<p><img src="https://images.unsplash.com/photo-1455390582262-044cdead277a?q=80&w=800&auto=format&fit=crop" alt="示例图片"></p>
 
             </article>
 

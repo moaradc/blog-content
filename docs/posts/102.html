@@ -33,18 +33,12 @@
     <!-- JSON-LD 结构化数据 -->
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"周五的公园与猫","description":"今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。 拍完照它就跑了，哈哈。 晚上准备去吃顿火锅庆祝一下周五！","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/102"},"author":{"@type":"Person","name":"Anonymous","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2025-11-22T02:30:00.000Z","dateModified":"2025-11-22T02:32:00.000Z","url":"https://blog.945426.xyz/posts/102","articleBody":"今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。 拍完照它就跑了，哈哈。 晚上准备去吃顿火锅庆祝一下周五！"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"周五的公园与猫","item":"https://blog.945426.xyz/posts/102"}]}]</script>
 
-    <!-- 第三方资源预连接 -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://unpkg.com" />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-
     <!-- 第三方资源 -->
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
 
-    <!-- Waline 评论样式（评论在页尾，异步加载不阻塞首屏） -->
-    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" media="print" onload="this.media='all'" />
+    <!-- Waline 评论样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/@waline/client@v3/dist/waline.css" />
     <!-- highlight.js 主题 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
 
@@ -52,19 +46,19 @@
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- 第三方库（defer：解析期不阻塞，执行顺序与文档顺序一致，均在 DOMContentLoaded 前执行完） -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
-    <script src="https://www.midijs.net/lib/midi.js" defer></script>
+    <!-- 第三方库 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
 
     <!-- 本站 JS -->
-    <script src="https://blog.945426.xyz/assets/js/marked.min.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/noise.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/config.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/users.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/marquee-control.js" defer></script>
-    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
 
     <style>
       #detail-content { overflow-x: auto; }
@@ -250,9 +244,9 @@
             <!-- 文章正文（article.js 运行时填充分类/作者/导航，正文不变）-->
             <article class="article-body" id="detail-content" data-math="false">
                 <p>今天天气真不错，在公园里看到了一只非常慵懒的猫。生活就该偶尔停下来发发呆。</p>
-<p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫" loading="lazy" decoding="async"></p>
+<p><img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=1000&auto=format&fit=crop" alt="猫"></p>
 <p>拍完照它就跑了，哈哈。</p>
-<p><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop" alt="猫2" loading="lazy" decoding="async"></p>
+<p><img src="https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=1000&auto=format&fit=crop" alt="猫2"></p>
 <p>晚上准备去吃顿火锅庆祝一下周五！</p>
 
             </article>
