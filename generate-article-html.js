@@ -312,7 +312,6 @@ for (const file of files.sort()) {
     .replace(/\{\{id\}\}/g, escapeAttr(slug))
     .replace(/\{\{title\}\}/g, escapeHtml(title))
     .replace(/\{\{description\}\}/g, escapeAttr(description))
-    .replace(/\{\{keywords\}\}/g, escapeAttr(tags.join(",")))
     .replace(/\{\{authorName\}\}/g, escapeHtml(authorName))
     .replace(/\{\{datePublished\}\}/g, escapeAttr(datePublished))
     .replace(/\{\{dateDisplay\}\}/g, escapeHtml(dateDisplay))
