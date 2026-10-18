@@ -32,7 +32,7 @@
         return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
     }
 
-    /** 属性串解析：{a="1" b='2' c=3 flag}，旗标（无 =）置 true */
+    /** 解析指令属性串 {a="1" b='2' c=3 flag}，布尔旗标（无 =）置 true；返回普通对象 */
     function parseAttrs(raw) {
         var attrs = {};
         if (!raw) return attrs;
@@ -93,12 +93,12 @@
         highlight: 'important'
     };
 
-    /* 标记行：[!TYPE] {attrs} 折叠尾缀(±) {attrs} 自定义标题 */
+    /* 标记行语法：[!TYPE] + {attrs}（尾缀前后均可）+ 可选折叠尾缀 + 可选自定义标题 */
     var ADM_MARKER_RE = /^\[!(\w+)\][ \t]*(?:\{([^}]*)\})?[ \t]*([+-]?)[ \t]*(?:\{([^}]*)\})?[ \t]*(.*)$/;
 
     /* ① 代码区摘离 / ⑦ 归还 */
 
-    /* ```lang title="…"：title 取出重写为 <pre data-title>；无 title 的围栏原样归还 */
+    /* 围栏 info 串解析：```lang title="..."；title marked 默认丢弃 → 取出后重写为携带 data-title 的<pre><code> HTML（marked 视作 html 块原样透传），标题栏渲染由前端完成。无 title 的围栏原样归还 marked */
     function parseCodeFenceInfo(raw) {
         var rest = String(raw || '').trim();
         if (!rest) return null;
@@ -156,7 +156,7 @@
         return out;
     }
 
-    /* ② 遗留标签保护（旧语法兼容降级） */
+    /* ② 遗留自定义标签保护（与旧版行为等价，旧语法仅作兼容降级） */
     function protectLegacyTags(text, ctx) {
         var placeholders = ctx.customTags || (ctx.customTags = []);
         var nonce = ctx.tagNonce || (ctx.tagNonce = makeNonce());
@@ -174,7 +174,7 @@
         text = text.replace(/<(music|gallery)\b([^>]*?)\s*\/>/gi, '<$1$2></$1>');
         text = text.replace(/<(music|gallery)\b([^>]*?)>(?!<\/\1>)/gi, '<$1$2></$1>');
 
-        /* 旧版折叠框整块（防截断保护） */
+        /* 旧版折叠框整块 HTML（已废弃，此处仅为防截断保护；渲染走旧 CSS） */
         text = text.replace(/<div\b[^>]*class=["'][^"']*details-box[^"']*["'][^>]*>[\s\S]*?<\/div>\s*<\/div>\s*<\/div>/gi, push);
 
         /* 行内黑幕 <span class='spoiler'>…</span> */
@@ -428,10 +428,10 @@
     var FOLDING_CLOSE = '</div>\n</div>\n</div>';
 
     var GALLERY_IMG_RE = /^[ \t]*!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
-    /* 链接包裹：[![说明](图片)](链接) → 整格锚点（新标签页打开） */
+    /* 链接包裹：[![说明](图片)](链接) → 整格锚点 */
     var GALLERY_LINK_RE = /^[ \t]*\[!\[([^\]]*)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)\]\(\s*<?([^()<>\s]+?)>?(?:\s(?:"[^"]*"|'[^']*'))?[ \t]*\)[ \t]*$/;
 
-    /** caption-color 校验：仅放行 #hex / rgb(a) / 色名（防 style 注入） */
+    /** 颜色校验：仅 #hex/色名/rgb(a)（防注入） */
     function safeColorAttr(v) {
         var s = String(v == null ? '' : v).trim();
         if (/^#[0-9a-fA-F]{3,8}$/.test(s)) return s;
@@ -440,7 +440,12 @@
         return '';
     }
 
-    /** 图集：title/notitle 隐标题；caption="false"/nocaption 关浮层；caption-color；[![说明](图)](链接) → 整格锚点 img-link-wrap；零图片行返回空串（原文降级） */
+    /**
+     * 渲染图集容器：:::gallery{…} 包裹 ![说明](图) 行，支持 [![说明](图)](链接) 整格跳转。
+     * 属性：title/notitle（标题栏）、caption="false"|nocaption（浮层）、caption-color。
+     * 与 folding/tabs 同一套栈式容器解析，支持嵌套于提示框、折叠、选项卡内。
+     * 零图片行 → 返回空串（调用方按原文降级输出）；旧 <gallery src> 仍兜底可用。
+     */
     function renderGalleryDirective(body, attrs) {
         attrs = attrs || {};
         var items = [];
@@ -504,7 +509,7 @@
         var emitBlock = function (html, indent) {
             var block = '\n\n' + indentBlock(html, indent) + '\n\n';
             if (stack.length > 0) {
-                /* 嵌套：渲染结果写入父帧体，随父容器递归包裹 */
+                /* 嵌套场景：内层容器闭合时，渲染结果写入父帧体，随父容器递归包裹 */
                 stack[stack.length - 1].bodyLines.push(block);
             } else {
                 out.push(block);
@@ -520,7 +525,7 @@
             }
         };
 
-        /** 关闭一个栈帧（folding/tab/tabs/gallery） */
+        /** 关闭一个栈帧：folding/tab/tabs/gallery/video容器/linkcard卡片/github卡片 */
         var closeFrame = function (frame) {
             var body = frame.bodyLines.join('\n').replace(/^\n+/, '').replace(/\n+$/, '');
 
@@ -547,7 +552,7 @@
                     var uid = ++tabsUid;
                     var bar = '';
                     var panels = '';
-                    /* tabs 默认折叠；{open} 默认展开（同 :::folding） */
+                    /* ::::tabs 默认折叠；{open} 默认展开（与 :::folding 语义一致） */
                     var tabsOpen = !!(frame.attrs &&
                         (frame.attrs.open === true || String(frame.attrs.open).toLowerCase() === 'true'));
                     frame.panels.forEach(function (p, idx) {
@@ -595,7 +600,7 @@
                 var name = openMatch[3].toLowerCase();
                 var attrs = parseAttrs(openMatch[4] || '');
 
-                /* 叶子指令（恰好两个冒号）：单行自足 */
+                /* 叶子指令（恰好两个冒号）：单行自足。否则进入顶层输出。 */
                 if (fenceLen === 2) {
                     if (LEAF_DIRECTIVES.indexOf(name) !== -1) {
                         var leafHtml = renderLeafDirective(name, attrs);
@@ -611,7 +616,7 @@
                     continue;
                 }
 
-                /* 无正文指令（>= 3 冒号）：自足渲染，不入栈、不消费围栏 */
+                /* 无正文指令（>= 3 冒号的 video/linkcard/github）：自足渲染，不入栈、不消费后续围栏。其后的 ::: 属于外层容器 */
                 if (BODYLESS_DIRECTIVES.indexOf(name) !== -1) {
                     var bodylessHtml = renderLeafDirective(name, attrs);
                     if (bodylessHtml) {
@@ -682,7 +687,7 @@
                     var frame = stack.pop();
                     if (frame.name === 'tab') {
                         var innerHtml = transformDirectives(frame.bodyLines.join('\n'), opts);
-                        /* 面板级 notoc 优先，缺省继承组级 */
+                        /* 面板级 notoc 优先（true/false 显式值）；缺省继承组级 ::::tabs{notoc} 的整组排除 */
                         var panelNotoc = attrBool(frame.attrs.notoc);
                         frame.owner.panels.push({
                             title: frame.attrs.title != null && String(frame.attrs.title).trim() !== ''
@@ -835,7 +840,13 @@
     }
 
     /* 对外 API */
-    /** 前置变换：返回 { text, ctx }；opts.onWarn 为告警回调 */
+    /**
+     * Markdown 正文前置变换
+     * @param {string} bodyMd - 已剥离 frontmatter 的正文
+     * @param {Object} [opts]
+     * @param {Function} [opts.onWarn] - 告警回调（浏览器 console / Node stderr）
+     * @returns {{ text: string, ctx: Object }}
+     */
     function preprocess(bodyMd, opts) {
         var ctx = {};
         var text = String(bodyMd == null ? '' : bodyMd);
@@ -853,7 +864,14 @@
         return { text: text, ctx: ctx };
     }
 
-    /** 后置处理：marked.parse 之后调用；api.parseInline 用于脚注定义体 */
+    /**
+     * marked.parse 之后的后置处理
+     * @param {string} html
+     * @param {Object} ctx - preprocess 返回的 ctx
+     * @param {Object} [api]
+     * @param {Function} [api.parseInline] - marked.parseInline，用于脚注定义体
+     * @returns {string}
+     */
     function postprocess(html, ctx, api) {
         api = api || {};
         var out = String(html);
@@ -879,7 +897,7 @@
                 } else {
                     rendered = escapeHtml(fn.md);
                 }
-                /* 外链新标签页打开 */
+                /* 外链新标签页打开，文内锚点（fn-jump/回引）不受影响 */
                 rendered = String(rendered).replace(
                     /<a\s+href="(https?:\/\/[^"]*)"/gi,
                     '<a href="$1" target="_blank" rel="noopener noreferrer"'
