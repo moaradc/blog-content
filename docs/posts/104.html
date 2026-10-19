@@ -34,6 +34,10 @@
     <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"pixiv","description":"","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/104"},"author":{"@type":"Person","name":"Lamb","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2025-12-26T00:59:00.000Z","dateModified":"2025-12-26T00:59:00.000Z","url":"https://blog.945426.xyz/posts/104"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"pixiv","item":"https://blog.945426.xyz/posts/104"}]}]</script>
 
     <!-- 第三方资源 -->
+    <!-- 预连接：数据域(posts.json/music/lrc) 与 mermaid 域的 DNS/TCP/TLS
+         提前完成（预加载扫描器即时发现，不等脚本执行） -->
+    <link rel="preconnect" href="https://raw-posts.945426.xyz" crossorigin />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet" />
 
@@ -46,19 +50,20 @@
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- 第三方库 -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <script type='text/javascript' src='//www.midijs.net/lib/midi.js'></script>
+    <!-- 第三方库与站点脚本统一 defer：不再阻塞 HTML 解析（正文直出即可入 DOM），
+         defer 保持文档顺序执行，依赖关系与原先一致。
+         midi.js 不再在首屏加载：改由彩蛋触发时动态注入（见 article.js ensureMidiLib）。
+         feature-switch.js：文章页无此依赖且线上 404，移除。 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
 
     <!-- 本站 JS -->
-    <script src="https://blog.945426.xyz/assets/js/marked.min.js"></script>
-    <script src="https://blog.945426.xyz/assets/js/noise.js"></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/config.js"></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/users.js"></script>
-    <script src="https://blog.945426.xyz/assets/data-scripts/feature-switch.js"></script>
-    <script src="https://blog.945426.xyz/assets/js/marquee-control.js"></script>
-    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js"></script>
+    <script src="https://blog.945426.xyz/assets/js/marked.min.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/js/noise.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/config.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/data-scripts/users.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/js/marquee-control.js" defer></script>
+    <script src="https://blog.945426.xyz/assets/js/scroll-nav.js" defer></script>
 
     <style>
       #detail-content { overflow-x: auto; }
