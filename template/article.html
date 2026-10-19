@@ -34,8 +34,6 @@
     <script type="application/ld+json">{{jsonld}}</script>
 
     <!-- 第三方资源 -->
-    <!-- 预连接：数据域(posts.json/music/lrc) 与 mermaid 域的 DNS/TCP/TLS
-         提前完成（预加载扫描器即时发现，不等脚本执行） -->
     <link rel="preconnect" href="https://raw-posts.945426.xyz" crossorigin />
     <link rel="preconnect" href="https://cdn.jsdelivr.net" />
     <link href="https://unpkg.com/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet" />
@@ -50,10 +48,7 @@
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/global.css" />
     <link rel="stylesheet" href="https://blog.945426.xyz/assets/css/article.css" />
 
-    <!-- 第三方库与站点脚本统一 defer：不再阻塞 HTML 解析（正文直出即可入 DOM），
-         defer 保持文档顺序执行，依赖关系与原先一致。
-         midi.js 不再在首屏加载：改由彩蛋触发时动态注入（见 article.js ensureMidiLib）。
-         feature-switch.js：文章页无此依赖且线上 404，移除。 -->
+    <!-- 第三方库 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js" defer></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js" defer></script>
 
