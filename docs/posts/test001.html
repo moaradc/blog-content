@@ -31,7 +31,7 @@
     <meta name="twitter:image" content="https://blog.945426.xyz/assets/img/icon/moara.webp" />
 
     <!-- JSON-LD 结构化数据 -->
-    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown 组件语法全览","description":"沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/test001"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-10-03T00:20:00.000Z","dateModified":"2026-10-07T02:00:00.000Z","url":"https://blog.945426.xyz/posts/test001","articleBody":"本文是博客 Markdown 扩展语法的 完整演示 ：先逐一列举全部组件，再给出 嵌套组合矩阵 。所有组件由 moara-md 扩展层渲染（浏览器端与 /posts/ id 直出共用同一实现，产物一致）。 备注 提示框（Admonition）共 13 种类型 ： NOTE ABSTRACT INFO TIP SUCCESS QUESTION WARNING FAILURE DANGER BUG EXAMPLE QUOTE IMPORTANT 。全部默认可折叠；同义别名（ TLDR CAUTION ERROR 等）自动归并。 可折叠提示框 尾缀 + 默认展开， - 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。 收起状态的警告 这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。 1. 提示框 13 类型全览 备注 备注类型：用于补充说明与背景信息。 摘要 摘要类型：文章概要、TLDR。 信息 信息类型：中性提示。 提示 提示类型：小技巧与最佳实践。 成功 成功类型：完成状态确认。 问题 问题类型：常见疑问。 警告 警告类型：需要注意的事项。 失败 失败类型：出错的场景。 危险 危险类型：高风险操作警示。 缺陷 缺陷类型：已知问题记录。 示例类型（已展开） 示例类型默认展开的样子：内部可以继续嵌套 行内元素 标记 、 Ctrl 按键、 黑幕 与 链接 。 引用 引用类型：摘录他人观点。 重要 重要类型：关键结论。 别名归一演示（ CAUTION → 警告色、 TLDR → 摘要色）： 警告 这是 CAUTION 别名，渲染为 warning 样式。 摘要 这是 TLDR 别名，渲染为 abstract 样式。 2. 折叠面板 :::folding 折叠面板取代了旧版手写 HTML。 内部支持所有块级语法 ：列表、表格、代码块、甚至嵌套折叠。 点击展开 — 查看代码块与列表 列表项一 列表项二 列表项三 export interface Post { id: string; title: string; html: string; } 嵌套折叠：外层面板 外层默认展开（ open 属性）。内层默认收起， 内层里面还有第三层 ： 内层折叠 — 双层嵌套 内层折叠内容：内层面板内部再嵌一层： 三层折叠 — 第三层 这里是在折叠内、折叠内的 第三层折叠 ——外层、内层、第三层逐层缩进嵌套。 折叠面板内的组件全家桶 以下折叠面板 默认展开 ，内部逐项演示每种组件的嵌套形态： 组件全家桶：折叠内嵌套一切 普通段落：折叠面板内的正文文字，支持 加粗 、 斜体 、 行内代码 、 链接 。 无序列表与有序列表： 无序项 A 无序项 B 有序项一 有序项二 任务列表（GFM）： 已完成的任务 待办任务 另一个待办 表格： 组件 嵌套 说明 折叠 ✓ 任意层级 选项卡 ✓ 见 §3 提示框 ✓ 下一项演示 代码块： console.log(&#39;折叠面板内的代码块&#39;); 提示框： 提示 折叠面板内的提示框：绿色左边条同样生效。 Mermaid 图表： flowchart LR A[折叠内图表] -- B[正常渲染] 数学公式： $ E = mc^2 \\quad \\text{（折叠内公式）} $ 链接卡与仓库卡： 折 折叠内的链接卡 github.com markedjs/marked 视频（叶子形式）： 折叠内的视频 点击加载 bilibili 播放器 图片与引用块： 折叠面板内的引用块（普通 blockquote）。 原生 details （HTML 直写在折叠内）： 折叠内的原生 details 原生 details 嵌套在 :::folding 内部。 行内元素一排： 荧光标记 、 Ctrl 、 黑幕 、H 2 O、x 2 。 3. 选项卡 ::::tabs 选项卡两种形态： {open} 默认展开；无属性默认折叠（仅标题栏可见）。 notoc 属性控制容器内标题是否进目录：提示框 [!NOTE]{notoc} 、折叠面板 :::folding{notoc} 、选项卡面板 :::tab{notoc} 均可单点排除；组级 ::::tabs{notoc} 一键排除整组面板，面板级 notoc=false 可单独放开。 组级排除 单独放开 npm install moara-md 面板内小节（组级 notoc 排除，不进目录）： 组级排除的小节 面板写 notoc=false ：仅本面板标题回到目录。 面板级放开的小节 提示框排除（标题自定义） [!NOTE]{notoc} ：框内标题不进目录。 提示框排除的小节 此 H3 不出现在目录卡片中。 折叠面板 notoc 演示 :::folding{notoc} ：面板内标题不进目录。 折叠面板排除的小节 安装 配置与表格 折叠与代码 图表与公式 嵌套选项卡 卡片与视频 npm install moara-md 面板内小节（ notoc 属性使标题不进目录）： 面板内小节（不进目录） 此处 H3 不会出现在目录卡片中。 选项卡内的表格： 项 值 主题 oklch 字体 Space Grotesk 选项卡内的提示框： 选项卡内提示框 提示框嵌在选项卡面板里，默认展开。 选项卡内的折叠面板： 选项卡内的折叠 折叠面板嵌在选项卡面板里，内部再有代码块： console.log(&#39;tabs folding code&#39;); 选项卡内的 Mermaid： pie showData title 选项卡内饼图 A : 60 B : 40 选项卡内的数学： $ \\int_0^1 x^2 \\, dx = \\frac{1}{3} $ 选项卡嵌套选项卡（内层五冒号围栏）： 内层 A 内层 B 内层选项卡面板 A。 内层选项卡面板 B：嵌套层级不受限制（栈式解析）。 选项卡内的叶子指令（单行压缩）： 选 选项卡内链接卡 github.com markedjs/marked 选项卡内视频 点击加载 YouTube 播放器 横向滑动演示（10 个选项卡，无属性默认折叠）： 第 1 步：安装 第 2 步：初始化 第 3 步：配置 第 4 步：迁移 第 5 步：构建 第 6 步：测试 第 7 步：联调 第 8 步：灰度 第 9 步：发布 第 10 步：运维 第 1 步内容。 第 2 步内容。 第 3 步内容。 第 4 步内容。 第 5 步内容。 第 6 步内容。 第 7 步内容。 第 8 步内容。 第 9 步内容。 第 10 步内容。 4. 提示框内嵌套容器 提示框（引用块变换）内部同样支持容器指令——每行加 前缀即可： 提示框内的折叠面板 提示框内部直接嵌套 :::folding： 提示框内的折叠 折叠面板渲染在提示框内部。 提示框内也可以放 普通嵌套引用 ： 提示框内的一层引用。 提示框内的两层引用。 提示框内的图表与公式 flowchart LR Q[提示框内] -- R[图表正常] $a^2 + b^2 = c^2$ 提示框内的卡片与表格 提 提示框内链接卡 github.com markedjs/marked 提示框内的视频 点击加载 bilibili 播放器 位置 卡片 提示框内 ✓ 5. 视频嵌入 :::video 演示：Bilibili 嵌入 点击加载 bilibili 播放器 演示：YouTube 嵌入 点击加载 YouTube 播放器 直链视频（裸 video 标签，无外壳跟随原始比例）： 折叠块内既可用叶子形式 ::video ，也可用块形式（见 §2 全家桶）。 6. 链接卡片 :::linkcard M MOARA 主仓库 github.com 文 文件链接：按后缀显示文件图标 example.com 站内文章卡片（标题由目标文章 frontmatter 自动填充） 本站文章 #103 直 直连 favicon 演示：取自 www.baidu.com/favicon.ico www.baidu.com 7. 仓库卡片 :::github markedjs/marked 8. 数学公式（frontmatter math: true ） 行内公式 $e^{i\\pi} + 1 = 0$ 与块级公式： $ \\begin{aligned} \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\varepsilon_0} \\\\ \\nabla \\cdot \\mathbf{B} &= 0 \\end{aligned} $ 9. 行内元素 高亮 荧光笔标记 （酸绿色，双模式高对比） 键盘按键 Ctrl + Alt + Del 上下标：H 2 O 与 x 2 + y 2 = r 2 行内黑幕（防剧透）：凶手是 黑衣人 ，点击显示。 行内代码 const x = 42; 10. 链接包裹图片与裸图 链接包裹的图片： 点击图片本身打开灯箱 预览；跳转链接收在灯箱的 i 信息面板里： 裸图（无链接）点击同样打开灯箱预览： 11. 脚注 摩尔 Blog 的脚注语法与 GFM 一致 1 ，定义可以写在任意位置 2 ，渲染时统一汇总到文末「注释」区。 未写定义的引用 （如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。 12. 表格对齐 左对齐列 居中列 右对齐列 GitHub 1 100 掘金 2 200 知乎 3 300 b 站 1 1000 云盘 2 2000 邮箱 3 3000 13. Mermaid 图表类型全集 moara-md 不拦截 Mermaid——交给 article.js 加载的 Mermaid 10.9 渲染。常用 12 种图： flowchart TD A[开始] -- B{条件?} B -- 是 -- C[执行] B -- 否 -- D[跳过] C -- E[结束] D -- E sequenceDiagram participant U as 用户 participant S as 服务器 U- S: 请求文章 S-- U: 返回 HTML U- S: 请求评论 S-- U: 返回 JSON classDiagram class Article { +String title +String html +render() } class Comment { +String body +post() } Article 1 -- n Comment : 拥有 stateDiagram-v2 [*] -- 草稿 草稿 -- 发布: 审核通过 发布 -- 修订: 更新 修订 -- 发布 发布 -- [*] erDiagram USER ||--o{ POST : writes POST ||--o{ COMMENT : has USER ||--o{ COMMENT : leaves gantt title 发版流程 dateFormat YYYY-MM-DD section 开发 功能开发 :a1, 2026-10-01, 6d section 测试 回归测试 :a2, after a1, 3d section 上线 灰度发布 :a3, after a2, 2d pie showData title 流量来源 搜索 : 45 直接 : 30 外链 : 25 journey title 写博客的一天 section 上午 起床: 5: 我 喝咖啡: 4: 我 section 下午 写文章: 5: 我, 读者 section 晚上 发布: 5: 我, 读者 mindmap root((博客)) 内容 文章 评论 技术 Astro moara-md timeline title 博客演进 2023 : 静态 HTML 2024 : Hexo 迁移 2025 : Astro 重构 2026 : moara-md 扩展层 gitGraph commit id: ini"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown 组件语法全览","item":"https://blog.945426.xyz/posts/test001"}]}]</script>
+    <script type="application/ld+json">[{"@context":"https://schema.org","@type":"BlogPosting","headline":"Markdown 组件语法全览","description":"沫然Blog 全部 Markdown 扩展组件与嵌套组合矩阵：折叠、选项卡、提示框、视频、卡片、图表、数学、脚注等。","image":"https://blog.945426.xyz/assets/img/icon/moara.webp","mainEntityOfPage":{"@type":"WebPage","@id":"https://blog.945426.xyz/posts/test001"},"author":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"publisher":{"@type":"Person","name":"moara","url":"https://blog.945426.xyz/"},"datePublished":"2026-10-03T00:20:00.000Z","dateModified":"2026-11-25T12:30:00.000Z","url":"https://blog.945426.xyz/posts/test001","articleBody":"本文是博客 Markdown 扩展语法的 完整演示 ：先逐一列举全部组件，再给出 嵌套组合矩阵 。所有组件由 moara-md 扩展层渲染（浏览器端与 /posts/ id 直出共用同一实现，产物一致）。 备注 提示框（Admonition）共 13 种类型 ： NOTE ABSTRACT INFO TIP SUCCESS QUESTION WARNING FAILURE DANGER BUG EXAMPLE QUOTE IMPORTANT 。全部默认可折叠；同义别名（ TLDR CAUTION ERROR 等）自动归并。 可折叠提示框 尾缀 + 默认展开， - 或无尾缀默认收起。展开/收起为即时切换（无动画、零闪烁）。 收起状态的警告 这一栏默认收起，点击标题即可展开。内部支持嵌套任意块级语法（见下方 §2 / §3 矩阵）。 1. 提示框 13 类型全览 备注 备注类型：用于补充说明与背景信息。 摘要 摘要类型：文章概要、TLDR。 信息 信息类型：中性提示。 提示 提示类型：小技巧与最佳实践。 成功 成功类型：完成状态确认。 问题 问题类型：常见疑问。 警告 警告类型：需要注意的事项。 失败 失败类型：出错的场景。 危险 危险类型：高风险操作警示。 缺陷 缺陷类型：已知问题记录。 示例类型（已展开） 示例类型默认展开的样子：内部可以继续嵌套 行内元素 标记 、 Ctrl 按键、 黑幕 与 链接 。 引用 引用类型：摘录他人观点。 重要 重要类型：关键结论。 别名归一演示（ CAUTION → 警告色、 TLDR → 摘要色）： 警告 这是 CAUTION 别名，渲染为 warning 样式。 摘要 这是 TLDR 别名，渲染为 abstract 样式。 2. 折叠面板 :::folding 折叠面板取代了旧版手写 HTML。 内部支持所有块级语法 ：列表、表格、代码块、甚至嵌套折叠。 点击展开 — 查看代码块与列表 列表项一 列表项二 列表项三 export interface Post { id: string; title: string; html: string; } 嵌套折叠：外层面板 外层默认展开（ open 属性）。内层默认收起， 内层里面还有第三层 ： 内层折叠 — 双层嵌套 内层折叠内容：内层面板内部再嵌一层： 三层折叠 — 第三层 这里是在折叠内、折叠内的 第三层折叠 ——外层、内层、第三层逐层缩进嵌套。 折叠面板内的组件全家桶 以下折叠面板 默认展开 ，内部逐项演示每种组件的嵌套形态： 组件全家桶：折叠内嵌套一切 普通段落：折叠面板内的正文文字，支持 加粗 、 斜体 、 行内代码 、 链接 。 无序列表与有序列表： 无序项 A 无序项 B 有序项一 有序项二 任务列表（GFM）： 已完成的任务 待办任务 另一个待办 表格： 组件 嵌套 说明 折叠 ✓ 任意层级 选项卡 ✓ 见 §3 提示框 ✓ 下一项演示 代码块： console.log(&#39;折叠面板内的代码块&#39;); 提示框： 提示 折叠面板内的提示框：绿色左边条同样生效。 Mermaid 图表： flowchart LR A[折叠内图表] -- B[正常渲染] 数学公式： $ E = mc^2 \\quad \\text{（折叠内公式）} $ 链接卡与仓库卡： 折 折叠内的链接卡 github.com markedjs/marked 视频（叶子形式）： 折叠内的视频 点击加载 bilibili 播放器 图片与引用块： 折叠面板内的引用块（普通 blockquote）。 原生 details （HTML 直写在折叠内）： 折叠内的原生 details 原生 details 嵌套在 :::folding 内部。 行内元素一排： 荧光标记 、 Ctrl 、 黑幕 、H 2 O、x 2 。 3. 选项卡 ::::tabs 选项卡两种形态： {open} 默认展开；无属性默认折叠（仅标题栏可见）。 notoc 属性控制容器内标题是否进目录：提示框 [!NOTE]{notoc} 、折叠面板 :::folding{notoc} 、选项卡面板 :::tab{notoc} 均可单点排除；组级 ::::tabs{notoc} 一键排除整组面板，面板级 notoc=false 可单独放开。 组级排除 单独放开 npm install moara-md 面板内小节（组级 notoc 排除，不进目录）： 组级排除的小节 面板写 notoc=false ：仅本面板标题回到目录。 面板级放开的小节 提示框排除（标题自定义） [!NOTE]{notoc} ：框内标题不进目录。 提示框排除的小节 此 H3 不出现在目录卡片中。 折叠面板 notoc 演示 :::folding{notoc} ：面板内标题不进目录。 折叠面板排除的小节 安装 配置与表格 折叠与代码 图表与公式 嵌套选项卡 卡片与视频 npm install moara-md 面板内小节（ notoc 属性使标题不进目录）： 面板内小节（不进目录） 此处 H3 不会出现在目录卡片中。 选项卡内的表格： 项 值 主题 oklch 字体 Space Grotesk 选项卡内的提示框： 选项卡内提示框 提示框嵌在选项卡面板里，默认展开。 选项卡内的折叠面板： 选项卡内的折叠 折叠面板嵌在选项卡面板里，内部再有代码块： console.log(&#39;tabs folding code&#39;); 选项卡内的 Mermaid： pie showData title 选项卡内饼图 A : 60 B : 40 选项卡内的数学： $ \\int_0^1 x^2 \\, dx = \\frac{1}{3} $ 选项卡嵌套选项卡（内层五冒号围栏）： 内层 A 内层 B 内层选项卡面板 A。 内层选项卡面板 B：嵌套层级不受限制（栈式解析）。 选项卡内的叶子指令（单行压缩）： 选 选项卡内链接卡 github.com markedjs/marked 选项卡内视频 点击加载 YouTube 播放器 横向滑动演示（10 个选项卡，无属性默认折叠）： 第 1 步：安装 第 2 步：初始化 第 3 步：配置 第 4 步：迁移 第 5 步：构建 第 6 步：测试 第 7 步：联调 第 8 步：灰度 第 9 步：发布 第 10 步：运维 第 1 步内容。 第 2 步内容。 第 3 步内容。 第 4 步内容。 第 5 步内容。 第 6 步内容。 第 7 步内容。 第 8 步内容。 第 9 步内容。 第 10 步内容。 4. 提示框内嵌套容器 提示框（引用块变换）内部同样支持容器指令——每行加 前缀即可： 提示框内的折叠面板 提示框内部直接嵌套 :::folding： 提示框内的折叠 折叠面板渲染在提示框内部。 提示框内也可以放 普通嵌套引用 ： 提示框内的一层引用。 提示框内的两层引用。 提示框内的图表与公式 flowchart LR Q[提示框内] -- R[图表正常] $a^2 + b^2 = c^2$ 提示框内的卡片与表格 提 提示框内链接卡 github.com markedjs/marked 提示框内的视频 点击加载 bilibili 播放器 位置 卡片 提示框内 ✓ 5. 视频嵌入 :::video 演示：Bilibili 嵌入 点击加载 bilibili 播放器 演示：YouTube 嵌入 点击加载 YouTube 播放器 直链视频（裸 video 标签，无外壳跟随原始比例）： 折叠块内既可用叶子形式 ::video ，也可用块形式（见 §2 全家桶）。 6. 链接卡片 :::linkcard M MOARA 主仓库 github.com 文 文件链接：按后缀显示文件图标 example.com 站内文章卡片（标题由目标文章 frontmatter 自动填充） 本站文章 #103 直 直连 favicon 演示：取自 www.baidu.com/favicon.ico www.baidu.com 7. 仓库卡片 :::github markedjs/marked 8. 数学公式（frontmatter math: true ） 行内公式 $e^{i\\pi} + 1 = 0$ 与块级公式： $ \\begin{aligned} \\nabla \\cdot \\mathbf{E} &= \\frac{\\rho}{\\varepsilon_0} \\\\ \\nabla \\cdot \\mathbf{B} &= 0 \\end{aligned} $ 9. 行内元素 高亮 荧光笔标记 （酸绿色，双模式高对比） 键盘按键 Ctrl + Alt + Del 上下标：H 2 O 与 x 2 + y 2 = r 2 行内黑幕（防剧透）：凶手是 黑衣人 ，点击显示。 行内代码 const x = 42; 10. 链接包裹图片与裸图 链接包裹的图片： 点击图片本身打开灯箱 预览；跳转链接收在灯箱的 i 信息面板里： 裸图（无链接）点击同样打开灯箱预览： 11. 脚注 摩尔 Blog 的脚注语法与 GFM 一致 1 ，定义可以写在任意位置 2 ，渲染时统一汇总到文末「注释」区。 未写定义的引用 （如这条[^missing]）按原文显示、不进入注释区；点击脚注不更新地址栏。 12. 表格对齐 左对齐列 居中列 右对齐列 GitHub 1 100 掘金 2 200 知乎 3 300 b 站 1 1000 云盘 2 2000 邮箱 3 3000 13. Mermaid 图表类型全集 moara-md 不拦截 Mermaid——交给 article.js 加载的 Mermaid 10.9 渲染。常用 12 种图： flowchart TD A[开始] -- B{条件?} B -- 是 -- C[执行] B -- 否 -- D[跳过] C -- E[结束] D -- E sequenceDiagram participant U as 用户 participant S as 服务器 U- S: 请求文章 S-- U: 返回 HTML U- S: 请求评论 S-- U: 返回 JSON classDiagram class Article { +String title +String html +render() } class Comment { +String body +post() } Article 1 -- n Comment : 拥有 stateDiagram-v2 [*] -- 草稿 草稿 -- 发布: 审核通过 发布 -- 修订: 更新 修订 -- 发布 发布 -- [*] erDiagram USER ||--o{ POST : writes POST ||--o{ COMMENT : has USER ||--o{ COMMENT : leaves gantt title 发版流程 dateFormat YYYY-MM-DD section 开发 功能开发 :a1, 2026-10-01, 6d section 测试 回归测试 :a2, after a1, 3d section 上线 灰度发布 :a3, after a2, 2d pie showData title 流量来源 搜索 : 45 直接 : 30 外链 : 25 journey title 写博客的一天 section 上午 起床: 5: 我 喝咖啡: 4: 我 section 下午 写文章: 5: 我, 读者 section 晚上 发布: 5: 我, 读者 mindmap root((博客)) 内容 文章 评论 技术 Astro moara-md timeline title 博客演进 2023 : 静态 HTML 2024 : Hexo 迁移 2025 : Astro 重构 2026 : moara-md 扩展层 gitGraph commit id: ini"},{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"首页","item":"https://blog.945426.xyz/"},{"@type":"ListItem","position":2,"name":"归档","item":"https://blog.945426.xyz/details/archives"},{"@type":"ListItem","position":3,"name":"Markdown 组件语法全览","item":"https://blog.945426.xyz/posts/test001"}]}]</script>
 
     <!-- 第三方资源 -->
     <link rel="preconnect" href="https://raw-posts.945426.xyz" crossorigin />
@@ -132,7 +132,7 @@
 </nav>
 
 <!-- 文章容器 -->
-<div id="article-view" data-article-id="test001" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown 组件语法全览&quot;,&quot;date&quot;:&quot;2026-10-03 08:20&quot;,&quot;last_modified&quot;:&quot;2026-10-07 10:00&quot;,&quot;author&quot;:&quot;moara&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;,&quot;Markdown&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false,&quot;math&quot;:true}">
+<div id="article-view" data-article-id="test001" data-content-type="md" data-article-meta="{&quot;title&quot;:&quot;Markdown 组件语法全览&quot;,&quot;date&quot;:&quot;2026-10-03 08:20&quot;,&quot;last_modified&quot;:&quot;2026-11-25 20:30&quot;,&quot;author&quot;:&quot;moara&quot;,&quot;category&quot;:[&quot;Demo&quot;],&quot;tags&quot;:[&quot;Demo&quot;,&quot;Markdown&quot;],&quot;image&quot;:&quot;&quot;,&quot;type&quot;:&quot;article&quot;,&quot;locked&quot;:false,&quot;math&quot;:true}">
 
     <div class="article-hero-wrapper">
         <img src="" alt="" class="article-hero-bg" id="detail-bg-img" />
@@ -1830,11 +1830,719 @@ export const twice = (x) =&gt; fold(x) * 2;</code></pre>
 <p><music title="轻涟 La vaguelette" artist="HOYO-MiX" src="music/HOYO-MiX - 轻涟 La vaguelette.mp3" lrc="music/HOYO-MiX - 轻涟 La vaguelette.lrc"></music></p>
 <h3>19.6 旧语法兜底（music.json）</h3>
 <p><music id="cry"></music></p>
+<h1>moara-md v1.3 四大组件</h1>
+<p>本文是 moara-md v1.3 版本的四大组件（文件树 / 代码树 / 内容边注 / 步骤流）的<strong>全量视觉与交互测试</strong>，覆盖规格中的每一种语法、每一种标记与所有降级路径。</p>
+<h2>20. 文件树（:::file-tree / ```file-tree）</h2>
+<p>文件树可将多层级项目结构、源码目录以及终端目录输出转化为紧凑的交互式树状视图，支持自动识别后缀图标、Diff 差异高亮以及可折叠分支。</p>
+<h3>20.1 嵌套列表语法（基础 · 规格原样）</h3>
+<p>使用 <code>:::file-tree</code> 块：</p>
+<div class="md-file-tree" data-file-tree role="group" aria-label="Shirone 源码树">
+<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">Shirone 源码树</span></div>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 components"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">components</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file ft-added">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-flashlight-line" aria-hidden="true"></i><span class="ft-name">Navigation.svelte</span></span>
+</li><li class="ft-item ft-file ft-deleted">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-rocket-2-line" aria-hidden="true"></i><span class="ft-name">Button.astro</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 content"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">content</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 posts"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">posts</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-markdown-line" aria-hidden="true"></i><span class="ft-name">markdown-enhancements.md</span></span>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 layouts"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">layouts</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-rocket-2-line" aria-hidden="true"></i><span class="ft-name">PostLayout.astro</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 plugins"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">plugins</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 markdown"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">markdown</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-javascript-line" aria-hidden="true"></i><span class="ft-name">rehype-file-tree.mjs</span></span>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 styles"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">styles</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 markdown"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">markdown</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-css3-line" aria-hidden="true"></i><span class="ft-name">trees.css</span></span>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-code-line" aria-hidden="true"></i><span class="ft-name ft-strong">content.config.ts</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 public"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">public</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-shape-line" aria-hidden="true"></i><span class="ft-name">favicon.svg</span></span>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-npmjs-line" aria-hidden="true"></i><span class="ft-name">package.json</span></span>
+</li></ul>
+</div>
+
+
+<p>说明：</p>
+<ul>
+<li>目录默认展开，显式带斜杠（如 <code>posts/</code>） → <strong>默认折叠</strong>，点击可展开</li>
+<li><code>++ Navigation.svelte</code> → 绿色背景高亮</li>
+<li><code>-- Button.astro</code> → 红色背景与删除线</li>
+<li><code>**content.config.ts**</code> → 重点强调的高亮视觉层级</li>
+</ul>
+<h3>20.2 终端输出语法（Unicode 分支字符）</h3>
+<p>从命令行（如  <code>tree</code> ）直接复制时，可直接粘贴到 ```file-tree 块中：</p>
+<div class="md-file-tree" data-file-tree role="group" aria-label="构建产物">
+<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">构建产物</span></div>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 dist"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">dist</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 _astro"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">_astro</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-css3-line" aria-hidden="true"></i><span class="ft-name">index.css</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-javascript-line" aria-hidden="true"></i><span class="ft-name">page.js</span></span>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-shape-line" aria-hidden="true"></i><span class="ft-name">favicon.ico</span></span>
+</li></ul>
+</li></ul>
+</div>
+
+<p>说明：</p>
+<ul>
+<li>title=&quot;string&quot;：自定义文件树的标题</li>
+</ul>
+<h3>20.3 支持终端输出语法（ASCII 分支字符）</h3>
+<div class="md-file-tree" data-file-tree role="group" aria-label="Python 工程">
+<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">Python 工程</span></div>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">main.py</span></span>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 utils"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">utils</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">__init__.py</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">helpers.py</span></span>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-book-open-line" aria-hidden="true"></i><span class="ft-name">README.md</span></span>
+</li></ul>
+</li></ul>
+</div>
+
+<h3>20.4 图标多样性 + Diff 标记 + 深层嵌套</h3>
+<div class="md-file-tree" data-file-tree role="group" aria-label="图库工程 assets-check">
+<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">图库工程 assets-check</span></div>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 project"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">project</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 assets"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">assets</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-image-line" aria-hidden="true"></i><span class="ft-name">logo.png</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-image-line" aria-hidden="true"></i><span class="ft-name">banner.webp</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-image-line" aria-hidden="true"></i><span class="ft-name">photo.jpg</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-shape-line" aria-hidden="true"></i><span class="ft-name">icon.svg</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 audio"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">audio</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-music-line" aria-hidden="true"></i><span class="ft-name">bgm.mp3</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-music-line" aria-hidden="true"></i><span class="ft-name">voice.flac</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 video"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">video</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-video-line" aria-hidden="true"></i><span class="ft-name">intro.mp4</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 docs"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">docs</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-markdown-line" aria-hidden="true"></i><span class="ft-name">guide.md</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-pdf-line" aria-hidden="true"></i><span class="ft-name">api.pdf</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-excel-line" aria-hidden="true"></i><span class="ft-name">data.xlsx</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 components"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">components</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file ft-added">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-vuejs-line" aria-hidden="true"></i><span class="ft-name">Button.vue</span></span>
+</li><li class="ft-item ft-file ft-deleted">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-reactjs-line" aria-hidden="true"></i><span class="ft-name">OldButton.jsx</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-flashlight-line" aria-hidden="true"></i><span class="ft-name">Modal.svelte</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 utils"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">utils</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-reactjs-line" aria-hidden="true"></i><span class="ft-name ft-strong">App.tsx</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">helpers.py</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-box-line" aria-hidden="true"></i><span class="ft-name">build.rs</span></span>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-html5-line" aria-hidden="true"></i><span class="ft-name">index.html</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">main.go</span></span>
+</li></ul>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-npmjs-line" aria-hidden="true"></i><span class="ft-name">package.json</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-git-repository-line" aria-hidden="true"></i><span class="ft-name">.gitignore</span></span>
+</li><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-shield-line" aria-hidden="true"></i><span class="ft-name">LICENSE</span></span>
+</li></ul>
+</li></ul>
+</div>
+
+
+<h3>20.5 降级：容器内无列表</h3>
+<p>:::file-tree{title=&quot;这应该降级为普通文本&quot;}<br>这里没有任何列表，容器应保持为普通 Markdown 展示，不会强行启发式解析。<br>:::</p>
+<h3>20.6 降级：终端输出非树文本</h3>
+<pre data-title="这不是树"><code class="language-file-tree">随便一段文字
+没有分支字符
+无法解析为目录树</code></pre>
+
+<p>以上应显示为普通代码块。</p>
+<h2>21. 代码树（:::code-tree）</h2>
+<p>交互式代码树将左侧的多级文件层级导航与右侧（不同设备的位置不同：桌面左右、移动端上下）的代码即时预览组合呈现。</p>
+<h3>21.1 完整示例（entry 指定初始文件）</h3>
+<p>在 <code>:::code-tree</code> 块指令中组合多个代码块。每个代码块通过 title=&quot;path/to/file&quot; 指定其相对路径：</p>
+<div class="md-code-tree" data-code-tree aria-label="Shirone 组件演示" style="--ct-h:380px">
+<div class="ct-head"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="ct-title">Shirone 组件演示</span><span class="ct-path" data-ct-path>src/Button.svelte</span><button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false"><i class="ri-text-wrap" aria-hidden="true"></i></button><button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码"><i class="ri-file-copy-line" aria-hidden="true"></i></button></div>
+<div class="ct-body">
+<div class="ct-tree" role="tree" aria-label="文件导航">
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="src/Button.svelte" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-flashlight-line" aria-hidden="true"></i><span class="ft-name">Button.svelte</span></button>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 styles"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">styles</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="src/styles/button.styl" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-css3-line" aria-hidden="true"></i><span class="ft-name">button.styl</span></button>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="package.json" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-npmjs-line" aria-hidden="true"></i><span class="ft-name">package.json</span></button>
+</li></ul>
+</div>
+<div class="ct-panels">
+<div class="ct-panel active" data-path="src/Button.svelte">
+
+<pre><code class="language-svelte">&lt;script lang=&quot;ts&quot;&gt;
+  let { label = &quot;点击我&quot; } = $props();
+&lt;/script&gt;
+
+&lt;button class=&quot;m3-btn&quot;&gt;{label}&lt;/button&gt;</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="src/styles/button.styl" hidden>
+
+<pre><code class="language-stylus">.m3-btn
+  background: var(--primary)
+  color: var(--on-primary)
+  border-radius: var(--shape-corner-m)</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="package.json" hidden>
+
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;button-demo&quot;,
+  &quot;version&quot;: &quot;1.0.0&quot;
+}</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<p>说明：</p>
+<ul>
+<li>title=&quot;string&quot;：自定义代码树的标题</li>
+<li>height=&quot;string&quot;：设置视图高度，默认 420px</li>
+<li>entry=&quot;filepath&quot;：指定页面初次加载时默认激活展示的文件路径</li>
+<li>:active：在任意代码块后添加 :active 可将其设为默认激活的标签页</li>
+</ul>
+<h3>21.2 <code>:active</code> 标记（无 entry 时生效）</h3>
+<div class="md-code-tree" data-code-tree aria-label="配置文件集">
+<div class="ct-head"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="ct-title">配置文件集</span><span class="ct-path" data-ct-path>astro.config.mjs</span><button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false"><i class="ri-text-wrap" aria-hidden="true"></i></button><button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码"><i class="ri-file-copy-line" aria-hidden="true"></i></button></div>
+<div class="ct-body">
+<div class="ct-tree" role="tree" aria-label="文件导航">
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="tsconfig.json" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-settings-4-line" aria-hidden="true"></i><span class="ft-name">tsconfig.json</span></button>
+</li><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="astro.config.mjs" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-settings-4-line" aria-hidden="true"></i><span class="ft-name">astro.config.mjs</span></button>
+</li><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="vercel.json" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-braces-line" aria-hidden="true"></i><span class="ft-name">vercel.json</span></button>
+</li></ul>
+</div>
+<div class="ct-panels">
+<div class="ct-panel" data-path="tsconfig.json" hidden>
+
+<pre><code class="language-json">{
+  &quot;extends&quot;: &quot;astro/tsconfigs/strict&quot;
+}</code></pre>
+
+</div>
+
+<div class="ct-panel active" data-path="astro.config.mjs">
+
+<pre><code class="language-js">import { defineConfig } from &#39;astro/config&#39;;
+
+export default defineConfig({});</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="vercel.json" hidden>
+
+<pre><code class="language-yaml">{
+  &quot;cleanUrls&quot;: true
+}</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<p>初始激活为 <code>astro.config.mjs</code>（<code>:active</code> 标记）。</p>
+<h3>21.3 默认高度 + 深层路径</h3>
+<div class="md-code-tree" data-code-tree aria-label="多级目录（默认 420px 高度）">
+<div class="ct-head"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="ct-title">多级目录（默认 420px 高度）</span><span class="ct-path" data-ct-path>src/layouts/BaseLayout.astro</span><button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false"><i class="ri-text-wrap" aria-hidden="true"></i></button><button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码"><i class="ri-file-copy-line" aria-hidden="true"></i></button></div>
+<div class="ct-body">
+<div class="ct-tree" role="tree" aria-label="文件导航">
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 layouts"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">layouts</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="src/layouts/BaseLayout.astro" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-rocket-2-line" aria-hidden="true"></i><span class="ft-name">BaseLayout.astro</span></button>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 styles"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">styles</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="src/styles/global.css" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-css3-line" aria-hidden="true"></i><span class="ft-name">global.css</span></button>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 content"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">content</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 posts"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">posts</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="content/posts/hello.md" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-markdown-line" aria-hidden="true"></i><span class="ft-name">hello.md</span></button>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 docs"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">docs</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 release-notes"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">release-notes</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="docs/release-notes/v1.3.txt" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-text-line" aria-hidden="true"></i><span class="ft-name">v1.3.txt</span></button>
+</li></ul>
+</li></ul>
+</li></ul>
+</div>
+<div class="ct-panels">
+<div class="ct-panel active" data-path="src/layouts/BaseLayout.astro">
+
+<pre><code class="language-ts">&lt;html lang=&quot;zh-CN&quot;&gt;&lt;/html&gt;</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="src/styles/global.css" hidden>
+
+<pre><code class="language-css">:root { --primary: #111; }</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="content/posts/hello.md" hidden>
+
+<pre><code class="language-md"># 你好，世界</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="docs/release-notes/v1.3.txt" hidden>
+
+<pre><code class="language-txt">- file-tree / code-tree / sidenote / steps</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<h3>21.4 超长代码</h3>
+<p><code>height</code> 同时作用于桌面端与移动端，两端默认均 420px。</p>
+<div class="md-code-tree" data-code-tree aria-label="超长代码（默认 420px）">
+<div class="ct-head"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="ct-title">超长代码（默认 420px）</span><span class="ct-path" data-ct-path>src/utils/format.ts</span><button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false"><i class="ri-text-wrap" aria-hidden="true"></i></button><button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码"><i class="ri-file-copy-line" aria-hidden="true"></i></button></div>
+<div class="ct-body">
+<div class="ct-tree" role="tree" aria-label="文件导航">
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 utils"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">utils</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="src/utils/format.ts" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-code-line" aria-hidden="true"></i><span class="ft-name">format.ts</span></button>
+</li></ul>
+</li></ul>
+</li><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="README.txt" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-file-text-line" aria-hidden="true"></i><span class="ft-name">README.txt</span></button>
+</li></ul>
+</div>
+<div class="ct-panels">
+<div class="ct-panel active" data-path="src/utils/format.ts">
+
+<pre><code class="language-ts">export function padLeft(input: string, len: number, ch = &#39; &#39;): string {
+    let out = input;
+    while (out.length &lt; len) out = ch + out;
+    return out;
+}
+
+export function formatDate(d: Date, pattern = &#39;YYYY-MM-DD&#39;): string {
+    const y = d.getFullYear();
+    const m = padLeft(String(d.getMonth() + 1), 2, &#39;0&#39;);
+    const day = padLeft(String(d.getDate()), 2, &#39;0&#39;);
+    return pattern
+        .replace(&#39;YYYY&#39;, String(y))
+        .replace(&#39;MM&#39;, m)
+        .replace(&#39;DD&#39;, day);
+}
+
+export function formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return &#39;0 B&#39;;
+    const k = 1024;
+    const units = [&#39;B&#39;, &#39;KB&#39;, &#39;MB&#39;, &#39;GB&#39;, &#39;TB&#39;, &#39;PB&#39;];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const value = bytes / Math.pow(k, i);
+    return value.toFixed(decimals) + &#39; &#39; + units[i];
+}
+
+export function truncateMiddle(text: string, max = 40): string {
+    if (text.length &lt;= max) return text;
+    const half = Math.floor((max - 1) / 2);
+    return text.slice(0, half) + &#39;…&#39; + text.slice(text.length - half);
+}
+
+export function chunk&lt;T&gt;(arr: T[], size: number): T[][] {
+    const out: T[][] = [];
+    for (let i = 0; i &lt; arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+}
+
+export function groupBy&lt;T, K extends string&gt;(arr: T[], key: (item: T) =&gt; K): Record&lt;K, T[]&gt; {
+    const out = {} as Record&lt;K, T[]&gt;;
+    for (const item of arr) {
+        const k = key(item);
+        (out[k] || (out[k] = [])).push(item);
+    }
+    return out;
+}
+
+export function debounce&lt;F extends (...args: never[]) =&gt; void&gt;(fn: F, wait = 200): (...args: Parameters&lt;F&gt;) =&gt; void {
+    let timer: ReturnType&lt;typeof setTimeout&gt; | undefined;
+    return (...args: Parameters&lt;F&gt;) =&gt; {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() =&gt; fn(...args), wait);
+    };
+}
+
+export function throttle&lt;F extends (...args: never[]) =&gt; void&gt;(fn: F, interval = 200): (...args: Parameters&lt;F&gt;) =&gt; void {
+    let last = 0;
+    return (...args: Parameters&lt;F&gt;) =&gt; {
+        const now = Date.now();
+        if (now - last &gt;= interval) {
+            last = now;
+            fn(...args);
+        }
+    };
+}</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="README.txt" hidden>
+
+<pre><code class="language-txt">format.ts 汇总：padLeft / formatDate / formatBytes / truncateMiddle / chunk / groupBy / debounce / throttle</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+
+<h3>21.5 降级：代码块缺少 title</h3>
+<p>:::code-tree{title=&quot;这应该降级&quot;}</p>
+<pre><code class="language-js">console.log(&#39;没有 title 的代码块&#39;);
+</code></pre>
+<p>:::</p>
+<p>以上应整体保持为普通代码块输出（带原容器文字）。</p>
+<h2>22. 内容边注（[+label]）</h2>
+<p>内容边注将辅助背景信息紧邻特定句子放置，而不强行插入到正文阅读主线。它与脚注不同：脚注统一收录在文末注释区，而边注点击标记即出现悬浮气泡。</p>
+<h3>22.1 基本引用与富文本</h3>
+<p>在正文中添加 <code>[+label]</code> 引用标记，然后在其他位置定义对应的边注内容。渲染管线 <sup class="fn-ref sn-ref" data-sn-label="pipeline" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：pipeline">+</sup><template class="sn-store" data-sn-label="pipeline">预处理依次执行：代码摘离 → 遗留标签保护 → 数学摘离 → admonition → 容器指令栈式解析 → 脚注 → 边注 → 行内剧透 → 代码还原。</template> 会先摘离代码与公式，再逐级变换，最后统一还原 <sup class="fn-ref sn-ref" data-sn-label="restore" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：restore">+</sup><template class="sn-store" data-sn-label="restore"><div class="sn-item">定义体支持<strong>多段落</strong>、加粗、链接、列表与行内代码：</div><div class="sn-item">- 就像这样，第二个同标签定义；<br>- 与第三条一起，合并为<strong>一组有序批注</strong>。</div></template>。</p>
+<h3>22.2 多条关联定义与多次引用</h3>
+<p>同一个标签 <sup class="fn-ref sn-ref" data-sn-label="multi" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：multi">+</sup><template class="sn-store" data-sn-label="multi"><div class="sn-item">第一条批注：说明该标签的职责。</div><div class="sn-item">第二条批注：补充边界情况，例如包含 <a href="https://docs.astro.build/zh-cn/concepts/islands/" target="_blank" rel="noopener noreferrer">外部链接</a> 与 <code>行内代码</code>。</div></template> 可以被引用多次 <sup class="fn-ref sn-ref" data-sn-label="multi" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：multi">+</sup>，多次引用共享同一份内容；重复定义 <sup class="fn-ref sn-ref" data-sn-label="multi" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：multi">+</sup> 则合并为气泡内的一组批注列表。</p>
+<h3>22.3 与脚注共存</h3>
+<p>边注 <sup class="fn-ref sn-ref" data-sn-label="coexist" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：coexist">+</sup><template class="sn-store" data-sn-label="coexist">边注气泡固定显示「+」，脚注标记自动编号「1、2、3」。</template> 与脚注<sup class="fn-ref" id="fnref-note1" data-fn-ref="note1" role="button" tabindex="0" aria-label="查看注释卡片">3</sup>可以出现在同一句话里<sup class="fn-ref" id="fnref-note2" data-fn-ref="note2" role="button" tabindex="0" aria-label="查看注释卡片">4</sup>，互不干扰 <sup class="fn-ref sn-ref" data-sn-label="coexist" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：coexist">+</sup>。</p>
+<h3>22.4 未定义引用</h3>
+<p>[+ref] 没有对应定义，原样保留为普通文本 [+ref] 。</p>
+<h2>23. 步骤流（:::steps）</h2>
+<p>步骤流适用于强调先后执行顺序的操作流程，通过低调优雅的数字导轨提供清晰导航。</p>
+<h3>23.1 方括号简写标题 + 代码块（规格原样）</h3>
+<div class="md-steps" data-md-steps data-steps-start="1" role="group" aria-label="生产环境部署">
+<div class="steps-title"><i class="ri-flask-line" aria-hidden="true"></i><span class="steps-title-text">生产环境部署</span></div>
+<ol class="steps-list">
+<li class="step-item">
+<span class="step-num">1</span>
+<div class="step-main">
+
+<p><strong>克隆并准备工作区</strong></p>
+<p>克隆代码仓库并进入项目根目录：</p>
+<pre><code class="language-powershell">git clone https://github.com/LyraVoid/Shirone.git
+Set-Location Shirone
+</code></pre>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">2</span>
+<div class="step-main">
+
+<p><strong>安装项目依赖</strong></p>
+<p>使用仓库指定的包管理器进行安装：</p>
+<pre><code class="language-powershell">pnpm.cmd install
+</code></pre>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">3</span>
+<div class="step-main">
+
+<p><strong>执行项目校验</strong></p>
+<p>确认 Astro 诊断与 TypeScript 类型检查均通过：</p>
+<pre><code class="language-powershell">npx.cmd astro check
+pnpm.cmd type-check
+</code></pre>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">4</span>
+<div class="step-main">
+
+<p><strong>构建生产站点</strong></p>
+<p>生成静态页面与搜索索引产物：</p>
+<pre><code class="language-powershell">pnpm.cmd build
+</code></pre>
+</div>
+</li>
+</ol>
+</div>
+
+
+<p>说明：</p>
+<ul>
+<li>:::steps[标题] 或 title=&quot;标题&quot; 可添加标题</li>
+<li>start=4 可修改起始展示的步骤编号</li>
+<li>容器内必须且仅包含一个有序列表。格式不规范或混合的内容将保持为普通 Markdown 文本展示</li>
+</ul>
+<h3>23.2 花括号属性 + start 修改起始编号</h3>
+<div class="md-steps" data-md-steps data-steps-start="4" role="group" aria-label="编号从 4 开始">
+<div class="steps-title"><i class="ri-flask-line" aria-hidden="true"></i><span class="steps-title-text">编号从 4 开始</span></div>
+<ol class="steps-list">
+<li class="step-item">
+<span class="step-num">4</span>
+<div class="step-main">
+
+<p><strong>第四步</strong></p>
+<p>这一步编号应显示为 4。</p>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">5</span>
+<div class="step-main">
+
+<p><strong>第五步</strong></p>
+<p>内嵌列表：</p>
+<ul>
+<li>检查产物体积</li>
+<li>上传 CDN</li>
+</ul>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">6</span>
+<div class="step-main">
+
+<p><strong>第六步</strong></p>
+<p>收尾，可含 <a href="https://example.com">链接</a>。</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+<h3>23.3 无标题</h3>
+<div class="md-steps" data-md-steps data-steps-start="1" role="group">
+<ol class="steps-list">
+<li class="step-item">
+<span class="step-num">1</span>
+<div class="step-main">
+
+<p><strong>无标题步骤一</strong></p>
+<p>无标题时应只有数字导轨，没有标题栏。</p>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">2</span>
+<div class="step-main">
+
+<p><strong>无标题步骤二</strong></p>
+<p>第二步。</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+<h3>23.4 降级：混入顶层裸文本</h3>
+<p>:::steps[这应该降级]<br>这段顶层裸文本不属于任何列表项。</p>
+<ol>
+<li><p><strong>不会被渲染为步骤</strong></p>
+<p>因为容器格式不规范。</p>
+</li>
+</ol>
+<p>:::</p>
+<p>以上应保持为普通 Markdown（普通有序列表 + 段落），不出现数字导轨。</p>
+<h2>24. 混合嵌套</h2>
+<h3>24.1 文件树嵌套在 admonition 内</h3>
+<div class="admonition admonition-note" data-collapsible>
+<div class="admonition-title" role="button" tabindex="0" aria-expanded="false">
+<i class="ri-sticky-note-line" aria-hidden="true"></i>
+<span class="admonition-title-text">项目速览</span>
+<i class="admonition-chevron ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="admonition-body">
+
+
+<div class="md-file-tree" data-file-tree role="group" aria-label="引用块内的树">
+<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">引用块内的树</span></div>
+<ul class="ft-list" role="group"><li class="ft-item ft-dir">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="true" aria-label="折叠目录 src"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">src</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">main.py</span></span>
+</li></ul>
+</li><li class="ft-item ft-dir ft-collapsed">
+<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="false" aria-label="展开目录 tests"><i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i><i class="ft-icon ri-folder-line" aria-hidden="true"></i><span class="ft-name">tests</span></button>
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<span class="ft-row"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-code-s-slash-line" aria-hidden="true"></i><span class="ft-name">test_main.py</span></span>
+</li></ul>
+</li></ul>
+</div>
+
+
+</div>
+</div>
+
+<h3>24.2 代码树嵌套在 folding 内</h3>
+<div class="details-box" data-fold>
+<div class="details-header" role="button" tabindex="0" aria-expanded="false">
+<span class="details-title">展开查看代码树</span>
+<i class="details-icon ri-arrow-right-s-line" aria-hidden="true"></i>
+</div>
+<div class="details-content-wrapper">
+<div class="details-inner">
+
+<div class="md-code-tree" data-code-tree aria-label="折叠面板里的代码树">
+<div class="ct-head"><i class="ri-code-s-slash-line" aria-hidden="true"></i><span class="ct-title">折叠面板里的代码树</span><span class="ct-path" data-ct-path>index.html</span><button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false"><i class="ri-text-wrap" aria-hidden="true"></i></button><button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码"><i class="ri-file-copy-line" aria-hidden="true"></i></button></div>
+<div class="ct-body">
+<div class="ct-tree" role="tree" aria-label="文件导航">
+<ul class="ft-list" role="group"><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="index.html" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-html5-line" aria-hidden="true"></i><span class="ft-name">index.html</span></button>
+</li><li class="ft-item ft-file">
+<button type="button" class="ft-row ft-row-file" data-ft-path="style.css" role="treeitem" aria-selected="false"><i class="ft-caret ft-caret-ghost" aria-hidden="true"></i><i class="ft-icon ri-css3-line" aria-hidden="true"></i><span class="ft-name">style.css</span></button>
+</li></ul>
+</div>
+<div class="ct-panels">
+<div class="ct-panel active" data-path="index.html">
+
+<pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html&gt;&lt;/html&gt;</code></pre>
+
+</div>
+
+<div class="ct-panel" data-path="style.css" hidden>
+
+<pre><code class="language-css">body { margin: 0; }</code></pre>
+
+</div>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+</div>
+
+
+<h3>24.3 步骤流内含边注混排</h3>
+<div class="md-steps" data-md-steps data-steps-start="1" role="group" aria-label="综合演练">
+<div class="steps-title"><i class="ri-flask-line" aria-hidden="true"></i><span class="steps-title-text">综合演练</span></div>
+<ol class="steps-list">
+<li class="step-item">
+<span class="step-num">1</span>
+<div class="step-main">
+
+<p><strong>阅读源码结构</strong></p>
+<p>先看目录 <sup class="fn-ref sn-ref" data-sn-label="structure" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：structure">+</sup><template class="sn-store" data-sn-label="structure">目录结构由嵌套列表推断，目录默认展开，带斜杠的目录默认折叠。</template>，再进入下一步。</p>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">2</span>
+<div class="step-main">
+
+<p><strong>理解数据流</strong></p>
+<p>数据从 <code>:::code-tree</code> 左侧导航流向右侧预览面板 <sup class="fn-ref sn-ref" data-sn-label="flow" role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：flow">+</sup><template class="sn-store" data-sn-label="flow">点击左侧文件 → 右侧面板切换 → 顶栏路径与复制按钮同步。</template>。</p>
+</div>
+</li>
+<li class="step-item">
+<span class="step-num">3</span>
+<div class="step-main">
+
+<p><strong>完成验证</strong></p>
+<p>所有组件视觉状态正确、点击正常、无卡顿。</p>
+</div>
+</li>
+</ol>
+</div>
+
+
+
+
 <section class="footnotes" data-footnotes data-notoc>
 <div class="footnotes-title"><i class="ri-book-open-line" aria-hidden="true"></i><span>注释</span></div>
 <ol class="footnotes-list">
 <li id="fn-gfm" class="footnote-item"><button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-gfm" aria-label="返回引用处 1">1</button><span class="footnote-text">参见 GitHub Flavored Markdown Spec 的脚注扩展。</span></li>
 <li id="fn-anywhere" class="footnote-item"><button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-anywhere" aria-label="返回引用处 2">2</button><span class="footnote-text">引用处按首次出现顺序编号，支持<a href="https://github.github.com/gfm/" target="_blank" rel="noopener noreferrer"><strong>行内 Markdown</strong></a> 与多行定义。</span></li>
+<li id="fn-note1" class="footnote-item"><button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-note1" aria-label="返回引用处 3">3</button><span class="footnote-text">这是脚注一。</span></li>
+<li id="fn-note2" class="footnote-item"><button class="fn-ref fn-jump" type="button" data-fn-jump="fnref-note2" aria-label="返回引用处 4">4</button><span class="footnote-text">这是脚注二。</span></li>
 </ol>
 </section>
             </article>
