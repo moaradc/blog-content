@@ -5,7 +5,19 @@
  * 两仓各持副本，改动需手动同步。
  * v1.1：:::gallery{…} 包裹 ![说明](图) 行（栈式解析、可嵌套）；旧 <gallery src> 兜底
  * v1.2：notitle/nocaption/caption-color；[![](图)](链接) 整格锚点；说明浮层两行截断
- * v1.2.3：postprocess 给内容图片统一补 loading="lazy" / decoding="async"（幂等） */
+ * v1.2.3：postprocess 给内容图片统一补 loading="lazy" / decoding="async"（幂等）
+ * v1.3：四大新组件——
+ *   ① :::file-tree{title} 嵌套列表文件树 / ```file-tree 围栏（tree 终端输出）；
+ *     ++ 新增、-- 删除、**粗体** 强调、目录名带 / 默认折叠；可点击/键盘折叠
+ *   ② :::code-tree{title height entry} 左侧文件导航 + 右侧代码预览（IDE 布局）；
+ *     内部代码块以 title="path" 指定路径，:active 或 entry 指定初始文件；
+ *     height 同时作用于桌面端与移动端（两端默认均 420px，超长代码限高滚动）；
+ *     工具条提供换行（data-ct-wrap，与普通代码块同功能）与复制按钮
+ *   ③ [+label] 内容边注：正文引用 + [+label]: 定义，点击弹出悬浮气泡（复用脚注外观，
+ *     标记固定为 "+"），支持多条关联定义与块级富文本；未定义引用保留原文
+ *   ④ :::steps[标题] / :::steps{title start} 步骤流：有序列表转数字导轨，
+ *     start 可改起始编号；格式不规范时原样降级为普通 Markdown
+ */
 (function (global, factory) {
     if (typeof module === 'object' && typeof module.exports === 'object') {
         module.exports = factory();
@@ -15,7 +27,7 @@
 })(typeof window !== 'undefined' ? window : this, function () {
     'use strict';
 
-    var VERSION = '1.2.3';
+    var VERSION = '1.3.0';
 
     /* 基础工具 */
 
@@ -123,14 +135,42 @@
             + escapeHtml(body) + '</code></pre>';
     }
 
-    /** 摘离围栏与行内代码防误处理；nonce 占位符 + split/join 还原（规避 $ 特殊字符） */
+    /** 摘离围栏与行内代码防误处理；nonce 占位符 + split/join 还原（规避 $ 特殊字符）
+     * v1.3：①围栏元信息（lang/title/:active/原文）同步记录到 ctx.fenceMetas，
+     *         供 :::code-tree 重建左侧文件导航；②```file-tree 围栏在此处直接
+     *         解析渲染（tree 终端输出语法），失败则按普通代码块降级。 */
     function extractCode(text, ctx) {
         var codeSpans = [];
+        var fenceMetas = [];
         var nonce = makeNonce();
         var ph = function (i) { return '%%MD_CODE_' + nonce + '_' + i + '%%'; };
 
         var fenceRegex = /^[ \t]*(`{3,}|~{3,})[^\n]*\n[\s\S]*?\n[ \t]*\1[ \t]*(?=\n|$)/gm;
         text = text.replace(fenceRegex, function (match) {
+            var fenceLines = match.split('\n');
+            var m = fenceLines[0].match(/^[ \t]*(`{3,}|~{3,})[ \t]*(.*)$/);
+            var infoStr = m ? m[2] : '';
+            var body = fenceLines.slice(1, fenceLines.length - 1).join('\n');
+
+            /* file-tree 围栏：tree 终端输出语法，尝试解析为交互文件树 */
+            var ftInfo = infoStr.trim().match(/^file-tree\b[ \t]*(.*)$/);
+            if (ftInfo) {
+                var ftAttrs = parseAttrs(ftInfo[1] || '');
+                var ftHtml = renderTerminalFileTree(body, ftAttrs);
+                if (ftHtml) {
+                    fenceMetas.push({ lang: 'file-tree', title: ftAttrs.title, body: body, active: false });
+                    codeSpans.push(ftHtml);
+                    return ph(codeSpans.length - 1);
+                }
+                /* 解析失败 → 普通代码块降级 */
+            }
+
+            /* 常规围栏：解析 lang / title / :active 标记，记录元信息 */
+            var active = /(^|\s):active\b/.test(infoStr);
+            var cleanInfo = infoStr.replace(/(^|\s):active\b/g, ' ').trim();
+            var info = parseCodeFenceInfo(cleanInfo);
+            var lang = info ? info.lang : (cleanInfo.trim().split(/\s+/)[0] || '');
+            fenceMetas.push({ lang: lang, title: info ? info.title : undefined, body: body, active: active });
             codeSpans.push(rewriteFenceInfo(match));
             return ph(codeSpans.length - 1);
         });
@@ -144,6 +184,7 @@
 
         ctx.codeSpans = codeSpans;
         ctx.codeNonce = nonce;
+        ctx.fenceMetas = fenceMetas;
         return text;
     }
 
@@ -154,6 +195,11 @@
             out = out.split('%%MD_CODE_' + ctx.codeNonce + '_' + i + '%%').join(ctx.codeSpans[i]);
         }
         return out;
+    }
+
+    /** v1.3：对摘离出主文本的字符串（脚注/边注定义体）单独还原代码占位符（行内代码场景） */
+    function restoreCodeInStr(s, ctx) {
+        return ctx && ctx.codeSpans ? restoreCode(String(s), ctx) : String(s);
     }
 
     /* ② 遗留自定义标签保护（与旧版行为等价，旧语法仅作兼容降级） */
@@ -281,13 +327,14 @@
     }
 
     /* ④ 容器指令变换（栈式解析） */
-    var DIRECTIVE_OPEN_RE = /^([ \t]*)(::+)([a-zA-Z][\w-]*)(?:[ \t]*\{(.*)\})?[ \t]*$/;
+    /* v1.3：指令开标签支持 [标题] 简写（等价 title="标题"），:::steps[部署] 之类 */
+    var DIRECTIVE_OPEN_RE = /^([ \t]*)(::+)([a-zA-Z][\w-]*)(?:[ \t]*(?:\{([^{}]*)\}|\[([^\]]*)\]))?[ \t]*$/;
     var DIRECTIVE_CLOSE_RE = /^([ \t]*)(::+)[ \t]*$/;
 
     /* 叶子指令（双冒号、单行、无闭合围栏） */
     var LEAF_DIRECTIVES = ['video', 'linkcard', 'github'];
     /* 容器指令（三冒号及以上、需闭合围栏） */
-    var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab', 'gallery'];
+    var CONTAINER_DIRECTIVES = ['folding', 'tabs', 'tab', 'gallery', 'file-tree', 'code-tree', 'steps'];
     /* 无正文指令：三冒号形式同样自足，不消费闭合围栏 */
     var BODYLESS_DIRECTIVES = ['video', 'linkcard', 'github'];
 
@@ -488,8 +535,516 @@
             '\n</div>';
     }
 
+    /* ═══════════════════════════════════════════════════════════════
+     *  v1.3 新组件：文件树 / 代码树 / 步骤流 / 内容边注
+     * ═══════════════════════════════════════════════════════════════ */
+
+    /* 文件后缀 → remixicon 图标（moara-md 双端自持映射，与 article.js 的链接卡图标表语义一致） */
+    var FT_FILE_ICONS = {
+        md: 'ri-markdown-line', markdown: 'ri-markdown-line', mdx: 'ri-markdown-line',
+        js: 'ri-javascript-line', mjs: 'ri-javascript-line', cjs: 'ri-javascript-line',
+        jsx: 'ri-reactjs-line', ts: 'ri-file-code-line', tsx: 'ri-reactjs-line',
+        json: 'ri-braces-line', jsonc: 'ri-braces-line',
+        html: 'ri-html5-line', htm: 'ri-html5-line', xhtml: 'ri-html5-line',
+        css: 'ri-css3-line', scss: 'ri-css3-line', sass: 'ri-css3-line',
+        less: 'ri-css3-line', styl: 'ri-css3-line', stylus: 'ri-css3-line',
+        vue: 'ri-vuejs-line', svelte: 'ri-flashlight-line', astro: 'ri-rocket-2-line',
+        py: 'ri-code-s-slash-line', rb: 'ri-code-s-slash-line', php: 'ri-code-s-slash-line',
+        go: 'ri-code-s-slash-line', rs: 'ri-code-box-line', java: 'ri-code-box-line',
+        kt: 'ri-code-box-line', c: 'ri-terminal-box-line', h: 'ri-terminal-box-line',
+        cpp: 'ri-terminal-box-line', hpp: 'ri-terminal-box-line', cc: 'ri-terminal-box-line',
+        cs: 'ri-terminal-box-line', swift: 'ri-terminal-box-line', dart: 'ri-terminal-box-line',
+        sh: 'ri-terminal-line', bash: 'ri-terminal-line', zsh: 'ri-terminal-line',
+        fish: 'ri-terminal-line', ps1: 'ri-terminal-line', psm1: 'ri-terminal-line',
+        bat: 'ri-terminal-line', cmd: 'ri-terminal-line',
+        yml: 'ri-file-list-3-line', yaml: 'ri-file-list-3-line', toml: 'ri-file-list-3-line',
+        ini: 'ri-file-list-3-line', env: 'ri-file-list-3-line',
+        xml: 'ri-file-code-line', sql: 'ri-database-2-line', graphql: 'ri-database-2-line',
+        png: 'ri-image-line', jpg: 'ri-image-line', jpeg: 'ri-image-line', gif: 'ri-image-line',
+        webp: 'ri-image-line', svg: 'ri-shape-line', avif: 'ri-image-line', ico: 'ri-shape-line',
+        mp3: 'ri-file-music-line', flac: 'ri-file-music-line', wav: 'ri-file-music-line',
+        ogg: 'ri-file-music-line', m4a: 'ri-file-music-line',
+        mp4: 'ri-file-video-line', mkv: 'ri-file-video-line', webm: 'ri-file-video-line',
+        mov: 'ri-file-video-line', avi: 'ri-file-video-line',
+        pdf: 'ri-file-pdf-line', txt: 'ri-file-text-line', log: 'ri-file-text-line',
+        zip: 'ri-file-zip-line', rar: 'ri-file-zip-line', '7z': 'ri-file-zip-line',
+        tar: 'ri-file-zip-line', gz: 'ri-file-zip-line', br: 'ri-file-zip-line',
+        doc: 'ri-file-word-line', docx: 'ri-file-word-line',
+        xls: 'ri-file-excel-line', xlsx: 'ri-file-excel-line', csv: 'ri-file-excel-line',
+        ppt: 'ri-file-ppt-line', pptx: 'ri-file-ppt-line',
+        lock: 'ri-lock-line', sum: 'ri-shield-check-line', mod: 'ri-shield-check-line'
+    };
+
+    /* 特殊文件名整名匹配（优先于扩展名） */
+    var FT_SPECIAL_ICONS = {
+        '.gitignore': 'ri-git-repository-line', '.gitattributes': 'ri-git-repository-line',
+        '.dockerfile': 'ri-box-3-line', 'dockerfile': 'ri-box-3-line',
+        'license': 'ri-shield-line', 'licence': 'ri-shield-line',
+        'makefile': 'ri-hammer-line', 'cmakelists.txt': 'ri-hammer-line',
+        'package.json': 'ri-npmjs-line', 'pnpm-lock.yaml': 'ri-npmjs-line',
+        'package-lock.json': 'ri-npmjs-line', 'yarn.lock': 'ri-npmjs-line',
+        'readme.md': 'ri-book-open-line', 'changelog.md': 'ri-history-line',
+        'tsconfig.json': 'ri-settings-4-line', 'vite.config.ts': 'ri-settings-4-line',
+        'astro.config.mjs': 'ri-settings-4-line', 'eslint.config.js': 'ri-settings-4-line'
+    };
+
+    function ftIconFor(name, isDir) {
+        if (isDir) return 'ri-folder-line';
+        var lower = String(name || '').toLowerCase();
+        if (FT_SPECIAL_ICONS[lower]) return FT_SPECIAL_ICONS[lower];
+        var m = lower.match(/\.([a-z0-9]+)$/);
+        return (m && FT_FILE_ICONS[m[1]]) || 'ri-file-line';
+    }
+
+    /** 尺寸属性校验：仅数字+单位（px/rem/em/vh/vw/%），防注入 */
+    function safeSizeAttr(v) {
+        var s = String(v == null ? '' : v).trim();
+        return /^\d+(\.\d+)?(px|rem|em|vh|vw|%)$/.test(s) ? s : '';
+    }
+
+    /**
+     * 列表项文本解析：[++] / [--] / **粗体** / 尾部斜杠目录
+     * 返回 { name, added, deleted, strong, dir, collapsed }
+     */
+    function parseTreeEntryText(raw) {
+        var t = String(raw == null ? '' : raw).trim();
+        var e = { name: '', added: false, deleted: false, strong: false, dir: false, collapsed: false };
+        if (!t) return e;
+        if (/^\+\+\s+/.test(t)) { e.added = true; t = t.replace(/^\+\+\s+/, ''); }
+        else if (/^--\s+/.test(t)) { e.deleted = true; t = t.replace(/^--\s+/, ''); }
+        var bm = t.match(/^\*\*(.+?)\*\*$/);
+        if (bm) { e.strong = true; t = bm[1].trim(); }
+        if (/\/\s*$/.test(t)) { e.dir = true; e.collapsed = true; t = t.replace(/\/\s*$/, '').trim(); }
+        e.name = t;
+        return e;
+    }
+
+    /** 嵌套列表语法 → 树（:::file-tree 容器体）。层级由「唯一缩进宽度排序定级」推断（2/4 空格混排均兼容） */
+    function parseListTree(body) {
+        var lines = String(body).split('\n');
+        var items = [];
+        var indents = {};
+        lines.forEach(function (ln) {
+            var m = ln.match(/^([ \t]*)-[ \t]+(.+?)[ \t]*$/);
+            if (!m) return;
+            var w = m[1].replace(/\t/g, '    ').length;
+            indents[w] = true;
+            items.push({ w: w, entry: parseTreeEntryText(m[2]) });
+        });
+        if (!items.length) return null;
+        /* 缩进宽度 → 层级序号 */
+        var widths = Object.keys(indents).map(Number).sort(function (a, b) { return a - b; });
+        var rank = {};
+        widths.forEach(function (w, i) { rank[w] = i; });
+
+        var roots = [];
+        var stack = []; /* {node, level} */
+        items.forEach(function (it) {
+            var e = it.entry;
+            if (!e.name) return;
+            var node = {
+                name: e.name, dir: e.dir, added: e.added, deleted: e.deleted,
+                strong: e.strong, collapsed: e.collapsed, children: []
+            };
+            var level = rank[it.w];
+            if (stack.length) {
+                /* 层级跳级防御：异常层级挂到最深层级（不丢文件） */
+                var maxLevel = stack[stack.length - 1].level;
+                if (level > maxLevel + 1) level = maxLevel + 1;
+            }
+            while (stack.length && stack[stack.length - 1].level >= level) stack.pop();
+            if (!stack.length) {
+                roots.push(node);
+            } else {
+                var parent = stack[stack.length - 1].node;
+                parent.dir = true; /* 有子级 → 必为目录（保持默认展开） */
+                parent.children.push(node);
+            }
+            stack.push({ node: node, level: level });
+        });
+        return roots.length ? roots : null;
+    }
+
+    /* tree 终端输出行前缀单元：Unicode（├── └── │）与 ASCII（|-- `-- |）各 4/3 字符宽 */
+    var FT_UNIT_RE = /^(?:\u251c\u2500\u2500 |\u2514\u2500\u2500 |\u2502   |\|   |    |\|-- |`-- |\u251c\u2500\u2500|\u2514\u2500\u2500|\|--|`--)/;
+
+    /** 终端输出语法 → 树（```file-tree 围栏体）。首行根，其余按分支前缀深度挂载 */
+    function parseTerminalTree(body) {
+        var lines = String(body).split('\n').filter(function (l) { return l.trim() !== ''; });
+        if (!lines.length) return null;
+        var rootE = parseTreeEntryText(lines[0]);
+        if (!rootE.name || rootE.added || rootE.deleted) return null;
+
+        var root = {
+            name: rootE.name, dir: true, added: false, deleted: false,
+            strong: rootE.strong, collapsed: false, children: []
+        };
+        var stack = [{ node: root, depth: 0 }];
+        var minDepth = 1;
+
+        for (var i = 1; i < lines.length; i++) {
+            var line = lines[i];
+            var pos = 0, depth = 0;
+            while (pos < line.length) {
+                var seg = line.slice(pos, pos + 4);
+                var seg3 = line.slice(pos, pos + 3);
+                if (FT_UNIT_RE.test(seg)) { depth++; pos += 4; }
+                else if (FT_UNIT_RE.test(seg3)) { depth++; pos += 3; }
+                else break;
+            }
+            if (depth < minDepth) return null; /* 无任何分支前缀的裸行 → 非法 */
+            var name = line.slice(pos).trim();
+            if (!name) return null;
+            var e = parseTreeEntryText(name);
+            if (!e.name) return null;
+
+            var node = {
+                name: e.name, dir: e.dir, added: e.added, deleted: e.deleted,
+                strong: e.strong, collapsed: e.collapsed, children: []
+            };
+            if (depth > stack.length) depth = stack.length; /* 深度跳级防御 */
+            while (stack.length > depth) stack.pop();
+            if (!stack.length) return null;
+            var parent = stack[stack.length - 1].node;
+            parent.dir = true;
+            parent.children.push(node);
+            stack.push({ node: node, depth: depth });
+        }
+        return root.children.length ? { root: root, children: root.children } : null;
+    }
+
+    /**
+     * 树节点 → HTML（file-tree 与 code-tree 左栏共用）。
+     * opts.forCode：文件行渲染为 button（role=treeitem，点击切换代码面板），data-ft-path 带全路径
+     */
+    function renderTreeNodes(children, opts, parentPath) {
+        opts = opts || {};
+        var html = '<ul class="ft-list" role="group">';
+        children.forEach(function (node) {
+            var path = (parentPath ? parentPath + '/' : '') + node.name;
+            if (node.dir) {
+                var open = !node.collapsed;
+                html += '<li class="ft-item ft-dir' + (open ? '' : ' ft-collapsed') + '"' +
+                    (node.added ? ' data-added' : '') + (node.deleted ? ' data-deleted' : '') + '>' +
+                    '\n<button type="button" class="ft-row ft-row-dir" data-ft-dir aria-expanded="' + (open ? 'true' : 'false') + '"' +
+                    ' aria-label="' + (open ? '折叠' : '展开') + '目录 ' + escapeHtml(node.name) + '">' +
+                    '<i class="ft-caret ri-arrow-right-s-line" aria-hidden="true"></i>' +
+                    '<i class="ft-icon ' + ftIconFor(node.name, true) + '" aria-hidden="true"></i>' +
+                    '<span class="ft-name' + (node.strong ? ' ft-strong' : '') + '">' + escapeHtml(node.name) + '</span>' +
+                    '</button>' +
+                    '\n' + renderTreeNodes(node.children, opts, path) +
+                    '\n</li>';
+            } else {
+                if (opts.forCode) {
+                    html += '<li class="ft-item ft-file' + (node.added ? ' ft-added' : '') + (node.deleted ? ' ft-deleted' : '') + '">' +
+                        '\n<button type="button" class="ft-row ft-row-file" data-ft-path="' + escapeHtml(path) + '"' +
+                        ' role="treeitem" aria-selected="false">' +
+                        '<i class="ft-caret ft-caret-ghost" aria-hidden="true"></i>' +
+                        '<i class="ft-icon ' + ftIconFor(node.name, false) + '" aria-hidden="true"></i>' +
+                        '<span class="ft-name' + (node.strong ? ' ft-strong' : '') + '">' + escapeHtml(node.name) + '</span>' +
+                        '</button>' +
+                        '\n</li>';
+                } else {
+                    html += '<li class="ft-item ft-file' + (node.added ? ' ft-added' : '') + (node.deleted ? ' ft-deleted' : '') + '">' +
+                        '\n<span class="ft-row">' +
+                        '<i class="ft-caret ft-caret-ghost" aria-hidden="true"></i>' +
+                        '<i class="ft-icon ' + ftIconFor(node.name, false) + '" aria-hidden="true"></i>' +
+                        '<span class="ft-name' + (node.strong ? ' ft-strong' : '') + '">' + escapeHtml(node.name) + '</span>' +
+                        '</span>' +
+                        '\n</li>';
+                }
+            }
+        });
+        return html + '</ul>';
+    }
+
+    /** 文件树外壳（:::file-tree 容器体 → 完整组件 HTML）；roots 为空返回 ''（降级） */
+    function renderFileTreeShell(roots, attrs) {
+        attrs = attrs || {};
+        var rawTitle = attrs.title != null ? String(attrs.title).trim() : '';
+        var title = rawTitle !== '' ? rawTitle : '文件树 / FILE TREE';
+        return '<div class="md-file-tree" data-file-tree role="group" aria-label="' + escapeHtml(title) + '">' +
+            '\n<div class="ft-title"><i class="ri-folder-line" aria-hidden="true"></i><span class="ft-title-text">' + escapeHtml(title) + '</span></div>' +
+            '\n' + renderTreeNodes(roots, {}, '') +
+            '\n</div>';
+    }
+
+    /** ```file-tree 围栏体 → 组件 HTML；解析失败返回 ''（调用方降级为普通代码块） */
+    function renderTerminalFileTree(body, attrs) {
+        var t = parseTerminalTree(body);
+        if (!t) return '';
+        /* 根节点（首行）作为顶层目录显示，子级随 children 挂载 */
+        return renderFileTreeShell([t.root], attrs);
+    }
+
+    /**
+     * :::code-tree 容器体 → IDE 布局组件。
+     * body 中的代码块此时已是 extractCode 占位符；按出现顺序与 ctx.fenceMetas 对齐，
+     * 以围栏 title="path" 重建左侧文件导航 + 右侧代码面板。无 title 的围栏 → 整体降级返回 ''。
+     */
+    function renderCodeTree(body, attrs, ctx, warn) {
+        attrs = attrs || {};
+        if (!ctx || !ctx.codeNonce || !ctx.fenceMetas) return '';
+        var phRe = /%%MD_CODE_([0-9a-z-]+)_(\d+)%%/g;
+        var metas = ctx.fenceMetas;
+        var files = [];
+        var m, stray = false;
+        while ((m = phRe.exec(body))) {
+            if (m[1] !== ctx.codeNonce) continue;
+            var idx = parseInt(m[2], 10);
+            if (!(idx >= 0 && idx < metas.length)) { stray = true; continue; }
+            var meta = metas[idx];
+            if (meta.lang === 'file-tree') return ''; /* file-tree 围栏语义不兼容，降级 */
+            if (meta.title == null || String(meta.title).trim() === '') {
+                if (warn) warn(':::code-tree 内代码块缺少 title="路径"（原样输出）');
+                return '';
+            }
+            files.push(meta);
+        }
+        if (!files.length) return '';
+
+        var seen = {};
+        var uniq = files.filter(function (f) {
+            var p = String(f.title).trim();
+            if (seen[p]) return false;
+            seen[p] = true;
+            return true;
+        });
+
+        /* 路径 → 树 */
+        var roots = [];
+        var findOrCreateDir = function (children, name) {
+            for (var i = 0; i < children.length; i++) {
+                if (children[i].name === name && children[i].dir) return children[i];
+            }
+            var d = { name: name, dir: true, added: false, deleted: false, strong: false, collapsed: false, children: [] };
+            children.push(d);
+            return d;
+        };
+        uniq.forEach(function (f) {
+            var parts = String(f.title).trim().split('/').filter(function (p) { return p !== ''; });
+            if (!parts.length) return;
+            var cursor = { children: roots };
+            for (var i = 0; i < parts.length - 1; i++) cursor = findOrCreateDir(cursor.children, parts[i]);
+            cursor.children.push({
+                name: parts[parts.length - 1], dir: false, added: false, deleted: false,
+                strong: false, collapsed: false, children: []
+            });
+        });
+        if (!roots.length) return '';
+
+        /* 默认激活：entry > :active > 首个 */
+        var entry = String(attrs.entry != null ? attrs.entry : '').trim();
+        var activePath = '';
+        if (entry && seen[entry]) activePath = entry;
+        else {
+            for (var k = 0; k < uniq.length; k++) {
+                if (uniq[k].active) { activePath = String(uniq[k].title).trim(); break; }
+            }
+        }
+        if (!activePath) activePath = String(uniq[0].title).trim();
+
+        var rawTitle = attrs.title != null ? String(attrs.title).trim() : '';
+        var title = rawTitle !== '' ? rawTitle : '代码树 / CODE TREE';
+        var height = safeSizeAttr(attrs.height);
+        var styleAttr = height ? ' style="--ct-h:' + height + '"' : '';
+
+        var panels = uniq.map(function (f) {
+            var p = String(f.title).trim();
+            var langCls = f.lang ? ' class="language-' + escapeHtml(f.lang) + '"' : '';
+            var isActive = p === activePath;
+            /* div 行与 pre 行之间空行隔离：marked 将 <pre> 识别为独立 HTML 块（type 1，
+               空行不截断），代码体内的空行不会再把后续代码行挤成段落（实测 P 泄漏修复） */
+            return '<div class="ct-panel' + (isActive ? ' active' : '') + '" data-path="' + escapeHtml(p) + '"' +
+                (isActive ? '' : ' hidden') + '>' +
+                '\n\n' + '<pre><code' + langCls + '>' + escapeHtml(f.body) + '</code></pre>' +
+                '\n\n' + '</div>';
+        }).join('\n\n');
+
+        return '<div class="md-code-tree" data-code-tree aria-label="' + escapeHtml(title) + '"' + styleAttr + '>' +
+            '\n<div class="ct-head">' +
+            '<i class="ri-code-s-slash-line" aria-hidden="true"></i>' +
+            '<span class="ct-title">' + escapeHtml(title) + '</span>' +
+            '<span class="ct-path" data-ct-path>' + escapeHtml(activePath) + '</span>' +
+            '<button type="button" class="ct-copy" data-ct-wrap title="自动换行" aria-label="自动换行" aria-pressed="false">' +
+            '<i class="ri-text-wrap" aria-hidden="true"></i></button>' +
+            '<button type="button" class="ct-copy" data-ct-copy title="复制当前文件代码" aria-label="复制当前文件代码">' +
+            '<i class="ri-file-copy-line" aria-hidden="true"></i></button>' +
+            '</div>' +
+            '\n<div class="ct-body">' +
+            '\n<div class="ct-tree" role="tree" aria-label="文件导航">' +
+            '\n' + renderTreeNodes(roots, { forCode: true }, '') +
+            '\n</div>' +
+            '\n<div class="ct-panels">' +
+            '\n' + panels +
+            '\n</div>' +
+            '\n</div>' +
+            '\n</div>';
+    }
+
+    /** steps 列表头 */
+    var STEPS_ITEM_RE = /^(\d{1,9})[.)][ \t]+(.*)$/;
+
+    /**
+     * :::steps 容器体校验与解析：必须且仅包含一个有序列表。
+     * 规则：首个非空行为列表头；后续行为「列表头 / 缩进体行 / 空行 / 代码占位符行」，
+     * 出现顶层裸文本 → 不合法（降级为普通 Markdown，不做启发式解析）。
+     * 返回 { items: [{head, lines}], firstNum } 或 null。
+     */
+    function parseStepsBody(body, ctx) {
+        var lines = String(body).split('\n');
+        var phRe = ctx && ctx.codeNonce
+            ? new RegExp('^%%MD_CODE_' + ctx.codeNonce + '_\\d+%%$')
+            : null;
+        var items = [];
+        var firstNum = null;
+        var cur = null;
+        var sawOpen = false;
+
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (!line.trim()) continue; /* 空行归当前项（段落分隔） */
+            var m = line.match(STEPS_ITEM_RE);
+            if (m) {
+                if (firstNum === null) firstNum = parseInt(m[1], 10);
+                cur = { head: m[2].trim(), lines: [] };
+                items.push(cur);
+                sawOpen = true;
+                continue;
+            }
+            /* 代码占位符行：extractCode 已归一为顶格，归属当前步骤体 */
+            if (phRe && phRe.test(line)) {
+                if (!cur) return null;
+                cur.lines.push(line);
+                continue;
+            }
+            var indentW = line.replace(/\t/g, '    ').match(/^ */)[0].length;
+            if (sawOpen && indentW >= 2 && cur) {
+                cur.lines.push(line);
+            } else {
+                return null; /* 顶层裸文本 / 首行非列表 → 不合法 */
+            }
+        }
+        if (!items.length) return null;
+        return { items: items, firstNum: firstNum || 1 };
+    }
+
+    /** :::steps 容器体 → 数字导轨 HTML（step 体行剥公共缩进后交 marked 渲染） */
+    function renderSteps(parsed, attrs) {
+        attrs = attrs || {};
+        var rawTitle = attrs.title != null ? String(attrs.title).trim() : '';
+        var startNum = parseInt(attrs.start, 10);
+        if (!(startNum >= 0)) startNum = parsed.firstNum;
+
+        var inner = '';
+        parsed.items.forEach(function (it, idx) {
+            /* 体行剥公共缩进（占位符行 0 缩进参与 min 计算 → min=0 不剥，安全）；
+               剩余 1-3 前导空格再剥一层，避免 marked 误判 lazy 续行缩进 */
+            var bodyLines = it.lines;
+            var minIndent = Infinity;
+            bodyLines.forEach(function (l) {
+                if (!l.trim()) return;
+                var w = l.replace(/\t/g, '    ').match(/^ */)[0].length;
+                if (w < minIndent) minIndent = w;
+            });
+            if (!isFinite(minIndent)) minIndent = 0;
+            var stripped = bodyLines.map(function (l) {
+                if (!l.trim()) return '';
+                var out = l.replace(/\t/g, '    ').slice(minIndent);
+                return out.replace(/^ {1,3}(?=\S)/, '');
+            });
+
+            inner += '\n<li class="step-item">' +
+                '\n<span class="step-num">' + (startNum + idx) + '</span>' +
+                '\n<div class="step-main">' +
+                '\n\n' + (it.head ? it.head + '\n\n' : '') + stripped.join('\n') + '\n\n' +
+                '\n</div>' +
+                '\n</li>';
+        });
+
+        var headHtml = rawTitle
+            ? '\n<div class="steps-title"><i class="ri-flask-line" aria-hidden="true"></i><span class="steps-title-text">' + escapeHtml(rawTitle) + '</span></div>'
+            : '';
+
+        return '<div class="md-steps" data-md-steps data-steps-start="' + (startNum + '') + '" role="group"' +
+            (rawTitle ? ' aria-label="' + escapeHtml(rawTitle) + '"' : '') + '>' +
+            headHtml +
+            '\n<ol class="steps-list">' +
+            inner +
+            '\n</ol>' +
+            '\n</div>';
+    }
+
+    /* ── 内容边注（[+label] 引用 / [+label]: 定义） ── */
+
+    var SIDENOTE_DEF_RE = /^[ \t]{0,3}\[\+([^\s\]]+)\]:[ \t]*(.*)$/;
+    var SIDENOTE_REF_RE = /\[\+([^\s\]]+)\]/g;
+
+    /**
+     * 边注变换：收集定义（含 4 空格缩进续行，同标签多次定义合并为多条），
+     * 替换引用为 "+" 标记（首引用处内嵌隐藏 store，postprocess 填充渲染内容）。
+     * 未定义引用保留原文。
+     */
+    function transformSidenotes(text, ctx) {
+        var lines = String(text).split('\n');
+        var outLines = [];
+        var defs = {}; /* label → [md, md, …] */
+        var defOrder = [];
+        var i = 0;
+
+        while (i < lines.length) {
+            var m = lines[i].match(SIDENOTE_DEF_RE);
+            if (m) {
+                var label = m[1];
+                var content = [m[2]];
+                i++;
+                /* 多行定义：2 空格及以上缩进续行（规格示例为 2 空格，兼容 tab） */
+                while (i < lines.length && /^[ \t]{2,}\S/.test(lines[i])) {
+                    content.push(lines[i].replace(/^[ \t]{2}/, ''));
+                    i++;
+                }
+                if (!(label in defs)) {
+                    defs[label] = [];
+                    defOrder.push(label);
+                }
+                /* 保留换行结构（join('\n')）：列表 / 多段落定义需要行边界才能被
+                   块级渲染正确解析（join(' ') 会把多行列表压成一行丢失结构） */
+                var joined = restoreCodeInStr(content.join('\n').trim(), ctx);
+                if (joined) defs[label].push(joined);
+                continue;
+            }
+            outLines.push(lines[i]);
+            i++;
+        }
+
+        if (!defOrder.length) return outLines.join('\n');
+
+        var pending = ctx.sidenotes || (ctx.sidenotes = []);
+        var emitted = {};
+        var body = outLines.join('\n');
+
+        body = body.replace(SIDENOTE_REF_RE, function (whole, label) {
+            if (!(label in defs) || !defs[label].length) return whole;
+            var store = '';
+            if (!emitted[label]) {
+                emitted[label] = true;
+                var token = '%%SN_STORE_' + (ctx.snNonce || (ctx.snNonce = makeNonce())) + '_' + pending.length + '%%';
+                pending.push({ token: token, label: label, mds: defs[label] });
+                /* template 载体：内容惰性解析不参与布局，且块级富文本（p/ul）不会被
+                   HTML 解析器从行内容器中剥离（span 场景实测会被吐出到正文） */
+                store = '<template class="sn-store" data-sn-label="' + escapeHtml(label) + '">' + token + '</template>';
+            }
+            return '<sup class="fn-ref sn-ref" data-sn-label="' + escapeHtml(label) + '"' +
+                ' role="button" tabindex="0" aria-expanded="false" aria-label="查看边注：' + escapeHtml(label) + '">+</sup>' + store;
+        });
+
+        return body;
+    }
+
+
     /** 指令主变换：栈式解析容器围栏，递归处理帧体。未闭合围栏 / 未知指令 / tab 脱离 tabs → 原文降级输出 + 告警 */
-    function transformDirectives(text, opts) {
+    function transformDirectives(text, opts, ctx) {
+        ctx = ctx || {};
         var lines = text.split('\n');
         var out = [];
         var stack = [];
@@ -540,8 +1095,38 @@
                     }
                     break;
                 }
+                case 'file-tree': {
+                    var ftRoots = parseListTree(body);
+                    if (ftRoots) {
+                        emitBlock(renderFileTreeShell(ftRoots, frame.attrs), frame.indent);
+                    } else {
+                        warn(':::file-tree 内无有效嵌套列表（原样输出）: ' + frame.raw.trim());
+                        emitBlock(frame.raw + '\n' + body + '\n' + ':::', frame.indent);
+                    }
+                    break;
+                }
+                case 'code-tree': {
+                    var ctHtml = renderCodeTree(body, frame.attrs, ctx, warn);
+                    if (ctHtml) {
+                        emitBlock(ctHtml, frame.indent);
+                    } else {
+                        warn(':::code-tree 结构不合法（原样输出）: ' + frame.raw.trim());
+                        emitBlock(frame.raw + '\n' + body + '\n' + ':::', frame.indent);
+                    }
+                    break;
+                }
+                case 'steps': {
+                    var stepsParsed = parseStepsBody(body, ctx);
+                    if (stepsParsed) {
+                        emitBlock(renderSteps(stepsParsed, frame.attrs), frame.indent);
+                    } else {
+                        warn(':::steps 内必须且仅包含一个有序列表（原样输出）: ' + frame.raw.trim());
+                        emitBlock(frame.raw + '\n' + body + '\n' + ':::', frame.indent);
+                    }
+                    break;
+                }
                 case 'folding': {
-                    var inner = transformDirectives(body, opts);
+                    var inner = transformDirectives(body, opts, ctx);
                     emitBlock(
                         frame.htmlOpen + '\n\n' + (inner || '') + '\n\n' + FOLDING_CLOSE,
                         frame.indent
@@ -599,6 +1184,10 @@
                 var fenceLen = openMatch[2].length;
                 var name = openMatch[3].toLowerCase();
                 var attrs = parseAttrs(openMatch[4] || '');
+                /* [标题] 简写捕获组：并入 attrs.title */
+                if (openMatch[5] != null && String(openMatch[5]).trim() !== '') {
+                    attrs.title = String(openMatch[5]).trim();
+                }
 
                 /* 叶子指令（恰好两个冒号）：单行自足。否则进入顶层输出。 */
                 if (fenceLen === 2) {
@@ -686,7 +1275,7 @@
                 if (closeLen >= topFrame.fenceLen) {
                     var frame = stack.pop();
                     if (frame.name === 'tab') {
-                        var innerHtml = transformDirectives(frame.bodyLines.join('\n'), opts);
+                        var innerHtml = transformDirectives(frame.bodyLines.join("\n"), opts, ctx);
                         /* 面板级 notoc 优先（true/false 显式值）；缺省继承组级 ::::tabs{notoc} 的整组排除 */
                         var panelNotoc = attrBool(frame.attrs.notoc);
                         frame.owner.panels.push({
@@ -787,7 +1376,7 @@
                     i++;
                 }
                 if (!(label in defs)) {
-                    defs[label] = content.join(' ').trim();
+                    defs[label] = restoreCodeInStr(content.join(' ').trim(), ctx);
                     defOrder.push(label);
                 }
                 continue;
@@ -856,8 +1445,9 @@
         text = protectLegacyTags(text, ctx);
         text = extractMath(text, ctx);
         text = transformAdmonitions(text, opts);
-        text = transformDirectives(text, opts);
+        text = transformDirectives(text, opts, ctx);
         text = transformFootnotes(text, ctx);
+        text = transformSidenotes(text, ctx);
         text = transformInlineSpoilers(text);
         text = restoreCode(text, ctx);
 
@@ -884,32 +1474,118 @@
             return '<img' + a + '>';
         });
 
-        /* ① 脚注定义体：inline 渲染回填 */
-        if (ctx.footnotes && ctx.footnotes.length) {
-            ctx.footnotes.forEach(function (fn) {
-                var rendered;
-                if (typeof api.parseInline === 'function') {
-                    try {
-                        rendered = api.parseInline(fn.md);
-                    } catch (e) {
-                        rendered = escapeHtml(fn.md);
+        /* 脚注、边注共用：外链新标签页打开，并补齐安全 rel；文内锚点不受影响 */
+        var enhanceNoteLinks = function (rendered) {
+            return String(rendered).replace(
+                /<a\b([^>]*?\s+href\s*=\s*)(["'])(https?:\/\/[^"']*)\2([^>]*)>/gi,
+                function (match, beforeHref, quote, href, afterHref) {
+                    var attrs = beforeHref + quote + href + quote + afterHref;
+                    var relPattern = /(^|\s)rel\s*=\s*(["'])(.*?)\2/i;
+        
+                    if (!/(^|\s)target\s*=/i.test(attrs)) {
+                        attrs += ' target="_blank"';
                     }
-                } else {
-                    rendered = escapeHtml(fn.md);
+        
+                    if (relPattern.test(attrs)) {
+                        attrs = attrs.replace(
+                            relPattern,
+                            function (relAttr, leading, relQuote, relValue) {
+                                var rel = relValue.split(/\s+/).filter(Boolean);
+        
+                                if (!rel.some(function (item) {
+                                    return item.toLowerCase() === 'noopener';
+                                })) {
+                                    rel.push('noopener');
+                                }
+        
+                                if (!rel.some(function (item) {
+                                    return item.toLowerCase() === 'noreferrer';
+                                })) {
+                                    rel.push('noreferrer');
+                                }
+        
+                                return leading + 'rel=' + relQuote +
+                                    rel.join(' ') + relQuote;
+                            }
+                        );
+                    } else {
+                        attrs += ' rel="noopener noreferrer"';
+                    }
+        
+                    return '<a' + attrs + '>';
                 }
-                /* 外链新标签页打开，文内锚点（fn-jump/回引）不受影响 */
-                rendered = String(rendered).replace(
-                    /<a\s+href="(https?:\/\/[^"]*)"/gi,
-                    '<a href="$1" target="_blank" rel="noopener noreferrer"'
-                );
-                out = out.split(fn.token).join(rendered);
+            );
+        };
+        
+        /*  脚注、边注共用：渲染脚注或边注；useBlock 控制是否优先进行块级渲染 */
+        var renderNote = function (md, useBlock) {
+            var rendered = null;
+            md = md == null ? '' : String(md);
+        
+            if (useBlock && api && typeof api.parseBlock === 'function') {
+                try {
+                    rendered = api.parseBlock(md);
+                } catch (e) {
+                    rendered = null;
+                }
+            }
+        
+            if (rendered == null && api && typeof api.parseInline === 'function') {
+                try {
+                    rendered = api.parseInline(md);
+                } catch (e) {
+                    rendered = null;
+                }
+            }
+        
+            if (rendered == null) {
+                rendered = useBlock
+                    ? '<p>' + escapeHtml(md) + '</p>'
+                    : escapeHtml(md);
+            }
+        
+            return enhanceNoteLinks(rendered);
+        };
+        
+        /* ① 脚注定义体：inline 渲染回填 */
+        if (ctx && Array.isArray(ctx.footnotes) && ctx.footnotes.length) {
+            ctx.footnotes.forEach(function (fn) {
+                if (!fn || typeof fn.token !== 'string' || !fn.token) {
+                    return;
+                }
+        
+                out = out.split(fn.token).join(renderNote(fn.md, false));
+            });
+        }
+        
+        /* ② 边注定义体：块级渲染回填（多段落 / 列表 / 行内代码均支持）。
+           多条关联定义：每条按自身 Markdown 原样块级渲染，条目间以间距分隔 */
+        if (ctx && Array.isArray(ctx.sidenotes) && ctx.sidenotes.length) {
+            ctx.sidenotes.forEach(function (sn) {
+                if (!sn || typeof sn.token !== 'string' || !sn.token) {
+                    return;
+                }
+        
+                var mds = Array.isArray(sn.mds) ? sn.mds : [];
+                var content;
+        
+                if (mds.length === 1) {
+                    content = renderNote(mds[0], true);
+                } else {
+                    content = mds.map(function (md) {
+                        return '<div class="sn-item">' +
+                            renderNote(md, true) + '</div>';
+                    }).join('');
+                }
+        
+                out = out.split(sn.token).join(content);
             });
         }
 
-        /* ② 遗留自定义标签还原 */
+        /* ③ 遗留自定义标签还原 */
         out = restoreLegacyTags(out, ctx);
 
-        /* ③ 数学公式还原（置于最后） */
+        /* ④ 数学公式还原（置于最后） */
         out = restoreMath(out, ctx);
 
         return out;
