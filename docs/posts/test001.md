@@ -1,7 +1,7 @@
 ---
 title: Markdown 组件语法全览
 date: 2026-10-03 08:20
-last_modified: 2026-10-07 10:00
+last_modified: 2026-11-25 20:30
 author: moara
 category: ["Demo"]
 tags: ["Demo", "Markdown"]
@@ -958,3 +958,469 @@ export const twice = (x) => fold(x) * 2;
 ### 19.6 旧语法兜底（music.json）
 
 <music id="cry"></music>
+
+# moara-md v1.3 四大组件
+
+本文是 moara-md v1.3 版本的四大组件（文件树 / 代码树 / 内容边注 / 步骤流）的**全量视觉与交互测试**，覆盖规格中的每一种语法、每一种标记与所有降级路径。
+
+## 20. 文件树（:::file-tree / ```file-tree）
+
+文件树可将多层级项目结构、源码目录以及终端目录输出转化为紧凑的交互式树状视图，支持自动识别后缀图标、Diff 差异高亮以及可折叠分支。
+
+### 20.1 嵌套列表语法（基础 · 规格原样）
+
+使用 `:::file-tree` 块：
+
+:::file-tree{title="Shirone 源码树"}
+- src
+  - components/
+    - ++ Navigation.svelte
+    - -- Button.astro
+  - content
+    - posts/
+      - markdown-enhancements.md
+  - layouts/
+    - PostLayout.astro
+  - plugins
+    - markdown/
+      - rehype-file-tree.mjs
+  - styles
+    - markdown/
+      - trees.css
+  - **content.config.ts**
+- public/
+  - favicon.svg
+- package.json
+:::
+
+说明：
+- 目录默认展开，显式带斜杠（如 `posts/`） → **默认折叠**，点击可展开
+- `++ Navigation.svelte` → 绿色背景高亮
+- `-- Button.astro` → 红色背景与删除线
+- `**content.config.ts**` → 重点强调的高亮视觉层级
+
+### 20.2 终端输出语法（Unicode 分支字符）
+
+从命令行（如  `tree` ）直接复制时，可直接粘贴到 ```file-tree 块中：
+
+```file-tree title="构建产物"
+dist
+├── _astro/
+│   ├── index.css
+│   └── page.js
+└── favicon.ico
+```
+
+说明：
+- title="string"：自定义文件树的标题
+
+### 20.3 支持终端输出语法（ASCII 分支字符）
+
+```file-tree title="Python 工程"
+src
+|-- main.py
+|-- utils/
+|   |-- __init__.py
+|   `-- helpers.py
+`-- README.md
+```
+
+### 20.4 图标多样性 + Diff 标记 + 深层嵌套
+
+:::file-tree{title="图库工程 assets-check"}
+- project
+  - assets/
+    - logo.png
+    - banner.webp
+    - photo.jpg
+    - icon.svg
+  - audio/
+    - bgm.mp3
+    - voice.flac
+  - video/
+    - intro.mp4
+  - docs/
+    - guide.md
+    - api.pdf
+    - data.xlsx
+  - src/
+    - components/
+      - ++ Button.vue
+      - -- OldButton.jsx
+      - Modal.svelte
+    - utils/
+      - **App.tsx**
+      - helpers.py
+      - build.rs
+    - index.html
+    - main.go
+  - package.json
+  - .gitignore
+  - LICENSE
+:::
+
+### 20.5 降级：容器内无列表
+
+:::file-tree{title="这应该降级为普通文本"}
+这里没有任何列表，容器应保持为普通 Markdown 展示，不会强行启发式解析。
+:::
+
+### 20.6 降级：终端输出非树文本
+
+```file-tree title="这不是树"
+随便一段文字
+没有分支字符
+无法解析为目录树
+```
+
+以上应显示为普通代码块。
+
+## 21. 代码树（:::code-tree）
+
+交互式代码树将左侧的多级文件层级导航与右侧（不同设备的位置不同：桌面左右、移动端上下）的代码即时预览组合呈现。
+
+### 21.1 完整示例（entry 指定初始文件）
+
+在 `:::code-tree` 块指令中组合多个代码块。每个代码块通过 title="path/to/file" 指定其相对路径：
+
+:::code-tree{title="Shirone 组件演示" height="380px" entry="src/Button.svelte"}
+```svelte title="src/Button.svelte"
+<script lang="ts">
+  let { label = "点击我" } = $props();
+</script>
+
+<button class="m3-btn">{label}</button>
+```
+
+```stylus title="src/styles/button.styl"
+.m3-btn
+  background: var(--primary)
+  color: var(--on-primary)
+  border-radius: var(--shape-corner-m)
+```
+
+```json title="package.json"
+{
+  "name": "button-demo",
+  "version": "1.0.0"
+}
+```
+:::
+
+说明：
+- title="string"：自定义代码树的标题
+- height="string"：设置视图高度，默认 420px
+- entry="filepath"：指定页面初次加载时默认激活展示的文件路径
+- :active：在任意代码块后添加 :active 可将其设为默认激活的标签页
+
+### 21.2 `:active` 标记（无 entry 时生效）
+
+:::code-tree{title="配置文件集"}
+```json title="tsconfig.json"
+{
+  "extends": "astro/tsconfigs/strict"
+}
+```
+
+```js title="astro.config.mjs" :active
+import { defineConfig } from 'astro/config';
+
+export default defineConfig({});
+```
+
+```yaml title="vercel.json"
+{
+  "cleanUrls": true
+}
+```
+:::
+
+初始激活为 `astro.config.mjs`（`:active` 标记）。
+
+### 21.3 默认高度 + 深层路径
+
+:::code-tree{title="多级目录（默认 420px 高度）"}
+```ts title="src/layouts/BaseLayout.astro"
+<html lang="zh-CN"></html>
+```
+
+```css title="src/styles/global.css"
+:root { --primary: #111; }
+```
+
+```md title="content/posts/hello.md"
+# 你好，世界
+```
+
+```txt title="docs/release-notes/v1.3.txt"
+- file-tree / code-tree / sidenote / steps
+```
+:::
+
+### 21.4 超长代码
+
+`height` 同时作用于桌面端与移动端，两端默认均 420px。
+
+:::code-tree{title="超长代码（默认 420px）" entry="src/utils/format.ts"}
+```ts title="src/utils/format.ts"
+export function padLeft(input: string, len: number, ch = ' '): string {
+    let out = input;
+    while (out.length < len) out = ch + out;
+    return out;
+}
+
+export function formatDate(d: Date, pattern = 'YYYY-MM-DD'): string {
+    const y = d.getFullYear();
+    const m = padLeft(String(d.getMonth() + 1), 2, '0');
+    const day = padLeft(String(d.getDate()), 2, '0');
+    return pattern
+        .replace('YYYY', String(y))
+        .replace('MM', m)
+        .replace('DD', day);
+}
+
+export function formatBytes(bytes: number, decimals = 2): string {
+    if (bytes === 0) return '0 B';
+    const k = 1024;
+    const units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    const value = bytes / Math.pow(k, i);
+    return value.toFixed(decimals) + ' ' + units[i];
+}
+
+export function truncateMiddle(text: string, max = 40): string {
+    if (text.length <= max) return text;
+    const half = Math.floor((max - 1) / 2);
+    return text.slice(0, half) + '…' + text.slice(text.length - half);
+}
+
+export function chunk<T>(arr: T[], size: number): T[][] {
+    const out: T[][] = [];
+    for (let i = 0; i < arr.length; i += size) out.push(arr.slice(i, i + size));
+    return out;
+}
+
+export function groupBy<T, K extends string>(arr: T[], key: (item: T) => K): Record<K, T[]> {
+    const out = {} as Record<K, T[]>;
+    for (const item of arr) {
+        const k = key(item);
+        (out[k] || (out[k] = [])).push(item);
+    }
+    return out;
+}
+
+export function debounce<F extends (...args: never[]) => void>(fn: F, wait = 200): (...args: Parameters<F>) => void {
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    return (...args: Parameters<F>) => {
+        if (timer) clearTimeout(timer);
+        timer = setTimeout(() => fn(...args), wait);
+    };
+}
+
+export function throttle<F extends (...args: never[]) => void>(fn: F, interval = 200): (...args: Parameters<F>) => void {
+    let last = 0;
+    return (...args: Parameters<F>) => {
+        const now = Date.now();
+        if (now - last >= interval) {
+            last = now;
+            fn(...args);
+        }
+    };
+}
+```
+
+```txt title="README.txt"
+format.ts 汇总：padLeft / formatDate / formatBytes / truncateMiddle / chunk / groupBy / debounce / throttle
+```
+:::
+
+### 21.5 降级：代码块缺少 title
+
+:::code-tree{title="这应该降级"}
+```js
+console.log('没有 title 的代码块');
+```
+:::
+
+以上应整体保持为普通代码块输出（带原容器文字）。
+
+## 22. 内容边注（[+label]）
+
+内容边注将辅助背景信息紧邻特定句子放置，而不强行插入到正文阅读主线。它与脚注不同：脚注统一收录在文末注释区，而边注点击标记即出现悬浮气泡。
+
+### 22.1 基本引用与富文本
+
+在正文中添加 `[+label]` 引用标记，然后在其他位置定义对应的边注内容。渲染管线 [+pipeline] 会先摘离代码与公式，再逐级变换，最后统一还原 [+restore]。
+
+[+pipeline]:
+  预处理依次执行：代码摘离 → 遗留标签保护 → 数学摘离 → admonition → 容器指令栈式解析 → 脚注 → 边注 → 行内剧透 → 代码还原。
+
+[+restore]:
+  定义体支持**多段落**、加粗、链接、列表与行内代码：
+
+[+restore]:
+  - 就像这样，第二个同标签定义；
+  - 与第三条一起，合并为**一组有序批注**。
+
+### 22.2 多条关联定义与多次引用
+
+同一个标签 [+multi] 可以被引用多次 [+multi]，多次引用共享同一份内容；重复定义 [+multi] 则合并为气泡内的一组批注列表。
+
+[+multi]:
+  第一条批注：说明该标签的职责。
+
+[+multi]:
+  第二条批注：补充边界情况，例如包含 [外部链接](https://docs.astro.build/zh-cn/concepts/islands/) 与 `行内代码`。
+
+### 22.3 与脚注共存
+
+边注 [+coexist] 与脚注[^note1]可以出现在同一句话里[^note2]，互不干扰 [+coexist]。
+
+[+coexist]:
+  边注气泡固定显示「+」，脚注标记自动编号「1、2、3」。
+
+[^note1]: 这是脚注一。
+[^note2]: 这是脚注二。
+
+### 22.4 未定义引用
+
+[+ref] 没有对应定义，原样保留为普通文本 [+ref] 。
+
+## 23. 步骤流（:::steps）
+
+步骤流适用于强调先后执行顺序的操作流程，通过低调优雅的数字导轨提供清晰导航。
+
+### 23.1 方括号简写标题 + 代码块（规格原样）
+
+:::steps[生产环境部署]
+1. **克隆并准备工作区**
+
+   克隆代码仓库并进入项目根目录：
+
+   ```powershell
+   git clone https://github.com/LyraVoid/Shirone.git
+   Set-Location Shirone
+   ```
+
+2. **安装项目依赖**
+
+   使用仓库指定的包管理器进行安装：
+
+   ```powershell
+   pnpm.cmd install
+   ```
+
+3. **执行项目校验**
+
+   确认 Astro 诊断与 TypeScript 类型检查均通过：
+
+   ```powershell
+   npx.cmd astro check
+   pnpm.cmd type-check
+   ```
+
+4. **构建生产站点**
+
+   生成静态页面与搜索索引产物：
+
+   ```powershell
+   pnpm.cmd build
+   ```
+:::
+
+说明：
+- :::steps[标题] 或 title="标题" 可添加标题
+- start=4 可修改起始展示的步骤编号
+- 容器内必须且仅包含一个有序列表。格式不规范或混合的内容将保持为普通 Markdown 文本展示
+
+### 23.2 花括号属性 + start 修改起始编号
+
+:::steps{title="编号从 4 开始" start=4}
+1. **第四步**
+
+   这一步编号应显示为 4。
+
+2. **第五步**
+
+   内嵌列表：
+
+   - 检查产物体积
+   - 上传 CDN
+
+3. **第六步**
+
+   收尾，可含 [链接](https://example.com)。
+:::
+
+### 23.3 无标题
+
+:::steps
+1. **无标题步骤一**
+
+   无标题时应只有数字导轨，没有标题栏。
+
+2. **无标题步骤二**
+
+   第二步。
+:::
+
+### 23.4 降级：混入顶层裸文本
+
+:::steps[这应该降级]
+这段顶层裸文本不属于任何列表项。
+
+1. **不会被渲染为步骤**
+
+   因为容器格式不规范。
+:::
+
+以上应保持为普通 Markdown（普通有序列表 + 段落），不出现数字导轨。
+
+## 24. 混合嵌套
+
+### 24.1 文件树嵌套在 admonition 内
+
+> [!NOTE] 项目速览
+> :::file-tree{title="引用块内的树"}
+> - src
+>   - main.py
+> - tests/
+>   - test_main.py
+> :::
+
+### 24.2 代码树嵌套在 folding 内
+
+:::folding{title="展开查看代码树"}
+:::code-tree{title="折叠面板里的代码树"}
+```html title="index.html"
+<!DOCTYPE html>
+<html></html>
+```
+
+```css title="style.css"
+body { margin: 0; }
+```
+:::
+:::
+
+### 24.3 步骤流内含边注混排
+
+:::steps[综合演练]
+1. **阅读源码结构**
+
+   先看目录 [+structure]，再进入下一步。
+
+2. **理解数据流**
+
+   数据从 `:::code-tree` 左侧导航流向右侧预览面板 [+flow]。
+
+3. **完成验证**
+
+   所有组件视觉状态正确、点击正常、无卡顿。
+:::
+
+[+structure]:
+  目录结构由嵌套列表推断，目录默认展开，带斜杠的目录默认折叠。
+
+[+flow]:
+  点击左侧文件 → 右侧面板切换 → 顶栏路径与复制按钮同步。
